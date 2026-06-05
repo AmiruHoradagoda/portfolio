@@ -24,12 +24,13 @@ const gradient = accentClasses[accent as keyof typeof accentClasses] ?? accentCl
 
 <div class={`relative overflow-hidden rounded-xl bg-gradient-to-br ${gradient} text-white`}>
   {image && (
-    <div class="aspect-[16/9] bg-white">
+    <div class="image-load-frame aspect-[16/9] bg-white" data-image-frame>
       <img
         src={assetPath(image)}
         alt={imageAlt ?? title}
         class="h-full w-full object-cover object-top"
         loading="lazy"
+        data-load-image
       />
     </div>
   )}

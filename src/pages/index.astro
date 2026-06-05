@@ -27,12 +27,15 @@ const description =
 
         <div class="grid items-stretch gap-8 lg:grid-cols-2">
           <div class="glass-card flex justify-center rounded-2xl p-6">
+            <div class="image-load-frame w-full max-w-md rounded-xl" data-image-frame>
             <img
               src={assetPath(profile.imagePath)}
               alt="Portrait of Amiru Horadagoda"
-              class="max-h-[560px] w-full max-w-md rounded-xl object-cover object-[center_18%]"
+              class="max-h-[560px] w-full rounded-xl object-cover object-[center_18%]"
               loading="lazy"
+              data-load-image
             />
+            </div>
           </div>
 
           <article class="glass-card rounded-2xl p-8 text-lg leading-8 text-slate-300">

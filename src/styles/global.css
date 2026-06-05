@@ -38,3 +38,64 @@ a {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
   backdrop-filter: blur(16px);
 }
+
+.image-load-frame {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95)),
+    rgba(15, 23, 42, 0.85);
+}
+
+.image-load-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(100deg, transparent 18%, rgba(255, 255, 255, 0.22) 45%, transparent 72%);
+  transform: translateX(-100%);
+  animation: image-loading-shimmer 1.2s ease-in-out infinite;
+  pointer-events: none;
+  transition: opacity 260ms ease;
+}
+
+.image-load-frame[data-image-loaded="true"]::before {
+  opacity: 0;
+  animation: none;
+}
+
+.image-load-frame > img[data-load-image] {
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  filter: blur(10px);
+  transform: scale(1.02);
+  transition:
+    opacity 320ms ease,
+    filter 520ms ease,
+    transform 520ms ease;
+}
+
+.image-load-frame[data-image-loaded="true"] > img[data-load-image] {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+
+@keyframes image-loading-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-load-frame::before {
+    animation: none;
+  }
+
+  .image-load-frame > img[data-load-image] {
+    transition: opacity 160ms ease;
+    filter: none;
+    transform: none;
+  }
+}
