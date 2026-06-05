@@ -1,0 +1,15 @@
+---
+interface Props {
+  group: {
+    group: string;
+    items: string[];
+  };
+}
+
+const { group } = Astro.props;
+---
+
+<div class="border-b border-white/10 py-4">
+  <h3 class="text-base font-semibold text-white">{group.group}</h3>
+  <p class="mt-2 text-sm leading-6 text-slate-400">{group.items.join(" / ")}</p>
+</div>

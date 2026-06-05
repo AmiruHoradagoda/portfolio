@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { profile, projects } from "../data/profile";
+
+const title = `Projects | ${profile.name}`;
+const description = "Project work by Amiru Horadagoda across full-stack development, DevOps, mobile applications, and AI.";
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+  <main>
+    <section class="py-12 sm:py-14">
+      <div class="mx-auto grid max-w-6xl gap-8 px-5 sm:px-6 md:grid-cols-2 lg:px-8">
+        {projects.map((project) => <ProjectCard project={project} />)}
+      </div>
+    </section>
+  </main>
+  <footer class="border-t border-white/10 bg-blue-600/5 py-8">
+    <div class="mx-auto flex max-w-6xl flex-col gap-2 px-5 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <p>{profile.name}</p>
+      <p>{profile.location}</p>
+    </div>
+  </footer>
+</BaseLayout>

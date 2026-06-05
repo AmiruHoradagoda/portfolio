@@ -1,0 +1,67 @@
+---
+import { Code2, ExternalLink, PlayCircle } from "@lucide/astro";
+import ProjectVisual from "./ProjectVisual.astro";
+import { assetPath } from "../utils/paths";
+
+interface Link {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  project: {
+    slug: string;
+    title: string;
+    year: string;
+    type: string;
+    status: string;
+    stack: string[];
+    links: Link[];
+    accent?: string;
+    media: {
+      type: "image" | "video";
+      src: string;
+      alt?: string;
+    }[];
+  };
+}
+
+const { project } = Astro.props;
+const detailUrl = assetPath(`projects/${project.slug}/`);
+const leadImage = project.media.find((item) => item.type === "image");
+const linkIcons = {
+  GitHub: Code2,
+  Demo: ExternalLink,
+  Video: PlayCircle,
+};
+---
+
+<article class="group glass-card relative overflow-hidden rounded-2xl transition duration-300 hover:-translate-y-1 hover:border-white/40">
+  <div class="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-violet-600/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+  <a class="block" href={detailUrl} aria-label={`Open ${project.title} project details`}>
+    <ProjectVisual title={project.title} stack={project.stack} accent={project.accent} image={leadImage?.src} imageAlt={leadImage?.alt} />
+    <div class="relative z-10 p-6">
+      <h3 class="text-xl font-bold text-white transition group-hover:text-blue-300">{project.title}</h3>
+    </div>
+  </a>
+
+  <div class="relative z-10 flex flex-wrap gap-4 p-6 pt-0">
+    <a class="text-sm font-semibold text-slate-400 transition hover:text-blue-300" href={detailUrl}>
+      Details
+    </a>
+    {project.links.map((link) => {
+      const Icon = linkIcons[link.label as keyof typeof linkIcons] ?? ExternalLink;
+      return (
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noreferrer"
+          class="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-400 transition hover:text-blue-300"
+        >
+          <Icon class="h-4 w-4" aria-hidden="true" stroke-width={2} />
+          {link.label}
+        </a>
+      );
+    })}
+  </div>
+</article>

@@ -1,0 +1,85 @@
+---
+import { ArrowLeft, ArrowRight } from "@lucide/astro";
+import ProjectCard from "./ProjectCard.astro";
+
+interface Link {
+  label: string;
+  href: string;
+}
+
+interface Project {
+  slug: string;
+  title: string;
+  year: string;
+  type: string;
+  status: string;
+  role: string;
+  summary: string;
+  stack: string[];
+  links: Link[];
+  accent?: string;
+  media: {
+    type: "image" | "video";
+    src: string;
+    alt?: string;
+  }[];
+}
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+---
+
+<div class="relative" data-project-slider>
+  <div class="overflow-hidden">
+    <div class="flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-4 [scrollbar-width:none]" data-slider-track>
+      {projects.map((project) => (
+        <div class="min-w-full snap-start md:min-w-[calc(50%-0.625rem)]">
+          <ProjectCard project={project} />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="mt-2 flex items-center justify-between gap-3">
+    <div class="text-sm text-slate-500" data-slider-status>1 / {projects.length}</div>
+    <div class="flex gap-2">
+      <button class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-slate-300 transition hover:border-blue-400/60 hover:text-white" type="button" data-slider-prev aria-label="Previous project">
+        <ArrowLeft class="h-4 w-4" aria-hidden="true" stroke-width={2} />
+      </button>
+      <button class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 text-white transition hover:from-blue-700 hover:to-violet-700" type="button" data-slider-next aria-label="Next project">
+        <ArrowRight class="h-4 w-4" aria-hidden="true" stroke-width={2} />
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll("[data-project-slider]").forEach((slider) => {
+    const track = slider.querySelector("[data-slider-track]");
+    const prev = slider.querySelector("[data-slider-prev]");
+    const next = slider.querySelector("[data-slider-next]");
+    const status = slider.querySelector("[data-slider-status]");
+    const slides = Array.from(track?.children ?? []);
+
+    if (!(track instanceof HTMLElement) || !(prev instanceof HTMLButtonElement) || !(next instanceof HTMLButtonElement) || !(status instanceof HTMLElement) || slides.length === 0) {
+      return;
+    }
+
+    let index = 0;
+
+    function update(nextIndex) {
+      index = (nextIndex + slides.length) % slides.length;
+      const slide = slides[index];
+      if (slide instanceof HTMLElement) {
+        track.scrollTo({ left: slide.offsetLeft - track.offsetLeft, behavior: "smooth" });
+      }
+      status.textContent = `${index + 1} / ${slides.length}`;
+    }
+
+    prev.addEventListener("click", () => update(index - 1));
+    next.addEventListener("click", () => update(index + 1));
+  });
+</script>

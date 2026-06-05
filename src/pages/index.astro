@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactSection from "../components/ContactSection.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import Section from "../components/Section.astro";
+import SkillTabs from "../components/SkillTabs.astro";
+import { profile } from "../data/profile";
+import { assetPath } from "../utils/paths";
+
+const title = `${profile.name} | ${profile.headline}`;
+const description =
+  "Portfolio of Amiru Horadagoda, a Computer Engineer focused on full-stack development, DevOps, and AI projects.";
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+  <main>
+    <Hero />
+
+    <section id="about" class="scroll-mt-24 py-16 sm:py-20">
+      <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+        <div class="mb-12 text-center">
+          <h2 class="text-4xl font-bold text-white">About Me</h2>
+          <div class="mx-auto mt-4 h-1 w-20 rounded-full bg-gradient-to-r from-blue-400 to-violet-500"></div>
+        </div>
+
+        <div class="grid items-stretch gap-8 lg:grid-cols-2">
+          <div class="glass-card flex justify-center rounded-2xl p-6">
+            <img
+              src={assetPath(profile.imagePath)}
+              alt="Portrait of Amiru Horadagoda"
+              class="max-h-[560px] w-full max-w-md rounded-xl object-cover object-[center_18%]"
+              loading="lazy"
+            />
+          </div>
+
+          <article class="glass-card rounded-2xl p-8 text-lg leading-8 text-slate-300">
+            <p>
+              Hello! I'm {profile.name}, currently a Computer Engineering undergraduate at the University of Ruhuna. My studies have given me a strong foundation in software engineering, backend systems, databases, networking, and practical product development.
+            </p>
+            <p class="mt-7">
+              As a Full Stack Developer, I enjoy working across both frontend and backend development. I build responsive user interfaces, APIs, database-backed systems, and deployment workflows that help turn ideas into usable applications.
+            </p>
+            <p class="mt-7">
+              I am also interested in DevOps and AI, including Docker, Jenkins, AWS, CI/CD, Python, OpenCV, and machine learning. When I am not coding, I work on academic projects, competitions, and practical experiments that improve my engineering skills.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <Section
+      id="skills"
+      eyebrow="Technical Stack"
+      title="Skills"
+      intro="Tabbed skill groups for frontend, backend, DevOps, AI, and the tools that support my engineering workflow."
+    >
+      <SkillTabs />
+    </Section>
+
+    <ContactSection />
+  </main>
+  <footer class="border-t border-white/10 bg-blue-600/5 py-8">
+    <div class="mx-auto flex max-w-6xl flex-col gap-2 px-5 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <p>{profile.name}</p>
+      <p>{profile.location}</p>
+    </div>
+  </footer>
+</BaseLayout>

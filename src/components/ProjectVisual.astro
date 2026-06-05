@@ -1,0 +1,69 @@
+---
+import { Code2, Database, PlayCircle, Server } from "@lucide/astro";
+import { assetPath } from "../utils/paths";
+
+interface Props {
+  title: string;
+  stack: string[];
+  accent?: string;
+  image?: string;
+  imageAlt?: string;
+}
+
+const { title, stack, accent = "cyan", image, imageAlt } = Astro.props;
+const accentClasses = {
+  cyan: "from-cyan-600 to-zinc-950",
+  violet: "from-violet-600 to-zinc-950",
+  emerald: "from-emerald-600 to-zinc-950",
+  amber: "from-amber-500 to-zinc-950",
+  rose: "from-rose-600 to-zinc-950",
+  blue: "from-blue-600 to-zinc-950",
+};
+const gradient = accentClasses[accent as keyof typeof accentClasses] ?? accentClasses.cyan;
+---
+
+<div class={`relative overflow-hidden rounded-xl bg-gradient-to-br ${gradient} text-white`}>
+  {image && (
+    <div class="aspect-[16/9] bg-white">
+      <img
+        src={assetPath(image)}
+        alt={imageAlt ?? title}
+        class="h-full w-full object-cover object-top"
+        loading="lazy"
+      />
+    </div>
+  )}
+  {!image && (
+    <div class="p-5">
+  <div class="absolute right-4 top-4 flex gap-1.5">
+    <span class="h-2.5 w-2.5 rounded-full bg-white/70"></span>
+    <span class="h-2.5 w-2.5 rounded-full bg-white/45"></span>
+    <span class="h-2.5 w-2.5 rounded-full bg-white/25"></span>
+  </div>
+  <div class="relative min-h-48">
+    <div class="max-w-[80%]">
+      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-white/75">Project Preview</p>
+      <h3 class="mt-3 text-2xl font-semibold">{title}</h3>
+    </div>
+
+    <div class="absolute bottom-0 left-0 right-0 grid gap-3 sm:grid-cols-3">
+      <div class="rounded-md bg-white/14 p-3 backdrop-blur">
+        <Code2 class="h-5 w-5" aria-hidden="true" stroke-width={2} />
+        <p class="mt-2 text-xs font-medium text-white/80">{stack[0] ?? "Frontend"}</p>
+      </div>
+      <div class="rounded-md bg-white/14 p-3 backdrop-blur">
+        <Server class="h-5 w-5" aria-hidden="true" stroke-width={2} />
+        <p class="mt-2 text-xs font-medium text-white/80">{stack[1] ?? "Backend"}</p>
+      </div>
+      <div class="rounded-md bg-white/14 p-3 backdrop-blur">
+        <Database class="h-5 w-5" aria-hidden="true" stroke-width={2} />
+        <p class="mt-2 text-xs font-medium text-white/80">{stack[2] ?? "Database"}</p>
+      </div>
+    </div>
+  </div>
+  <div class="absolute bottom-5 right-5 hidden h-12 w-12 items-center justify-center rounded-full bg-white/18 backdrop-blur sm:flex">
+    <PlayCircle class="h-6 w-6" aria-hidden="true" stroke-width={2} />
+  </div>
+    </div>
+  )}
+</div>
