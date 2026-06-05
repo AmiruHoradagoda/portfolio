@@ -144,12 +144,14 @@ const contactItems = [
   const contactForm = document.querySelector("[data-contact-form]");
   const contactStatus = document.querySelector("[data-contact-status]");
   const contactSubmit = document.querySelector("[data-contact-submit]");
+  let contactStatusTimeout;
 
   function setContactStatus(message, type) {
     if (!(contactStatus instanceof HTMLElement)) {
       return;
     }
 
+    window.clearTimeout(contactStatusTimeout);
     contactStatus.textContent = message;
     contactStatus.classList.remove(
       "hidden",
@@ -172,6 +174,13 @@ const contactItems = [
           : ["border-blue-400/30", "bg-blue-500/10", "text-blue-100"];
 
     contactStatus.classList.add(...statusClasses);
+
+    if (type === "success") {
+      contactStatusTimeout = window.setTimeout(() => {
+        contactStatus.classList.add("hidden");
+        contactStatus.textContent = "";
+      }, 5000);
+    }
   }
 
   if (contactForm instanceof HTMLFormElement) {
