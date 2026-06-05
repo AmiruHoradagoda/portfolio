@@ -5,6 +5,8 @@ import { assetPath } from "../utils/paths";
 
 const cvUrl = assetPath(profile.cvPath);
 const web3FormsAccessKey = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY ?? "";
+const contactSource = "Portfolio Website (https://amiruhoradagoda.github.io/portfolio/)";
+const contactEmailSubject = "New Portfolio Contact Message - Amiru Horadagoda";
 const contactItems = [
   {
     label: "Email",
@@ -77,6 +79,8 @@ const contactItems = [
       <input type="hidden" name="access_key" value={web3FormsAccessKey} />
       <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" />
       <input type="hidden" name="redirect" value={assetPath("#contact")} />
+      <input type="hidden" name="subject" value={contactEmailSubject} />
+      <input type="hidden" name="Source" value={contactSource} />
 
       <div class="grid gap-4 md:grid-cols-2">
         <label class="grid gap-2 text-sm font-semibold">
@@ -84,7 +88,7 @@ const contactItems = [
           <input
             class="min-h-12 rounded-xl border border-white/20 bg-white/10 px-4 text-base font-normal text-white outline-none transition placeholder:text-slate-500 focus:border-blue-400/60 focus:ring-4 focus:ring-blue-500/20"
             type="text"
-            name="name"
+            name="Name"
             placeholder="Your name"
             autocomplete="name"
             required
@@ -108,7 +112,7 @@ const contactItems = [
         <input
           class="min-h-12 rounded-xl border border-white/20 bg-white/10 px-4 text-base font-normal text-white outline-none transition placeholder:text-slate-500 focus:border-blue-400/60 focus:ring-4 focus:ring-blue-500/20"
           type="text"
-          name="subject"
+          name="Inquiry Subject"
           placeholder="Project, internship, or collaboration"
           required
         />
@@ -118,7 +122,7 @@ const contactItems = [
         Message
         <textarea
           class="min-h-36 resize-y rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-base font-normal text-white outline-none transition placeholder:text-slate-500 focus:border-blue-400/60 focus:ring-4 focus:ring-blue-500/20"
-          name="message"
+          name="Message"
           placeholder="Tell me what you want to build"
           required
         ></textarea>
