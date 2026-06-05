@@ -1,0 +1,22 @@
+---
+import { assetPath } from "../utils/paths";
+
+const homeUrl = assetPath("");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content={`0; url=${homeUrl}`} />
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    <script is:inline define:vars={{ homeUrl }}>
+      window.location.replace(homeUrl);
+    </script>
+    <p>Redirecting to <a href={homeUrl}>home</a>.</p>
+  </body>
+</html>
