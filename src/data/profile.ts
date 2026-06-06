@@ -402,7 +402,16 @@ export const projects: Project[] = [
       "Designing secure role-based behavior for different user types.",
       "Keeping inventory and purchase workflows consistent through backend APIs.",
     ],
-    links: [],
+    links: [
+      {
+        label: "Backend GitHub",
+        href: "https://github.com/AmiruHoradagoda/pharmacy-backend",
+      },
+      {
+        label: "Frontend GitHub",
+        href: "https://github.com/AmiruHoradagoda/pharmacy-frontend",
+      },
+    ],
     accent: "blue",
     media: [
       {
