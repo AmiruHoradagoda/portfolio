@@ -180,6 +180,44 @@ export const experience = [
 
 export const projects: Project[] = [
   {
+    slug: "event-ticket-booking-platform",
+    title: "Event Ticket Booking Platform",
+    year: "2026",
+    type: "Cloud Microservices Project",
+    status: "Completed",
+    role: "Backend and DevOps Engineer",
+    summary:
+      "A cloud-based event management and ticket booking platform built with independently deployable services, asynchronous messaging, and Kubernetes deployment workflows.",
+    description:
+      "This project applies microservices architecture to a complete event booking domain. Separate services handle authentication, event management, booking, notifications, gateway routing, service discovery, and configuration, while RabbitMQ supports asynchronous communication and Kubernetes on GKE provides scalable cloud deployment.",
+    stack: ["Spring Boot", "Java", "TypeScript", "RabbitMQ", "Docker", "Kubernetes", "GCP", "GitHub Actions"],
+    features: [
+      "User authentication, registration, avatar, and password recovery workflows",
+      "Event creation, category management, and booking-oriented service boundaries",
+      "RabbitMQ-based messaging between loosely coupled services",
+      "Docker image build and deployment flow targeting Kubernetes on GKE",
+      "GitHub Actions CI/CD pipeline with build, test, quality scan, image push, and rollout stages",
+    ],
+    challenges: [
+      "Separating domain responsibilities across independently deployable microservices.",
+      "Coordinating service communication, configuration, and rollout behavior in a Kubernetes environment.",
+    ],
+    links: [
+      {
+        label: "GitHub",
+        href: "https://github.com/eventTicket-booking-platform",
+      },
+    ],
+    accent: "emerald",
+    media: [
+      {
+        type: "image",
+        src: "projects/event-booking/card-image.png",
+        alt: "Event Ticket Booking Platform microservices architecture card",
+      },
+    ],
+  },
+  {
     slug: "spare-part-sales-service-platform",
     title: "Spare Part Sales and Service Platform",
     year: "2024",
