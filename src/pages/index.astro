@@ -6,7 +6,6 @@ import Hero from "../components/Hero.astro";
 import Section from "../components/Section.astro";
 import SkillTabs from "../components/SkillTabs.astro";
 import { profile } from "../data/profile";
-import { assetPath } from "../utils/paths";
 
 const title = `${profile.name} | ${profile.headline}`;
 const description =
@@ -25,39 +24,34 @@ const description =
           <div class="mx-auto mt-4 h-1 w-20 rounded-full bg-gradient-to-r from-blue-400 to-violet-500"></div>
         </div>
 
-        <div class="grid items-stretch gap-8 lg:grid-cols-2">
-          <div class="glass-card flex justify-center rounded-2xl p-6">
-            <div class="image-load-frame w-full max-w-md rounded-xl" data-image-frame>
-            <img
-              src={assetPath(profile.imagePath)}
-              alt="Portrait of Amiru Horadagoda"
-              class="max-h-[560px] w-full rounded-xl object-cover object-[center_18%]"
-              loading="lazy"
-              data-load-image
-            />
-            </div>
+        <article class="relative mx-auto max-w-5xl px-2 py-4 text-center sm:px-6">
+          <div class="mx-auto grid max-w-4xl gap-3 text-lg leading-8 text-slate-300 sm:text-xl sm:leading-9">
+            <p class="mx-auto max-w-4xl">
+              Programming enthusiast studying in the third year of the Computer Engineering specialization programme,
+            </p>
+            <p class="mx-auto max-w-3xl">
+              interested in competitive coding as much as web development.
+            </p>
+            <p class="mx-auto max-w-2xl">
+              Always ready to dive head down into new technologies.
+            </p>
+            <p class="mx-auto max-w-xl font-semibold text-blue-200">
+              Passionate about embracing change.
+            </p>
           </div>
 
-          <article class="glass-card rounded-2xl p-8 text-lg leading-8 text-slate-300">
-            <p>
-              Hello! I'm {profile.name}, currently a Computer Engineering undergraduate at the University of Ruhuna. My studies have given me a strong foundation in software engineering, backend systems, databases, networking, and practical product development.
-            </p>
-            <p class="mt-7">
-              As a Full Stack Developer, I enjoy working across both frontend and backend development. I build responsive user interfaces, APIs, database-backed systems, and deployment workflows that help turn ideas into usable applications.
-            </p>
-            <p class="mt-7">
-              I am also interested in DevOps and AI, including Docker, Jenkins, AWS, CI/CD, Python, OpenCV, and machine learning. When I am not coding, I work on academic projects, competitions, and practical experiments that improve my engineering skills.
-            </p>
-          </article>
-        </div>
+          <div class="relative mx-auto mt-8 h-10 w-36">
+            <span class="absolute left-1/2 top-0 h-px w-24 origin-left rotate-[35deg] bg-blue-300/60"></span>
+            <span class="absolute right-1/2 top-0 h-px w-24 origin-right rotate-[-35deg] bg-violet-300/60"></span>
+          </div>
+        </article>
       </div>
     </section>
 
     <Section
       id="skills"
-      eyebrow="Technical Stack"
-      title="Skills"
-      intro="Tabbed skill groups for frontend, backend, DevOps, AI, and the tools that support my engineering workflow."
+      title="Skills & Expertise"
+      intro="A comprehensive overview of my technical abilities and areas of expertise."
     >
       <SkillTabs />
     </Section>
