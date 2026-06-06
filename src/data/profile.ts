@@ -190,7 +190,22 @@ export const projects: Project[] = [
       "A cloud-based event management and ticket booking platform built with independently deployable services, asynchronous messaging, and Kubernetes deployment workflows.",
     description:
       "This project applies microservices architecture to a complete event booking domain. Separate services handle authentication, event management, booking, notifications, gateway routing, service discovery, and configuration, while RabbitMQ supports asynchronous communication and Kubernetes on GKE provides scalable cloud deployment.",
-    stack: ["Spring Boot", "Java", "TypeScript", "RabbitMQ", "Docker", "Kubernetes", "GCP", "GitHub Actions"],
+    stack: [
+      "Spring Boot",
+      "Java",
+      "TypeScript",
+      "RabbitMQ",
+      "Docker",
+      "Kubernetes",
+      "GCP",
+      "GitHub Actions",
+      "Next.js",
+      "MongoDB",
+      "MySQL",
+      "Express.js",
+      "Angular",
+      "Keycloak",
+    ],
     features: [
       "User authentication, registration, avatar, and password recovery workflows",
       "Event creation, category management, and booking-oriented service boundaries",
