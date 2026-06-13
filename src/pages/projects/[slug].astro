@@ -3,7 +3,7 @@ import { Code2, ExternalLink, PlayCircle } from "@lucide/astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import ProjectVisual from "../../components/ProjectVisual.astro";
-import { profile, projects } from "../../data/profile";
+import { profile, projects, type ProjectDetails } from "../../data/profile";
 import { assetPath } from "../../utils/paths";
 import { getTechLogo } from "../../utils/techLogos";
 
@@ -22,6 +22,36 @@ const linkIcons = {
   GitHub: Code2,
   Demo: ExternalLink,
   Video: PlayCircle,
+};
+
+function getFallbackDetails(): ProjectDetails {
+  return {
+    background: project.description,
+    functionalRequirements: project.features.map((feature, index) => ({
+      id: `${project.slug.toUpperCase().replace(/-/g, "-")}-FR-${String(index + 1).padStart(2, "0")}`,
+      area: project.type,
+      requirement: feature,
+      priority: project.status === "Completed" ? "Implemented" : project.status,
+    })),
+    qualityAttributes: project.challenges.map((challenge, index) => ({
+      attribute: ["Maintainability", "Reliability", "Scalability", "Usability"][index] ?? "Quality",
+      scenario: challenge,
+      response:
+        "The project structure and selected technology stack were used to keep this concern isolated, testable, and easier to improve as the project evolved.",
+    })),
+    designPatterns: [
+      {
+        pattern: "Source-code verification pending",
+        where: "A public source repository or project-specific code sample is needed for this project.",
+        why: "OOP design-pattern claims should be based on actual implementation evidence, not guessed from the technology stack.",
+      },
+    ],
+  };
+}
+
+const details: ProjectDetails = {
+  ...getFallbackDetails(),
+  ...project.details,
 };
 ---
 
@@ -69,37 +99,105 @@ const linkIcons = {
     </section>
 
     <section class="py-12 sm:py-14">
-      <div class="mx-auto grid max-w-6xl gap-8 px-5 sm:px-6 lg:grid-cols-[1fr_0.75fr] lg:px-8">
+      <div class="mx-auto grid max-w-6xl gap-8 px-5 sm:px-6 lg:px-8">
         <article class="glass-card rounded-2xl p-6">
-          <h2 class="text-2xl font-bold text-white">Description</h2>
-          <p class="mt-4 text-base leading-8 text-slate-400">{project.description}</p>
+          <h2 class="text-2xl font-bold text-white">Background</h2>
+          <p class="mt-4 max-w-4xl text-base leading-8 text-slate-400">{details.background}</p>
 
-          <h2 class="mt-8 text-2xl font-bold text-white">Features</h2>
-          <ul class="mt-4 grid gap-2 text-sm leading-6 text-slate-300">
-            {project.features.map((feature) => <li class="border-l-2 border-blue-500 pl-3">{feature}</li>)}
-          </ul>
+          <h3 class="mt-8 text-sm font-semibold uppercase tracking-[0.16em] text-slate-300">Technology Stack</h3>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {project.stack.map((item) => (
+              <span class="inline-flex min-h-12 items-center gap-3 rounded-xl border border-blue-500/30 bg-blue-500/20 px-3 py-2 text-sm font-semibold text-blue-100">
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-white p-1.5 shadow-sm">
+                  <img src={getTechLogo(item)} alt={`${item} logo`} class="h-full w-full object-contain" loading="lazy" />
+                </span>
+                {item}
+              </span>
+            ))}
+          </div>
+        </article>
 
-          <h2 class="mt-8 text-2xl font-bold text-white">Challenges and Solutions</h2>
-          <ul class="mt-4 grid gap-2 text-sm leading-6 text-slate-300">
-            {project.challenges.map((challenge) => <li class="border-l-2 border-white/20 pl-3">{challenge}</li>)}
+        <article class="glass-card rounded-2xl p-6">
+          <h2 class="text-2xl font-bold text-white">Functional Requirements</h2>
+          <ul class="mt-5 grid gap-3 text-sm leading-6 text-slate-300">
+            {details.functionalRequirements.map((item) => (
+              <li class="border-l-2 border-blue-500 pl-3">{item.requirement}</li>
+            ))}
           </ul>
         </article>
 
-        <aside class="grid gap-5">
-          <article class="glass-card rounded-2xl p-6">
-            <h2 class="text-xl font-bold text-white">Technology Stack</h2>
-            <div class="mt-5 grid gap-3 sm:grid-cols-2">
-              {project.stack.map((item) => (
-                <span class="inline-flex min-h-12 items-center gap-3 rounded-xl border border-blue-500/30 bg-blue-500/20 px-3 py-2 text-sm font-semibold text-blue-100">
-                  <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-white p-1.5 shadow-sm">
-                    <img src={getTechLogo(item)} alt={`${item} logo`} class="h-full w-full object-contain" loading="lazy" />
-                  </span>
-                  {item}
-                </span>
-              ))}
-            </div>
-          </article>
-        </aside>
+        <article class="glass-card overflow-hidden rounded-2xl">
+          <div class="border-b border-white/10 p-6">
+            <h2 class="text-2xl font-bold text-white">Quality Attributes</h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-[820px] divide-y divide-white/10 text-left text-sm">
+              <thead class="bg-white/5 text-xs uppercase tracking-[0.12em] text-slate-400">
+                <tr>
+                  <th class="px-5 py-4 font-semibold">Attribute</th>
+                  <th class="px-5 py-4 font-semibold">Scenario</th>
+                  <th class="px-5 py-4 font-semibold">How the Architecture Responds</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/10 text-slate-300">
+                {details.qualityAttributes.map((item) => (
+                  <tr class="align-top">
+                    <td class="w-44 px-5 py-4 font-semibold text-blue-200">{item.attribute}</td>
+                    <td class="px-5 py-4 leading-6">{item.scenario}</td>
+                    <td class="px-5 py-4 leading-6 text-slate-400">{item.response}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="glass-card overflow-hidden rounded-2xl">
+          <div class="border-b border-white/10 p-6">
+            <h2 class="text-2xl font-bold text-white">Design Patterns Applied</h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-[820px] divide-y divide-white/10 text-left text-sm">
+              <thead class="bg-white/5 text-xs uppercase tracking-[0.12em] text-slate-400">
+                <tr>
+                  <th class="px-5 py-4 font-semibold">Pattern</th>
+                  <th class="px-5 py-4 font-semibold">Where in Project</th>
+                  <th class="px-5 py-4 font-semibold">Why</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/10 text-slate-300">
+                {details.designPatterns.map((item) => (
+                  <tr class="align-top">
+                    <td class="w-52 px-5 py-4 font-semibold text-blue-200">{item.pattern}</td>
+                    <td class="px-5 py-4 leading-6">{item.where}</td>
+                    <td class="px-5 py-4 leading-6 text-slate-400">{item.why}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="glass-card rounded-2xl p-6">
+          <h2 class="text-2xl font-bold text-white">ER Diagram</h2>
+          {
+            details.erDiagram ? (
+              <div class="image-load-frame mt-5 overflow-hidden rounded-xl border border-white/10 bg-white" data-image-frame>
+                <img
+                  src={assetPath(details.erDiagram.src)}
+                  alt={details.erDiagram.alt}
+                  class="h-auto w-full object-contain"
+                  loading="lazy"
+                  data-load-image
+                />
+              </div>
+            ) : (
+              <p class="mt-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm leading-6 text-slate-400">
+                ER diagram documentation has not been added for this project yet.
+              </p>
+            )
+          }
+        </article>
       </div>
     </section>
   </main>

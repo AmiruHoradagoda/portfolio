@@ -27,6 +27,37 @@ export type Project = {
   }[];
   accent?: string;
   media: ProjectMedia[];
+  details?: Partial<ProjectDetails>;
+};
+
+export type TableRequirement = {
+  id: string;
+  area: string;
+  requirement: string;
+  priority: string;
+};
+
+export type QualityAttribute = {
+  attribute: string;
+  scenario: string;
+  response: string;
+};
+
+export type DesignPattern = {
+  pattern: string;
+  where: string;
+  why: string;
+};
+
+export type ProjectDetails = {
+  background: string;
+  functionalRequirements: TableRequirement[];
+  qualityAttributes: QualityAttribute[];
+  designPatterns: DesignPattern[];
+  erDiagram?: {
+    src: string;
+    alt: string;
+  };
 };
 
 export const profile = {
@@ -231,6 +262,9 @@ export const projects: Project[] = [
         alt: "Event Ticket Booking Platform microservices architecture card",
       },
     ],
+    details: {
+      designPatterns: [],
+    },
   },
   {
     slug: "spare-part-sales-service-platform",
@@ -268,6 +302,146 @@ export const projects: Project[] = [
         alt: "BikePartsHub spare parts platform screenshot",
       },
     ],
+    details: {
+      background:
+        "Bike Parts Hub is a mobile-responsive e-commerce and service-booking application for Chandima Enterprises, a motorcycle spare parts business. The system lets customers browse and filter products, place orders, schedule services, and view order or appointment history, while the owner manages inventory, customers, order status, schedules, services, and loyal-customer discounts from an admin side.",
+      functionalRequirements: [
+        {
+          id: "BPH-FR-01",
+          area: "User management",
+          requirement:
+            "Public users can browse home, product, and service pages, while ordering, service scheduling, cart access, and profile history require registration and login.",
+          priority: "High",
+        },
+        {
+          id: "BPH-FR-02",
+          area: "Product discovery",
+          requirement:
+            "Customers can search and filter products by product attributes, bike manufacturer, model, type, color, and category, then open product details before purchase.",
+          priority: "High",
+        },
+        {
+          id: "BPH-FR-03",
+          area: "Order management",
+          requirement:
+            "Logged-in users can add products to cart, adjust quantities, enter delivery details, complete payment, and create an order with pending status.",
+          priority: "High",
+        },
+        {
+          id: "BPH-FR-04",
+          area: "Order status and history",
+          requirement:
+            "Admins can update order status through processing and dispatch, while customers can view order history, cancel before processing, and mark received orders as completed.",
+          priority: "High",
+        },
+        {
+          id: "BPH-FR-05",
+          area: "Service scheduling",
+          requirement:
+            "Customers can select a service package, choose an available date and time slot, select oil type, add instructions, and cancel before the service begins.",
+          priority: "High",
+        },
+        {
+          id: "BPH-FR-06",
+          area: "Admin operations",
+          requirement:
+            "Admins can add, update, or remove products and services, update schedule status, manage customers, remove accounts, and update customer roles.",
+          priority: "High",
+        },
+        {
+          id: "BPH-FR-07",
+          area: "Loyal customer discounts",
+          requirement:
+            "Admins can mark selected customers as loyal/VIP customers, set product discount percentages, and restrict exclusive discount visibility to loyal customers.",
+          priority: "High",
+        },
+      ],
+      qualityAttributes: [
+        {
+          attribute: "Security",
+          scenario:
+            "Only authenticated users should access ordering, scheduling, cart, and history, and only the admin should manage users, inventory, services, orders, and schedules.",
+          response:
+            "The architecture uses Spring Security, JWT-based session management, BCrypt password hashing, and role-aware backend endpoints to separate customer and admin operations.",
+        },
+        {
+          attribute: "Performance",
+          scenario:
+            "A customer searches or filters a large product catalog using bike and product attributes.",
+          response:
+            "The backend exposes paginated product endpoints and uses Spring Data JPA queries/specifications against MySQL so only matching result batches are returned to the UI.",
+        },
+        {
+          attribute: "Correctness",
+          scenario:
+            "A customer places an order or books a service while inventory, schedule slots, and status history must remain accurate.",
+          response:
+            "Business workflows are handled in the service layer, persisted through repositories, and represented with explicit order and appointment statuses.",
+        },
+        {
+          attribute: "Availability",
+          scenario:
+            "Customers need to browse products, place orders, and schedule services at any time.",
+          response:
+            "The system is designed as a web-based Angular client with a Spring Boot API and MySQL database suitable for cloud hosting and 24-hour access.",
+        },
+        {
+          attribute: "Maintainability",
+          scenario:
+            "Product, order, service, customer, and schedule features need to evolve without mixing UI, API, business, and database responsibilities.",
+          response:
+            "The implementation follows a layered structure with Angular components/services, Spring REST controllers, service interfaces/implementations, DTOs, mappers, entities, and repositories.",
+        },
+        {
+          attribute: "Usability",
+          scenario:
+            "Bike owners need to find compatible spare parts and book services with minimal effort.",
+          response:
+            "The UI organizes products into categories, supports filtering by bike-specific attributes, exposes service packages with time slots, and remains responsive for mobile users.",
+        },
+      ],
+      designPatterns: [
+        {
+          pattern: "Builder Pattern",
+          where:
+            "Lombok builders on User, Token, and AuthenticationResponse; used in AuthenticationService when registering users, creating tokens, refreshing tokens, and initializing the admin user.",
+          why:
+            "Creates complex objects with many fields in a readable way and avoids long constructors during authentication and token workflows.",
+        },
+        {
+          pattern: "Template Method Pattern",
+          where:
+            "JwtAuthenticationFilter extends OncePerRequestFilter and overrides doFilterInternal.",
+          why:
+            "Spring defines the fixed request-filtering lifecycle, while the project customizes only the JWT extraction, validation, and security-context update step.",
+        },
+        {
+          pattern: "Chain of Responsibility Pattern",
+          where:
+            "JwtAuthenticationFilter receives a FilterChain and calls filterChain.doFilter before or after JWT processing; SecurityConfiguration inserts it before UsernamePasswordAuthenticationFilter.",
+          why:
+            "Each security filter gets a chance to handle part of the request and then passes control to the next filter in the chain.",
+        },
+        {
+          pattern: "Strategy Pattern",
+          where:
+            "ApplicationConfig exposes PasswordEncoder as an interface and provides BCryptPasswordEncoder as the concrete strategy; AuthenticationService depends on PasswordEncoder.",
+          why:
+            "Password hashing can be changed by replacing the encoder implementation without changing authentication workflow code.",
+        },
+        {
+          pattern: "Singleton Pattern",
+          where:
+            "Spring-managed @Service, @Component, @Configuration, controller, repository, mapper, and security-filter beans such as AuthenticationService, JwtAuthenticationFilter, ProductServiceImpl, and ProductController.",
+          why:
+            "A single shared bean instance is reused by default across the application, reducing repeated object creation and keeping dependency wiring consistent.",
+        },
+      ],
+      erDiagram: {
+        src: "projects/bike-parts-hub/er_diagram.png",
+        alt: "Bike Parts Hub ER diagram showing users, products, orders, services, appointments, and related entities",
+      },
+    },
   },
   {
     slug: "leckeep",
@@ -305,6 +479,45 @@ export const projects: Project[] = [
         alt: "LecKeep lecture note app screenshot",
       },
     ],
+    details: {
+      designPatterns: [
+        {
+          pattern: "Strategy Pattern",
+          where:
+            "FileTypeHandler interface with PdfFileTypeHandler, ImageFileTypeHandler, and OfficeFileTypeHandler implementations.",
+          why:
+            "Each file type owns its own support, validation, document-type, and preview-mode behavior, so new file types can be added without changing upload workflow logic.",
+        },
+        {
+          pattern: "Adapter Pattern",
+          where:
+            "ObjectStorageService interface with MinioObjectStorageAdapter and S3ObjectStorageAdapter implementations.",
+          why:
+            "Storage-provider-specific APIs are hidden behind a common upload, download, delete, and preview-url contract.",
+        },
+        {
+          pattern: "Factory / Resolver Pattern",
+          where:
+            "FileTypeHandlerResolver receives all FileTypeHandler implementations and selects the handler that supports the uploaded content type and extension.",
+          why:
+            "Centralizes object selection logic and keeps document services from knowing every concrete file handler.",
+        },
+        {
+          pattern: "Template Method Pattern",
+          where:
+            "JwtFilter extends OncePerRequestFilter and overrides doFilterInternal.",
+          why:
+            "Spring defines the request filtering lifecycle while the project customizes only the JWT extraction and validation step.",
+        },
+        {
+          pattern: "Builder Pattern",
+          where:
+            "StoredObject, DownloadedObject, pagination responses, and authentication/response DTO creation use Lombok or library builder APIs.",
+          why:
+            "Keeps construction of objects with multiple fields readable and less error-prone.",
+        },
+      ],
+    },
   },
   {
     slug: "simple-pos-system",
@@ -342,6 +555,37 @@ export const projects: Project[] = [
         alt: "Simple POS system customer screen",
       },
     ],
+    details: {
+      designPatterns: [
+        {
+          pattern: "Factory Method Pattern",
+          where:
+            "BoFactory creates UserBoImpl, CustomerBoImpl, and ProductBoImpl from BoType; DaoFactory creates UserDaoImpl, CustomerDaoImpl, and ProductDaoImpl from DaoType.",
+          why:
+            "Object creation is centralized, so controllers can request a business object or DAO by type without directly constructing concrete classes.",
+        },
+        {
+          pattern: "Singleton Pattern",
+          where: "BoFactory.getInstance() and DaoFactory.getInstance() maintain a single factory instance.",
+          why:
+            "Factory objects are shared across the application instead of being recreated in each controller or business object.",
+        },
+        {
+          pattern: "DAO Pattern",
+          where:
+            "CrudDao, SupperDao, CustomerDao, ProductDao, UserDao, and their implementation classes isolate database operations.",
+          why:
+            "Persistence code is separated from business logic and UI controllers, making the JavaFX application easier to maintain.",
+        },
+        {
+          pattern: "Facade Pattern",
+          where:
+            "Business object interfaces such as CustomerBo, ProductBo, and UserBo expose higher-level operations to controllers.",
+          why:
+            "Controllers interact with a simpler business API instead of coordinating DAO calls and persistence details directly.",
+        },
+      ],
+    },
   },
   {
     slug: "service-finder-mobile",
@@ -379,6 +623,37 @@ export const projects: Project[] = [
         alt: "Service Finder mobile app screen",
       },
     ],
+    details: {
+      designPatterns: [
+        {
+          pattern: "Observer Pattern",
+          where:
+            "AuthPage uses FirebaseAuth.instance.authStateChanges() with StreamBuilder, and FirestoreDatabase.getPostsStream() returns Firestore snapshots.",
+          why:
+            "The UI reacts automatically when authentication state, posts, or chat messages change in Firebase.",
+        },
+        {
+          pattern: "Provider / Observable Pattern",
+          where: "ChatService extends ChangeNotifier and exposes chat operations and message streams.",
+          why:
+            "Chat-related state and behavior can notify listening widgets when data changes.",
+        },
+        {
+          pattern: "Facade Pattern",
+          where:
+            "FirestoreDatabase wraps Firestore collections and exposes methods such as addPost, getPostById, and getPostsStream.",
+          why:
+            "Screens use a simple application-specific API instead of repeating raw Firestore collection and document logic.",
+        },
+        {
+          pattern: "Singleton Pattern",
+          where:
+            "FirebaseAuth.instance, FirebaseFirestore.instance, and DefaultFirebaseOptions.currentPlatform provide shared service instances/configuration.",
+          why:
+            "Firebase clients and platform configuration are reused across the app instead of being recreated per screen.",
+        },
+      ],
+    },
   },
   {
     slug: "pharmacy-sales-inventory-system",
@@ -420,5 +695,43 @@ export const projects: Project[] = [
         alt: "Pharmacy sales and inventory system screenshot",
       },
     ],
+    details: {
+      designPatterns: [
+        {
+          pattern: "Builder Pattern",
+          where:
+            "OrderServiceIMPL builds response DTOs such as UserGetResponseDto, OrderGetResponseDto, ShippingAddressGetDto, OrderItemGetDto, and pagination responses.",
+          why:
+            "Builder calls keep nested response construction readable when order, customer, item, and shipping data are combined.",
+        },
+        {
+          pattern: "Template Method Pattern",
+          where:
+            "JwtRequestFilter extends OncePerRequestFilter and overrides doFilterInternal; WebSecurityConfiguration extends WebSecurityConfigurerAdapter and overrides configure.",
+          why:
+            "Spring Security provides the authentication/filtering lifecycle while the project customizes JWT validation and route authorization behavior.",
+        },
+        {
+          pattern: "Strategy Pattern",
+          where:
+            "WebSecurityConfiguration exposes PasswordEncoder as an interface and provides BCryptPasswordEncoder as the concrete implementation.",
+          why:
+            "The password-hashing algorithm can be swapped without rewriting login or registration logic.",
+        },
+        {
+          pattern: "Interceptor Pattern",
+          where:
+            "The React frontend creates a shared Axios instance in apiConfig.js with request and response interceptors.",
+          why:
+            "JWT attachment, 401 cleanup, 403 handling, and common API behavior are applied consistently around every HTTP request.",
+        },
+        {
+          pattern: "Context / Provider Pattern",
+          where: "AuthContext.jsx defines AuthProvider and useAuth around React createContext.",
+          why:
+            "Authentication state and login/logout actions are shared across components without prop drilling.",
+        },
+      ],
+    },
   },
 ];
