@@ -1,5 +1,5 @@
 ---
-import { Code2, ExternalLink, PlayCircle } from "@lucide/astro";
+import { Code2, Database, ExternalLink, FileText, Maximize2, Network, PlayCircle, Server, X } from "@lucide/astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import ProjectVisual from "../../components/ProjectVisual.astro";
@@ -18,11 +18,26 @@ const { project } = Astro.props;
 const title = `${project.title} | ${profile.name}`;
 const description = project.summary;
 const leadImage = project.media.find((item) => item.type === "image");
+const demoEmbedUrl =
+  project.demoVideo?.type === "youtube"
+    ? `https://www.youtube-nocookie.com/embed/${project.demoVideo.id}?autoplay=1&rel=0&modestbranding=1`
+    : "";
 const linkIcons = {
   GitHub: Code2,
   Demo: ExternalLink,
   Video: PlayCircle,
 };
+const diagramIconRules = [
+  { pattern: /\ber\b|entity relationship/i, Icon: Database },
+  { pattern: /document/i, Icon: FileText },
+  { pattern: /code/i, Icon: Code2 },
+  { pattern: /container/i, Icon: Server },
+  { pattern: /context|component|c4/i, Icon: Network },
+];
+
+function getDiagramIcon(title: string) {
+  return diagramIconRules.find(({ pattern }) => pattern.test(title))?.Icon ?? Network;
+}
 
 function getFallbackDetails(): ProjectDetails {
   return {
@@ -53,6 +68,17 @@ const details: ProjectDetails = {
   ...getFallbackDetails(),
   ...project.details,
 };
+const diagrams =
+  details.diagrams ??
+  (details.erDiagram
+    ? [
+        {
+          title: "ER Diagram",
+          src: details.erDiagram.src,
+          alt: details.erDiagram.alt,
+        },
+      ]
+    : []);
 ---
 
 <BaseLayout title={title} description={description}>
@@ -91,6 +117,15 @@ const details: ProjectDetails = {
                   </a>
                 );
               })}
+              <button
+                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-blue-400/40 bg-blue-500/20 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500/30"
+                type="button"
+                data-demo-open
+                data-demo-src={demoEmbedUrl}
+              >
+                <PlayCircle class="h-4 w-4" aria-hidden="true" stroke-width={2} />
+                Watch Demo
+              </button>
             </div>
           </div>
           <ProjectVisual title={project.title} stack={project.stack} accent={project.accent} image={leadImage?.src} imageAlt={leadImage?.alt} />
@@ -98,106 +133,303 @@ const details: ProjectDetails = {
       </div>
     </section>
 
+    <dialog
+      class="video-dialog w-[min(96vw,64rem)] max-w-none overflow-hidden rounded-2xl border border-white/15 bg-[#080d24] p-0 text-white shadow-2xl shadow-black/50"
+      data-demo-dialog
+      aria-labelledby={`demo-dialog-title-${project.slug}`}
+    >
+      <div class="flex flex-col">
+        <div class="flex items-center justify-between gap-4 border-b border-white/10 bg-[#0a0e27] px-4 py-3 sm:px-5">
+          <h2 id={`demo-dialog-title-${project.slug}`} class="text-base font-bold text-white sm:text-lg">
+            {project.demoVideo?.title ?? `${project.title} Demo`}
+          </h2>
+          <button
+            class="inline-flex h-10 w-10 flex-none items-center justify-center rounded-xl border border-white/15 bg-white/10 text-white transition hover:bg-white/20"
+            type="button"
+            aria-label="Close demo video"
+            data-demo-close
+          >
+            <X class="h-5 w-5" aria-hidden="true" stroke-width={2} />
+          </button>
+        </div>
+        {
+          project.demoVideo ? (
+            <div class="aspect-video bg-black">
+            <iframe
+              class="h-full w-full"
+              title={project.demoVideo.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              loading="lazy"
+              data-demo-frame
+            ></iframe>
+            </div>
+          ) : (
+            <div class="grid min-h-[20rem] place-items-center bg-[#0a0e27] px-6 py-12 text-center">
+              <div class="max-w-md">
+                <PlayCircle class="mx-auto h-12 w-12 text-blue-300" aria-hidden="true" stroke-width={2} />
+                <h3 class="mt-4 text-2xl font-bold text-white">Demo video is ready to connect</h3>
+                <p class="mt-3 text-sm leading-6 text-slate-400">
+                  Add a YouTube video ID to this project in profile data, and this dialog will play it here.
+                </p>
+              </div>
+            </div>
+          )
+        }
+      </div>
+    </dialog>
+
     <section class="py-12 sm:py-14">
       <div class="mx-auto grid max-w-6xl gap-8 px-5 sm:px-6 lg:px-8">
-        <article class="glass-card rounded-2xl p-6">
-          <h2 class="text-2xl font-bold text-white">Background</h2>
-          <p class="mt-4 max-w-4xl text-base leading-8 text-slate-400">{details.background}</p>
-
-          <h3 class="mt-8 text-sm font-semibold uppercase tracking-[0.16em] text-slate-300">Technology Stack</h3>
-          <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {project.stack.map((item) => (
-              <span class="inline-flex min-h-12 items-center gap-3 rounded-xl border border-blue-500/30 bg-blue-500/20 px-3 py-2 text-sm font-semibold text-blue-100">
-                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-white p-1.5 shadow-sm">
-                  <img src={getTechLogo(item)} alt={`${item} logo`} class="h-full w-full object-contain" loading="lazy" />
-                </span>
-                {item}
-              </span>
-            ))}
+        <section class="overflow-hidden rounded-2xl border border-white/10 bg-[#101632] shadow-2xl shadow-blue-950/20" data-project-breakdown>
+          <div class="border-b border-white/10 bg-white/[0.04] p-5 sm:p-6">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.16em] text-blue-300">Project Breakdown</p>
+              <h2 class="mt-2 text-3xl font-bold text-white">Case Study Details</h2>
+            </div>
           </div>
-        </article>
 
-        <article class="glass-card rounded-2xl p-6">
-          <h2 class="text-2xl font-bold text-white">Functional Requirements</h2>
-          <ul class="mt-5 grid gap-3 text-sm leading-6 text-slate-300">
-            {details.functionalRequirements.map((item) => (
-              <li class="border-l-2 border-blue-500 pl-3">{item.requirement}</li>
-            ))}
-          </ul>
-        </article>
+          <div class="grid lg:grid-cols-[18rem_1fr]">
+            <div class="border-b border-white/10 bg-[#0a0e27]/55 p-4 lg:border-b-0 lg:border-r">
+              <div class="flex gap-2 overflow-x-auto pb-1 lg:grid lg:overflow-visible lg:pb-0" role="tablist" aria-label="Project breakdown sections">
+                <button class="inline-flex min-h-12 min-w-40 items-center gap-3 rounded-xl border border-blue-400/50 bg-blue-500/20 px-3 py-2 text-left text-sm font-semibold text-white lg:min-w-0" type="button" role="tab" aria-selected="true" data-case-tab="overview">
+                  <FileText class="h-4 w-4 flex-none text-blue-200" aria-hidden="true" stroke-width={2} />
+                  Overview
+                </button>
+                <button class="inline-flex min-h-12 min-w-40 items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-left text-sm font-semibold text-slate-400 transition hover:border-white/25 hover:bg-white/10 hover:text-white lg:min-w-0" type="button" role="tab" aria-selected="false" data-case-tab="requirements">
+                  <Network class="h-4 w-4 flex-none text-blue-200" aria-hidden="true" stroke-width={2} />
+                  Requirements
+                </button>
+                <button class="inline-flex min-h-12 min-w-40 items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-left text-sm font-semibold text-slate-400 transition hover:border-white/25 hover:bg-white/10 hover:text-white lg:min-w-0" type="button" role="tab" aria-selected="false" data-case-tab="quality">
+                  <Database class="h-4 w-4 flex-none text-blue-200" aria-hidden="true" stroke-width={2} />
+                  Quality
+                </button>
+                <button class="inline-flex min-h-12 min-w-40 items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-left text-sm font-semibold text-slate-400 transition hover:border-white/25 hover:bg-white/10 hover:text-white lg:min-w-0" type="button" role="tab" aria-selected="false" data-case-tab="patterns">
+                  <Code2 class="h-4 w-4 flex-none text-blue-200" aria-hidden="true" stroke-width={2} />
+                  Patterns
+                </button>
+              </div>
+            </div>
 
-        <article class="glass-card overflow-hidden rounded-2xl">
-          <div class="border-b border-white/10 p-6">
-            <h2 class="text-2xl font-bold text-white">Quality Attributes</h2>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-[820px] divide-y divide-white/10 text-left text-sm">
-              <thead class="bg-white/5 text-xs uppercase tracking-[0.12em] text-slate-400">
-                <tr>
-                  <th class="px-5 py-4 font-semibold">Attribute</th>
-                  <th class="px-5 py-4 font-semibold">Scenario</th>
-                  <th class="px-5 py-4 font-semibold">How the Architecture Responds</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-white/10 text-slate-300">
-                {details.qualityAttributes.map((item) => (
-                  <tr class="align-top">
-                    <td class="w-44 px-5 py-4 font-semibold text-blue-200">{item.attribute}</td>
-                    <td class="px-5 py-4 leading-6">{item.scenario}</td>
-                    <td class="px-5 py-4 leading-6 text-slate-400">{item.response}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </article>
+            <div class="max-h-[42rem] min-h-[34rem] overflow-y-auto p-5 sm:p-6">
+              <section data-case-panel="overview">
+                <div class="grid gap-6 xl:grid-cols-[1fr_18rem]">
+                  <article>
+                    <p class="text-sm font-semibold uppercase tracking-[0.16em] text-blue-300">Background</p>
+                    <h3 class="mt-2 text-2xl font-bold text-white">What this project solves</h3>
+                    <p class="mt-4 text-base leading-8 text-slate-300">{details.background}</p>
+                  </article>
+                  <aside class="rounded-2xl border border-white/10 bg-[#0a0e27]/55 p-5">
+                    <dl class="grid gap-4 text-sm">
+                      <div>
+                        <dt class="font-semibold text-slate-500">Role</dt>
+                        <dd class="mt-1 font-semibold text-white">{project.role}</dd>
+                      </div>
+                      <div>
+                        <dt class="font-semibold text-slate-500">Type</dt>
+                        <dd class="mt-1 font-semibold text-white">{project.type}</dd>
+                      </div>
+                      <div>
+                        <dt class="font-semibold text-slate-500">Status</dt>
+                        <dd class="mt-1 font-semibold text-white">{project.status}</dd>
+                      </div>
+                      <div>
+                        <dt class="font-semibold text-slate-500">Year</dt>
+                        <dd class="mt-1 font-semibold text-white">{project.year}</dd>
+                      </div>
+                    </dl>
+                  </aside>
+                </div>
 
-        <article class="glass-card overflow-hidden rounded-2xl">
-          <div class="border-b border-white/10 p-6">
-            <h2 class="text-2xl font-bold text-white">Design Patterns Applied</h2>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-[820px] divide-y divide-white/10 text-left text-sm">
-              <thead class="bg-white/5 text-xs uppercase tracking-[0.12em] text-slate-400">
-                <tr>
-                  <th class="px-5 py-4 font-semibold">Pattern</th>
-                  <th class="px-5 py-4 font-semibold">Where in Project</th>
-                  <th class="px-5 py-4 font-semibold">Why</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-white/10 text-slate-300">
-                {details.designPatterns.map((item) => (
-                  <tr class="align-top">
-                    <td class="w-52 px-5 py-4 font-semibold text-blue-200">{item.pattern}</td>
-                    <td class="px-5 py-4 leading-6">{item.where}</td>
-                    <td class="px-5 py-4 leading-6 text-slate-400">{item.why}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </article>
+                <div class="mt-8">
+                  <h4 class="text-sm font-semibold uppercase tracking-[0.16em] text-slate-300">Technology Stack</h4>
+                  <div class="mt-4 flex flex-wrap gap-3">
+                    {project.stack.map((item) => (
+                      <span class="inline-flex min-h-11 items-center gap-3 rounded-xl border border-blue-500/25 bg-blue-500/15 px-3 py-2 text-sm font-semibold text-blue-100">
+                        <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-white p-1.5 shadow-sm">
+                          <img src={getTechLogo(item)} alt={`${item} logo`} class="h-full w-full object-contain" loading="lazy" />
+                        </span>
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </section>
 
-        <article class="glass-card rounded-2xl p-6">
-          <h2 class="text-2xl font-bold text-white">ER Diagram</h2>
+              <section class="hidden" data-case-panel="requirements">
+                <p class="text-sm font-semibold uppercase tracking-[0.16em] text-blue-300">Functional Requirements</p>
+                <h3 class="mt-2 text-2xl font-bold text-white">What the system needed to support</h3>
+                <ul class="mt-6 divide-y divide-white/10 rounded-2xl border border-white/10 bg-[#0a0e27]/45">
+                  {details.functionalRequirements.map((item) => (
+                    <li class="px-4 py-4 sm:px-5">
+                      <p class="text-xs font-semibold uppercase tracking-[0.14em] text-blue-300/80">{item.area}</p>
+                      <p class="mt-2 text-sm leading-6 text-slate-200">{item.requirement}</p>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              <section class="hidden" data-case-panel="quality">
+                <p class="text-sm font-semibold uppercase tracking-[0.16em] text-blue-300">Quality Attributes</p>
+                <h3 class="mt-2 text-2xl font-bold text-white">How the architecture responds</h3>
+                <div class="mt-6 divide-y divide-white/10 rounded-2xl border border-white/10 bg-[#0a0e27]/45">
+                  {details.qualityAttributes.map((item) => (
+                    <article class="grid gap-3 px-4 py-5 sm:px-5 md:grid-cols-[11rem_1fr]">
+                      <h4 class="text-base font-bold text-blue-200">{item.attribute}</h4>
+                      <div class="space-y-2">
+                        <p class="text-sm leading-6 text-slate-200">{item.scenario}</p>
+                        <p class="text-sm leading-6 text-slate-400">{item.response}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section class="hidden" data-case-panel="patterns">
+                <p class="text-sm font-semibold uppercase tracking-[0.16em] text-blue-300">Design Patterns Applied</p>
+                <h3 class="mt-2 text-2xl font-bold text-white">Implementation choices</h3>
+                <div class="mt-6 divide-y divide-white/10 rounded-2xl border border-white/10 bg-[#0a0e27]/45">
+                  {details.designPatterns.map((item, index) => (
+                    <details class="group" open={index === 0}>
+                      <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4 transition hover:bg-white/[0.04] sm:px-5">
+                        <h4 class="text-base font-bold text-white">{item.pattern}</h4>
+                        <span class="text-lg leading-none text-blue-200 transition group-open:rotate-45">+</span>
+                      </summary>
+                      <div class="px-4 pb-5 sm:px-5">
+                        <p class="text-sm leading-6 text-slate-200">{item.where}</p>
+                        <p class="mt-3 text-sm leading-6 text-slate-400">{item.why}</p>
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section id="architecture" class="scroll-mt-24 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 via-white/[0.06] to-blue-500/10 backdrop-blur">
+          <div class="border-b border-white/10 px-5 py-5 sm:px-6">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.16em] text-blue-300">Architecture Gallery</p>
+                <h2 class="mt-2 text-2xl font-bold text-white">Project Diagrams</h2>
+              </div>
+              {diagrams.length > 0 && (
+                <p class="text-sm font-semibold text-slate-400">
+                  {diagrams.length} {diagrams.length === 1 ? "diagram" : "diagrams"}
+                </p>
+              )}
+            </div>
+          </div>
           {
-            details.erDiagram ? (
-              <div class="image-load-frame mt-5 overflow-hidden rounded-xl border border-white/10 bg-white" data-image-frame>
-                <img
-                  src={assetPath(details.erDiagram.src)}
-                  alt={details.erDiagram.alt}
-                  class="h-auto w-full object-contain"
-                  loading="lazy"
-                  data-load-image
-                />
+            diagrams.length > 0 ? (
+              <div class="grid lg:grid-cols-[19rem_1fr]" data-diagram-viewer>
+                <div class="border-b border-white/10 bg-[#0a0e27]/45 p-4 lg:border-b-0 lg:border-r">
+                  {diagrams.length > 1 ? (
+                    <div class="flex gap-2 overflow-x-auto pb-1 lg:grid lg:overflow-visible lg:pb-0" role="tablist" aria-label={`${project.title} diagrams`}>
+                      {diagrams.map((diagram, index) => {
+                        const Icon = getDiagramIcon(diagram.title);
+                        return (
+                          <button
+                            class:list={[
+                              "group inline-flex min-h-14 min-w-56 items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm font-semibold transition lg:min-w-0",
+                              index === 0
+                                ? "border-blue-400/50 bg-blue-500/20 text-white"
+                                : "border-white/10 bg-white/[0.04] text-slate-400 hover:border-white/25 hover:bg-white/10 hover:text-white",
+                            ]}
+                            type="button"
+                            role="tab"
+                            aria-selected={index === 0 ? "true" : "false"}
+                            data-diagram-trigger
+                            data-diagram-src={assetPath(diagram.src)}
+                            data-diagram-alt={diagram.alt}
+                            data-diagram-label={diagram.title}
+                          >
+                            <span class="flex h-9 w-9 flex-none items-center justify-center rounded-lg border border-white/10 bg-white/10 text-blue-200">
+                              <Icon class="h-4 w-4" aria-hidden="true" stroke-width={2} />
+                            </span>
+                            <span class="min-w-0">
+                              <span class="block truncate">{diagram.title}</span>
+                              <span class="mt-0.5 block text-xs font-medium text-slate-500">View diagram</span>
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div class="flex min-h-14 items-center gap-3 rounded-xl border border-blue-400/30 bg-blue-500/15 px-3 py-3 text-sm font-semibold text-white">
+                      {(() => {
+                        const Icon = getDiagramIcon(diagrams[0].title);
+                        return <Icon class="h-5 w-5 text-blue-200" aria-hidden="true" stroke-width={2} />;
+                      })()}
+                      {diagrams[0].title}
+                    </div>
+                  )}
+                </div>
+
+                <figure class="bg-slate-950/45">
+                  <div class="flex justify-end border-b border-white/10 px-5 py-4">
+                    <button
+                      class="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
+                      type="button"
+                      data-diagram-open
+                    >
+                      <Maximize2 class="h-4 w-4" aria-hidden="true" stroke-width={2} />
+                      Open full screen
+                    </button>
+                  </div>
+                  <div class="image-load-frame diagram-image-frame flex max-h-[74vh] min-h-[18rem] items-center justify-center p-3 sm:p-5" data-image-frame>
+                    <img
+                      src={assetPath(diagrams[0].src)}
+                      alt={diagrams[0].alt}
+                      class="max-h-[68vh] w-full object-contain"
+                      loading="lazy"
+                      data-load-image
+                      data-diagram-image
+                      data-diagram-label={diagrams[0].title}
+                    />
+                  </div>
+                </figure>
+
+                <dialog
+                  class="diagram-dialog w-[min(96vw,78rem)] max-w-none overflow-hidden rounded-2xl border border-white/15 bg-[#080d24] p-0 text-white shadow-2xl shadow-black/50"
+                  data-diagram-dialog
+                  aria-labelledby={`diagram-dialog-title-${project.slug}`}
+                >
+                  <div class="flex min-h-[80vh] flex-col">
+                    <div class="flex items-center justify-between gap-4 border-b border-white/10 bg-[#0a0e27] px-4 py-3 sm:px-5">
+                      <h3 id={`diagram-dialog-title-${project.slug}`} class="text-base font-bold text-white sm:text-lg" data-diagram-dialog-title>
+                        {diagrams[0].title}
+                      </h3>
+                      <button
+                        class="inline-flex h-10 w-10 flex-none items-center justify-center rounded-xl border border-white/15 bg-white/10 text-white transition hover:bg-white/20"
+                        type="button"
+                        aria-label="Close diagram viewer"
+                        data-diagram-close
+                      >
+                        <X class="h-5 w-5" aria-hidden="true" stroke-width={2} />
+                      </button>
+                    </div>
+                    <div class="image-load-frame diagram-image-frame flex grow items-center justify-center overflow-auto p-3 sm:p-6" data-image-frame>
+                      <img
+                        src={assetPath(diagrams[0].src)}
+                        alt={diagrams[0].alt}
+                        class="max-h-[76vh] w-auto max-w-full object-contain"
+                        loading="lazy"
+                        data-load-image
+                        data-diagram-dialog-image
+                      />
+                    </div>
+                  </div>
+                </dialog>
               </div>
             ) : (
-              <p class="mt-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm leading-6 text-slate-400">
-                ER diagram documentation has not been added for this project yet.
+              <p class="m-6 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm leading-6 text-slate-400">
+                Project diagrams have not been added for this project yet.
               </p>
             )
           }
-        </article>
+        </section>
       </div>
     </section>
   </main>
@@ -207,4 +439,192 @@ const details: ProjectDetails = {
       <p>{profile.location}</p>
     </div>
   </footer>
+
+  <script>
+    const demoOpenButton = document.querySelector("[data-demo-open]");
+    const demoDialog = document.querySelector("[data-demo-dialog]");
+    const demoFrame = document.querySelector("[data-demo-frame]");
+    const demoCloseButton = document.querySelector("[data-demo-close]");
+
+    if (demoOpenButton instanceof HTMLButtonElement && demoDialog instanceof HTMLDialogElement) {
+      function closeDemoDialog() {
+        demoDialog.close();
+      }
+
+      demoOpenButton.addEventListener("click", () => {
+        const src = demoOpenButton.dataset.demoSrc;
+
+        if (src && demoFrame instanceof HTMLIFrameElement) {
+          demoFrame.src = src;
+        }
+
+        demoDialog.showModal();
+        document.documentElement.classList.add("overflow-hidden");
+      });
+
+      if (demoCloseButton instanceof HTMLButtonElement) {
+        demoCloseButton.addEventListener("click", closeDemoDialog);
+      }
+
+      demoDialog.addEventListener("click", (event) => {
+        if (event.target === demoDialog) {
+          closeDemoDialog();
+        }
+      });
+
+      demoDialog.addEventListener("close", () => {
+        if (demoFrame instanceof HTMLIFrameElement) {
+          demoFrame.removeAttribute("src");
+        }
+        document.documentElement.classList.remove("overflow-hidden");
+      });
+    }
+
+    document.querySelectorAll("[data-project-breakdown]").forEach((breakdown) => {
+      const tabs = Array.from(breakdown.querySelectorAll("[data-case-tab]"));
+      const panels = Array.from(breakdown.querySelectorAll("[data-case-panel]"));
+
+      function selectCasePanel(id) {
+        tabs.forEach((tab) => {
+          if (!(tab instanceof HTMLButtonElement)) {
+            return;
+          }
+
+          const isSelected = tab.dataset.caseTab === id;
+          tab.setAttribute("aria-selected", String(isSelected));
+          tab.classList.toggle("border-blue-400/50", isSelected);
+          tab.classList.toggle("bg-blue-500/20", isSelected);
+          tab.classList.toggle("text-white", isSelected);
+          tab.classList.toggle("border-white/10", !isSelected);
+          tab.classList.toggle("bg-white/[0.04]", !isSelected);
+          tab.classList.toggle("text-slate-400", !isSelected);
+        });
+
+        panels.forEach((panel) => {
+          if (!(panel instanceof HTMLElement)) {
+            return;
+          }
+
+          panel.classList.toggle("hidden", panel.dataset.casePanel !== id);
+        });
+      }
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          if (tab instanceof HTMLButtonElement) {
+            selectCasePanel(tab.dataset.caseTab ?? "overview");
+          }
+        });
+      });
+    });
+
+    document.querySelectorAll("[data-diagram-viewer]").forEach((viewer) => {
+      const triggers = Array.from(viewer.querySelectorAll("[data-diagram-trigger]"));
+      const image = viewer.querySelector("[data-diagram-image]");
+      const openButton = viewer.querySelector("[data-diagram-open]");
+      const dialog = viewer.querySelector("[data-diagram-dialog]");
+      const dialogTitle = viewer.querySelector("[data-diagram-dialog-title]");
+      const dialogImage = viewer.querySelector("[data-diagram-dialog-image]");
+      const closeButton = viewer.querySelector("[data-diagram-close]");
+
+      if (
+        !(image instanceof HTMLImageElement) ||
+        !(openButton instanceof HTMLButtonElement) ||
+        !(dialog instanceof HTMLDialogElement) ||
+        !(dialogTitle instanceof HTMLElement) ||
+        !(dialogImage instanceof HTMLImageElement)
+      ) {
+        return;
+      }
+
+      function markImageLoaded(targetImage) {
+        const frame = targetImage.closest("[data-image-frame]");
+        if (frame instanceof HTMLElement) {
+          frame.dataset.imageLoaded = "true";
+        }
+      }
+
+      function prepareImageLoad(targetImage) {
+        const frame = targetImage.closest("[data-image-frame]");
+        if (frame instanceof HTMLElement) {
+          frame.dataset.imageLoaded = "false";
+        }
+
+        targetImage.addEventListener("load", () => markImageLoaded(targetImage), { once: true });
+        targetImage.addEventListener("error", () => markImageLoaded(targetImage), { once: true });
+      }
+
+      function setImage(targetImage, src, alt) {
+        prepareImageLoad(targetImage);
+        targetImage.src = src;
+        targetImage.alt = alt;
+
+        if (targetImage.complete && targetImage.naturalWidth > 0) {
+          markImageLoaded(targetImage);
+        }
+      }
+
+      function getCurrentDiagram() {
+        return {
+          src: image.currentSrc || image.src,
+          alt: image.alt,
+          title: image.dataset.diagramLabel ?? "Project diagram",
+        };
+      }
+
+      function selectDiagram(trigger) {
+        if (!(trigger instanceof HTMLButtonElement)) {
+          return;
+        }
+
+      const src = trigger.dataset.diagramSrc;
+      const alt = trigger.dataset.diagramAlt ?? "";
+      const diagramTitle = trigger.dataset.diagramLabel ?? "Project diagram";
+
+        if (!src) {
+          return;
+        }
+
+        triggers.forEach((item) => {
+          const isSelected = item === trigger;
+          item.setAttribute("aria-selected", String(isSelected));
+          item.classList.toggle("border-blue-400/50", isSelected);
+          item.classList.toggle("bg-blue-500/20", isSelected);
+          item.classList.toggle("text-white", isSelected);
+          item.classList.toggle("border-white/10", !isSelected);
+          item.classList.toggle("bg-white/[0.04]", !isSelected);
+          item.classList.toggle("text-slate-400", !isSelected);
+        });
+
+      setImage(image, src, alt);
+      image.dataset.diagramLabel = diagramTitle;
+    }
+
+      triggers.forEach((trigger) => {
+        trigger.addEventListener("click", () => selectDiagram(trigger));
+      });
+
+      openButton.addEventListener("click", () => {
+        const current = getCurrentDiagram();
+        dialogTitle.textContent = current.title;
+        setImage(dialogImage, current.src, current.alt);
+        dialog.showModal();
+        document.documentElement.classList.add("overflow-hidden");
+      });
+
+      if (closeButton instanceof HTMLButtonElement) {
+        closeButton.addEventListener("click", () => dialog.close());
+      }
+
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) {
+          dialog.close();
+        }
+      });
+
+      dialog.addEventListener("close", () => {
+        document.documentElement.classList.remove("overflow-hidden");
+      });
+    });
+  </script>
 </BaseLayout>

@@ -9,6 +9,12 @@ export type ProjectMedia =
       src: string;
     };
 
+export type ProjectDemoVideo = {
+  type: "youtube";
+  id: string;
+  title: string;
+};
+
 export type Project = {
   slug: string;
   title: string;
@@ -27,6 +33,7 @@ export type Project = {
   }[];
   accent?: string;
   media: ProjectMedia[];
+  demoVideo?: ProjectDemoVideo;
   details?: Partial<ProjectDetails>;
 };
 
@@ -49,11 +56,18 @@ export type DesignPattern = {
   why: string;
 };
 
+export type ProjectDiagram = {
+  title: string;
+  src: string;
+  alt: string;
+};
+
 export type ProjectDetails = {
   background: string;
   functionalRequirements: TableRequirement[];
   qualityAttributes: QualityAttribute[];
   designPatterns: DesignPattern[];
+  diagrams?: ProjectDiagram[];
   erDiagram?: {
     src: string;
     alt: string;
@@ -263,6 +277,71 @@ export const projects: Project[] = [
       },
     ],
     details: {
+      functionalRequirements: [
+        {
+          id: "ETB-FR-01",
+          area: "Identity & Access",
+          requirement:
+            "Users must be able to register and log in, Keycloak must issue JWTs carrying the user's role, the system must support Customer, Host, and Admin roles, and other services must be able to resolve a user's internal ID from email through AuthServiceClient.",
+          priority: "High",
+        },
+        {
+          id: "ETB-FR-02",
+          area: "Event Management",
+          requirement:
+            "Hosts and admins must be able to create events with title, description, start date/time, and banner image; support multiple ticket types per event with price and quantity; allow users to browse or search published events; expose /internal/events/{id}/booking-info for booking validation; allow bookings only for published future events; and store uploaded banners in AWS S3.",
+          priority: "High",
+        },
+        {
+          id: "ETB-FR-03",
+          area: "Ticket Booking",
+          requirement:
+            "Customers must be able to book one or more ticket types and quantities for a published future event, while the system validates ticket types and quantities, calculates totals, processes simulated payment including SIMULATED_FAIL testing, snapshots event details onto the booking, supports paginated customer booking history, supports booking detail views for customers and admins/hosts, provides booking summaries per event, and generates unique booking and transaction references.",
+          priority: "High",
+        },
+        {
+          id: "ETB-FR-04",
+          area: "Notifications",
+          requirement:
+            "The system must send booking confirmation emails when bookings are confirmed, publish auth and booking events asynchronously through RabbitMQ, consume those events in the notification service, send email through Brevo, and expose admin/internal notification management endpoints.",
+          priority: "High",
+        },
+        {
+          id: "ETB-FR-05",
+          area: "API Gateway",
+          requirement:
+            "The gateway must route all client requests to downstream services by path, such as /user-service, /event-service, and /booking-service, and must be discoverable via Eureka so it can route to dynamically registered service instances.",
+          priority: "High",
+        },
+        {
+          id: "ETB-FR-06",
+          area: "Service Infrastructure",
+          requirement:
+            "All services must register themselves with Eureka for service discovery and fetch centralized configuration from the Config Server backed by config-repo.",
+          priority: "High",
+        },
+        {
+          id: "ETB-FR-07",
+          area: "Customer Web App",
+          requirement:
+            "Customers must be able to browse events, view event details, select tickets, complete a booking end-to-end through the Next.js UI, and view booking history through their dashboard.",
+          priority: "High",
+        },
+        {
+          id: "ETB-FR-08",
+          area: "Admin Dashboard",
+          requirement:
+            "Admins and hosts must be able to manage events and view bookings and statistics through a dedicated admin UI.",
+          priority: "High",
+        },
+      ],
+      diagrams: [
+        {
+          title: "Context Diagram",
+          src: "projects/event-booking/Context_diagram_c1.png",
+          alt: "Event Ticket Booking Platform context diagram",
+        },
+      ],
       designPatterns: [],
     },
   },
@@ -437,6 +516,13 @@ export const projects: Project[] = [
             "A single shared bean instance is reused by default across the application, reducing repeated object creation and keeping dependency wiring consistent.",
         },
       ],
+      diagrams: [
+        {
+          title: "ER Diagram",
+          src: "projects/bike-parts-hub/er_diagram.png",
+          alt: "Bike Parts Hub ER diagram showing users, products, orders, services, appointments, and related entities",
+        },
+      ],
       erDiagram: {
         src: "projects/bike-parts-hub/er_diagram.png",
         alt: "Bike Parts Hub ER diagram showing users, products, orders, services, appointments, and related entities",
@@ -480,6 +566,56 @@ export const projects: Project[] = [
       },
     ],
     details: {
+      functionalRequirements: [
+        {
+          id: "LK-FR-01",
+          area: "User Authentication & Management",
+          requirement:
+            "Users must be able to register and log in using JWT-based authentication, passwords must be hashed with BCrypt before storage, all non-auth endpoints must require a valid bearer token, and the system must support CRUD operations on user accounts.",
+          priority: "High",
+        },
+        {
+          id: "LK-FR-02",
+          area: "Subject Organization",
+          requirement:
+            "Users must be able to create, list, update, and delete subjects as top-level academic categories.",
+          priority: "High",
+        },
+        {
+          id: "LK-FR-03",
+          area: "Folder Management",
+          requirement:
+            "Users must be able to create, list, update, and delete note folders, folders must support private, global, group, and shared scopes, and folder listing must support pagination.",
+          priority: "High",
+        },
+        {
+          id: "LK-FR-04",
+          area: "Document Management",
+          requirement:
+            "Users must be able to upload documents into folders using multipart file upload, validate files with a 25 MB maximum size and filename sanitization, list folder documents with pagination, download documents, generate short-lived 15-minute preview URLs, delete documents, and route file handling by type such as image, PDF, or office document.",
+          priority: "High",
+        },
+        {
+          id: "LK-FR-05",
+          area: "Study Groups",
+          requirement:
+            "Users must be able to create, list, view, update, and delete study groups, and add or remove group members.",
+          priority: "High",
+        },
+        {
+          id: "LK-FR-06",
+          area: "Sharing",
+          requirement: "Users must be able to share a folder with others and revoke a folder share.",
+          priority: "High",
+        },
+        {
+          id: "LK-FR-07",
+          area: "Search",
+          requirement:
+            "Users must be able to search across their content through a placeholder endpoint that is not yet implemented.",
+          priority: "Planned",
+        },
+      ],
       designPatterns: [
         {
           pattern: "Strategy Pattern",
@@ -515,6 +651,33 @@ export const projects: Project[] = [
             "StoredObject, DownloadedObject, pagination responses, and authentication/response DTO creation use Lombok or library builder APIs.",
           why:
             "Keeps construction of objects with multiple fields readable and less error-prone.",
+        },
+      ],
+      diagrams: [
+        {
+          title: "C4 Context Diagram",
+          src: "projects/leckeep/Context_diagram_c1.png",
+          alt: "LecKeep C4 context diagram",
+        },
+        {
+          title: "C4 Container Diagram",
+          src: "projects/leckeep/Container_diagram_c2.png",
+          alt: "LecKeep C4 container diagram",
+        },
+        {
+          title: "C4 Component Diagram",
+          src: "projects/leckeep/Components_diagram_c3.png",
+          alt: "LecKeep C4 component diagram",
+        },
+        {
+          title: "C4 Code Diagram",
+          src: "projects/leckeep/Code Diagram_c4.png",
+          alt: "LecKeep C4 code diagram",
+        },
+        {
+          title: "Document Model",
+          src: "projects/leckeep/document_model.png",
+          alt: "LecKeep document model diagram",
         },
       ],
     },
@@ -556,6 +719,36 @@ export const projects: Project[] = [
       },
     ],
     details: {
+      functionalRequirements: [
+        {
+          id: "POS-FR-01",
+          area: "User Authentication",
+          requirement:
+            "Users must be able to register with an email and password, passwords must be hashed with BCrypt before storage, users must be able to log in with email and password, and the system must reject invalid email or incorrect password attempts with clear messages.",
+          priority: "High",
+        },
+        {
+          id: "POS-FR-02",
+          area: "Navigation",
+          requirement:
+            "After login, users must land on a dashboard with buttons to reach Customer, Product, Place Order, Order Details, and Income Report sections.",
+          priority: "High",
+        },
+        {
+          id: "POS-FR-03",
+          area: "Customer Management",
+          requirement:
+            "Users must be able to create customer records with email, name, contact number, and salary; view all customers in a table; search or filter customers by name or email as they type; select a customer to load details into the form; update an existing customer's name, contact, and salary while keeping email fixed; and delete a customer only after confirmation.",
+          priority: "High",
+        },
+        {
+          id: "POS-FR-04",
+          area: "Product Management",
+          requirement:
+            "The system must auto-generate the next product code when opening the product screen, and users must be able to save a new product with code and description.",
+          priority: "Partial",
+        },
+      ],
       designPatterns: [
         {
           pattern: "Factory Method Pattern",
@@ -653,6 +846,18 @@ export const projects: Project[] = [
             "Firebase clients and platform configuration are reused across the app instead of being recreated per screen.",
         },
       ],
+      diagrams: [
+        {
+          title: "Context Diagram",
+          src: "projects/service-finder/Context_diagram_c1.png",
+          alt: "Service Finder context diagram",
+        },
+        {
+          title: "Document Model",
+          src: "projects/service-finder/document_model.png",
+          alt: "Service Finder document model diagram",
+        },
+      ],
     },
   },
   {
@@ -696,6 +901,57 @@ export const projects: Project[] = [
       },
     ],
     details: {
+      functionalRequirements: [
+        {
+          id: "PHR-FR-01",
+          area: "User Authentication",
+          requirement:
+            "Users must be able to register with name, email, and password; log in and receive a JWT for authenticated requests; receive the default Customer role on registration while a separate Admin role is auto-seeded on startup through initCustomerRoleAndCustomer() and initAdminRoleAndAdmin(); and the frontend must persist the JWT and user object in localStorage while redirecting unauthenticated checkout users to login.",
+          priority: "High",
+        },
+        {
+          id: "PHR-FR-02",
+          area: "Product Catalog",
+          requirement:
+            "Customers must be able to browse a paginated and sortable product list, search or filter products client-side by name, description, or category, view product details in a dialog or modal, and use an initial product set auto-seeded on startup through initialItems().",
+          priority: "High",
+        },
+        {
+          id: "PHR-FR-03",
+          area: "Shopping Cart & Checkout",
+          requirement:
+            "Users must be able to add products to a cart, view cart contents with computed totals, proceed to checkout with address, city, and postal code, submit an order with cart line items, shipping address, and computed total, and clear the cart with a homepage redirect after successful order placement.",
+          priority: "High",
+        },
+        {
+          id: "PHR-FR-04",
+          area: "Order Management",
+          requirement:
+            "Users must be able to place orders that persist Order, OrderItems, and ShippingAddress records; admins must be able to view all orders with pagination and sorting, view full order details, and move order status through PENDING, PROCESSING, and COMPLETED.",
+          priority: "High",
+        },
+        {
+          id: "PHR-FR-05",
+          area: "Product Management",
+          requirement:
+            "Admins must be able to create, view, edit, and delete products, and the admin product listing must support pagination and sorting.",
+          priority: "High",
+        },
+        {
+          id: "PHR-FR-06",
+          area: "User Management",
+          requirement:
+            "Admins must be able to view all registered users with pagination and sorting, and view a specific user's details.",
+          priority: "High",
+        },
+        {
+          id: "PHR-FR-07",
+          area: "Admin Dashboard & Analytics",
+          requirement:
+            "The system must provide dashboard summary stats such as orders and revenue, show a configurable list of recent orders, show low-stock items against a configurable threshold, provide a sales overview over a configurable day range, and provide annual sales data for a selected year.",
+          priority: "High",
+        },
+      ],
       designPatterns: [
         {
           pattern: "Builder Pattern",
@@ -730,6 +986,18 @@ export const projects: Project[] = [
           where: "AuthContext.jsx defines AuthProvider and useAuth around React createContext.",
           why:
             "Authentication state and login/logout actions are shared across components without prop drilling.",
+        },
+      ],
+      diagrams: [
+        {
+          title: "Context Diagram",
+          src: "projects/pharmacy/Context_diagram_c1.png",
+          alt: "Pharmacy sales and inventory system context diagram",
+        },
+        {
+          title: "ER Diagram",
+          src: "projects/pharmacy/er_diagram.png",
+          alt: "Pharmacy sales and inventory system ER diagram",
         },
       ],
     },
