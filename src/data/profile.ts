@@ -268,6 +268,11 @@ export const projects: Project[] = [
         href: "https://github.com/eventTicket-booking-platform",
       },
     ],
+    demoVideo: {
+      type: "youtube",
+      id: "WyCTZabMX3A",
+      title: "Event Ticket Booking Platform Demo",
+    },
     accent: "emerald",
     media: [
       {
@@ -373,6 +378,11 @@ export const projects: Project[] = [
         href: "https://github.com/AmiruHoradagoda/BikePartsHubApplication/tree/develop",
       },
     ],
+    demoVideo: {
+      type: "youtube",
+      id: "PWVdUJgildE",
+      title: "Spare Part Sales and Service Platform Demo",
+    },
     accent: "cyan",
     media: [
       {
