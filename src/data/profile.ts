@@ -1,3 +1,5 @@
+import { kafkaOrderPipeline } from "./kafkaOrderPipeline";
+
 export type ProjectMedia =
   | {
       type: "image";
@@ -10,7 +12,7 @@ export type ProjectMedia =
     };
 
 export type ProjectDemoVideo = {
-  type: "youtube";
+  type: "youtube" | "google-drive";
   id: string;
   title: string;
 };
@@ -23,6 +25,9 @@ export type Project = {
   status: string;
   role: string;
   summary: string;
+  subtitle?: string;
+  categories?: string[];
+  cardStack?: string[];
   description: string;
   stack: string[];
   features: string[];
@@ -64,6 +69,12 @@ export type ProjectDiagram = {
 
 export type ProjectDetails = {
   background: string;
+  overviewHeading?: string;
+  qualityHeading?: string;
+  engineeringRequirements?: string[];
+  eventFlow?: string[];
+  eventSchema?: { field: string; type: string; description: string }[];
+  tradeOffs?: string[];
   functionalRequirements: TableRequirement[];
   qualityAttributes: QualityAttribute[];
   designPatterns: DesignPattern[];
@@ -494,6 +505,70 @@ export const projects: Project[] = [
         },
       ],
       designPatterns: [],
+    },
+  },
+  kafkaOrderPipeline,
+  {
+    slug: "securedns",
+    title: "SecureDNS",
+    year: "2026",
+    type: "Network Security Project",
+    status: "Completed",
+    role: "Network Security Developer",
+    summary:
+      "A browser-based DNS security demo comparing plaintext DNS with encrypted, signed requests and responses to demonstrate protection against sniffing, tampering, replay attacks, and flooding.",
+    description:
+      "SecureDNS follows a bank.test lookup from a local DNS gateway through an attacker proxy to a DNS server. In insecure mode, the proxy can observe queries and redirect the browser to a fake bank. Secure mode combines AES-GCM encryption, RSA-protected session keys, response signatures, nonce and timestamp checks, and rate limiting. A web dashboard runs the attack comparisons using Docker services and real DNS tools.",
+    stack: ["Python", "Docker", "Ubuntu", "AES-GCM", "RSA", "DNS"],
+    features: [
+      "Real browser and dig lookups through a DNS gateway, attacker proxy, and DNS server",
+      "Insecure and secure modes for comparing DNS attack outcomes",
+      "AES-GCM encryption with RSA protection for the session key and signed responses",
+      "Nonce and timestamp validation to detect replayed messages",
+      "Rate limiting to reduce DNS flooding and a dashboard for running attack demos",
+    ],
+    challenges: [
+      "Protecting DNS confidentiality and integrity while routing traffic through an attacker proxy.",
+      "Demonstrating observable browser outcomes for insecure redirection and rejected secure responses.",
+      "Coordinating Docker services, local DNS configuration, and restoration after tests.",
+    ],
+    links: [
+      { label: "GitHub", href: "https://github.com/AmiruHoradagoda/SecureDNS" },
+    ],
+    accent: "cyan",
+    media: [
+      {
+        type: "image",
+        src: "projects/securedns/card-image.png",
+        alt: "SecureDNS demo comparing insecure DNS attacks with encrypted and signed DNS communication",
+      },
+    ],
+    details: {
+      background:
+        "**SecureDNS demonstrates how common DNS attacks can compromise user privacy and redirect traffic to malicious destinations, then shows how those risks can be mitigated through practical security controls.**\n\nThe system compares insecure DNS communication with a protected flow that uses **encryption, digital signatures, replay protection, and rate limiting**. It includes realistic attack demonstrations such as DNS sniffing, response tampering, fake-site redirection, replay attacks, and flooding, allowing the security improvements to be observed and evaluated directly.\n\nRather than only explaining DNS security theoretically, the project provides a **hands-on environment for understanding confidentiality, integrity, and availability in network communication** and how security mechanisms change system behaviour under attack.",
+      functionalRequirements: [
+        { id: "DNS-FR-01", area: "DNS Resolution", requirement: "Resolve bank.test through the local gateway, attacker proxy, and DNS server, returning a DNS answer to the browser or dig client.", priority: "Implemented" },
+        { id: "DNS-FR-02", area: "Encryption", requirement: "Encrypt DNS payloads with AES-GCM and protect the session key with the server's public RSA key.", priority: "Implemented" },
+        { id: "DNS-FR-03", area: "Verification", requirement: "Verify response signatures and authentication tags, and check nonces and timestamps to detect tampering and replay.", priority: "Implemented" },
+        { id: "DNS-FR-04", area: "Availability", requirement: "Limit repeated rapid requests to reduce flooding, returning SERVFAIL for excess requests.", priority: "Implemented" },
+        { id: "DNS-FR-05", area: "Demo Dashboard", requirement: "Run insecure and secure sniffing and tampering comparisons, demonstrate flood limiting, and restore DNS when the demo ends.", priority: "Implemented" },
+      ],
+      qualityAttributes: [
+        { attribute: "Confidentiality", scenario: "The attacker observes DNS traffic between the gateway and server.", response: "AES-GCM encrypts the payload so the requested domain is hidden in secure mode." },
+        { attribute: "Integrity", scenario: "The attacker changes a response to redirect the browser to a fake bank.", response: "Authentication-tag and signature verification detect modified data; the gateway rejects the response." },
+        { attribute: "Replay Protection", scenario: "The attacker resends an old DNS message.", response: "Nonce and timestamp checks help detect replayed messages." },
+        { attribute: "Availability", scenario: "Repeated fast requests flood the DNS service.", response: "Rate limiting restricts excess requests to reduce the impact of flooding." },
+      ],
+      designPatterns: [],
+      diagrams: [
+        { title: "DNS Request Flow", src: "projects/securedns/dns-request-flow.png", alt: "DNS request flow from the browser through the gateway and attacker proxy to the DNS server" },
+        { title: "Full Communication: Alice, Bob & Trudy", src: "projects/securedns/full-communication.png", alt: "SecureDNS communication between Alice the gateway, Bob the server, and Trudy the attacker" },
+        { title: "DNS Sniffing: Insecure", src: "projects/securedns/sniffing-insecure.png", alt: "Insecure DNS sniffing demonstration exposing the requested domain" },
+        { title: "DNS Sniffing: Secure", src: "projects/securedns/sniffing-secure.png", alt: "SecureDNS sniffing demonstration with encrypted DNS traffic" },
+        { title: "DNS Tampering: Insecure", src: "projects/securedns/tampering-insecure.png", alt: "Insecure DNS tampering demonstration redirecting the browser to a fake bank" },
+        { title: "DNS Tampering: Secure", src: "projects/securedns/tampering-secure.png", alt: "SecureDNS tampering demonstration rejecting a modified response" },
+        { title: "Flood Protection", src: "projects/securedns/flood-protection.png", alt: "SecureDNS flood attack demonstration showing rate limiting" },
+      ],
     },
   },
   {
@@ -939,7 +1014,7 @@ export const projects: Project[] = [
   {
     slug: "service-finder-mobile",
     title: "Service Finder Mobile",
-    year: "2023",
+    year: "2024",
     type: "Team Project",
     status: "Completed",
     role: "Mobile Developer",
@@ -1019,7 +1094,7 @@ export const projects: Project[] = [
   {
     slug: "pharmacy-sales-inventory-system",
     title: "Pharmacy Sales and Inventory Management System",
-    year: "2023",
+    year: "2024",
     type: "Full-Stack Project",
     status: "Completed",
     role: "Developer",

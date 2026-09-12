@@ -4,7 +4,6 @@ import {
   Database,
   ExternalLink,
   FileText,
-  Maximize2,
   Network,
   PlayCircle,
   Server,
@@ -13,6 +12,7 @@ import {
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import ProjectVisual from "../../components/ProjectVisual.astro";
+import DiagramCanvas from "../../components/DiagramCanvas.astro";
 import { profile, projects, type ProjectDetails } from "../../data/profile";
 import { assetPath } from "../../utils/paths";
 import { getTechLogo } from "../../utils/techLogos";
@@ -29,9 +29,14 @@ const title = `${project.title} | ${profile.name}`;
 const description = project.summary;
 const leadImage = project.media.find((item) => item.type === "image");
 const demoEmbedUrl =
-  project.demoVideo?.type === "youtube"
+  project.demoVideo?.type === "youtube" && project.demoVideo.id.trim()
     ? `https://www.youtube-nocookie.com/embed/${project.demoVideo.id}?autoplay=1&rel=0&modestbranding=1`
-    : "";
+    : project.demoVideo?.type === "google-drive" && project.demoVideo.id.trim()
+      ? `https://drive.google.com/file/d/${project.demoVideo.id}/preview`
+      : "";
+const demoExternalUrl = project.demoVideo?.type === "google-drive"
+  ? `https://drive.google.com/file/d/${project.demoVideo.id}/view`
+  : `https://www.youtube.com/watch?v=${project.demoVideo?.id ?? ""}`;
 const linkIcons = {
   GitHub: Code2,
   Demo: ExternalLink,
@@ -146,7 +151,7 @@ const diagrams =
               {project.role}
             </p>
             <p class="mt-5 max-w-2xl text-base leading-8 text-slate-400">
-              {project.summary}
+              {project.subtitle ?? project.summary}
             </p>
             <div class="mt-6 flex flex-wrap gap-3">
               {
@@ -172,8 +177,10 @@ const diagrams =
                 })
               }
               <button
-                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-blue-400/40 bg-blue-500/20 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500/30"
+                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-blue-400/40 bg-blue-500/20 px-4 py-2 text-sm font-semibold text-white transition enabled:hover:bg-blue-500/30 disabled:cursor-not-allowed disabled:opacity-40"
                 type="button"
+                disabled={!demoEmbedUrl}
+                title={demoEmbedUrl ? "Watch project demo" : "Demo video unavailable"}
                 data-demo-open
                 data-demo-src={demoEmbedUrl}
               >
@@ -230,11 +237,11 @@ const diagrams =
             <div class="flex justify-end border-t border-white/10 bg-[#0a0e27] px-4 py-3">
               <a
                 class="text-sm font-semibold text-blue-300 underline decoration-blue-300/40 underline-offset-4 transition hover:text-white"
-                href={`https://www.youtube.com/watch?v=${project.demoVideo.id}`}
+                href={demoExternalUrl}
                 target="_blank"
                 rel="noreferrer"
               >
-                Open on YouTube
+                {project.demoVideo.type === "google-drive" ? "Open on Google Drive" : "Open on YouTube"}
               </a>
             </div>
           ) : (
@@ -347,7 +354,7 @@ const diagrams =
             </div>
 
             <div
-              class="min-w-0 max-h-[42rem] min-h-[34rem] overflow-x-hidden overflow-y-auto p-5 sm:p-6"
+              class:list={["min-w-0 max-h-[42rem] min-h-[34rem] overflow-x-hidden overflow-y-auto p-5 sm:p-6", { "[&_.text-sm]:text-base": !!details.engineeringRequirements }]}
             >
               <section data-case-panel="overview">
                 <div class="grid gap-6 xl:grid-cols-[1fr_18rem]">
@@ -358,16 +365,28 @@ const diagrams =
                       Background
                     </p>
                     <h3 class="mt-2 text-2xl font-bold text-white">
-                      What this project solves
+                      {details.overviewHeading ?? "What this project solves"}
                     </h3>
-                    <p class="mt-4 text-base leading-8 text-slate-300">
-                      {details.background}
-                    </p>
+                    {details.background.split(/\n\s*\n/).map((paragraph) => (
+                      <p class="mt-4 text-base leading-8 text-slate-300">
+                        {paragraph.split(/(\*\*.*?\*\*)/g).map((part) =>
+                          part.startsWith("**") && part.endsWith("**")
+                            ? <strong class="font-semibold text-white">{part.slice(2, -2)}</strong>
+                            : part
+                        )}
+                      </p>
+                    ))}
                   </article>
                   <aside
                     class="rounded-2xl border border-white/10 bg-[#0a0e27]/55 p-5"
                   >
                     <dl class="grid gap-4 text-sm">
+                      {project.categories && (
+                        <div>
+                          <dt class="font-semibold text-slate-500">Focus</dt>
+                          <dd class="mt-1 font-semibold text-white">{project.categories.join(" / ")}</dd>
+                        </div>
+                      )}
                       <div>
                         <dt class="font-semibold text-slate-500">Role</dt>
                         <dd class="mt-1 font-semibold text-white">
@@ -447,6 +466,14 @@ const diagrams =
                     ))
                   }
                 </ul>
+                {details.engineeringRequirements && (
+                  <div class="mt-8">
+                    <h4 class="text-sm font-semibold uppercase tracking-[0.16em] text-blue-300">Engineering Requirements</h4>
+                    <ul class="mt-4 list-disc space-y-3 pl-5 text-base leading-7 text-slate-200">
+                      {details.engineeringRequirements.map((item) => <li>{item}</li>)}
+                    </ul>
+                  </div>
+                )}
               </section>
 
               <section class="hidden" data-case-panel="quality">
@@ -456,7 +483,7 @@ const diagrams =
                   Quality Attributes
                 </p>
                 <h3 class="mt-2 text-2xl font-bold text-white">
-                  How the architecture responds
+                  {details.qualityHeading ?? "How the architecture responds"}
                 </h3>
                 <div
                   class="mt-6 divide-y divide-white/10 rounded-2xl border border-white/10 bg-[#0a0e27]/45"
@@ -520,6 +547,42 @@ const diagrams =
             </div>
           </div>
         </section>
+
+        {details.eventFlow && (
+          <section class="rounded-2xl border border-white/10 bg-[#101632] p-5 sm:p-6">
+            <h2 class="text-2xl font-bold text-white">Event Flow</h2>
+            <ol class="mt-5 grid list-decimal gap-x-10 gap-y-3 pl-6 text-base leading-7 text-slate-300 md:grid-cols-2">
+              {details.eventFlow.map((step) => <li class="pl-1">{step}</li>)}
+            </ol>
+          </section>
+        )}
+        {details.eventSchema && (
+          <section class="min-w-0 rounded-2xl border border-white/10 bg-[#101632] p-5 sm:p-6">
+            <h2 class="text-2xl font-bold text-white">Order Event</h2>
+            <div class="mt-5 overflow-x-auto" role="region" aria-label="Order event schema" tabindex="0">
+              <table class="w-full min-w-[32rem] text-left text-base leading-7 text-slate-300">
+                <caption class="sr-only">Avro Order schema and validation rules</caption>
+                <thead class="border-b border-white/15 text-blue-200"><tr>
+                  <th scope="col" class="p-3">Field</th><th scope="col" class="p-3">Type</th><th scope="col" class="p-3">Description</th>
+                </tr></thead>
+                <tbody>{details.eventSchema.map((item) => (
+                  <tr class="border-b border-white/10 last:border-0">
+                    <th scope="row" class="p-3 font-mono font-medium text-white">{item.field}</th>
+                    <td class="p-3 font-mono">{item.type}</td><td class="p-3">{item.description}</td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
+          </section>
+        )}
+        {details.tradeOffs && (
+          <section class="rounded-2xl border border-white/10 bg-[#101632] p-5 sm:p-6">
+            <h2 class="text-2xl font-bold text-white">Engineering Trade-offs</h2>
+            <ul class="mt-5 list-disc space-y-3 pl-5 text-base leading-7 text-slate-300">
+              {details.tradeOffs.map((item) => <li>{item}</li>)}
+            </ul>
+          </section>
+        )}
 
         <section
           id="architecture"
@@ -616,36 +679,7 @@ const diagrams =
                   )}
                 </div>
 
-                <figure class="min-w-0 bg-slate-950/45">
-                  <div class="flex justify-end border-b border-white/10 px-5 py-4">
-                    <button
-                      class="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
-                      type="button"
-                      data-diagram-open
-                    >
-                      <Maximize2
-                        class="h-4 w-4"
-                        aria-hidden="true"
-                        stroke-width={2}
-                      />
-                      Open full screen
-                    </button>
-                  </div>
-                  <div
-                    class="image-load-frame diagram-image-frame flex max-h-[74vh] min-h-[18rem] items-center justify-center p-3 sm:p-5"
-                    data-image-frame
-                  >
-                    <img
-                      src={assetPath(diagrams[0].src)}
-                      alt={diagrams[0].alt}
-                      class="max-h-[68vh] w-full object-contain"
-                      loading="lazy"
-                      data-load-image
-                      data-diagram-image
-                      data-diagram-label={diagrams[0].title}
-                    />
-                  </div>
-                </figure>
+                <figure class="min-w-0"><DiagramCanvas src={assetPath(diagrams[0].src)} alt={diagrams[0].alt} title={diagrams[0].title} /></figure>
 
                 <dialog
                   class="diagram-dialog w-[min(96vw,78rem)] max-w-none overflow-hidden rounded-2xl border border-white/15 bg-[#080d24] p-0 text-white shadow-2xl shadow-black/50"
@@ -674,19 +708,7 @@ const diagrams =
                         />
                       </button>
                     </div>
-                    <div
-                      class="image-load-frame diagram-image-frame flex grow items-center justify-center overflow-auto p-3 sm:p-6"
-                      data-image-frame
-                    >
-                      <img
-                        src={assetPath(diagrams[0].src)}
-                        alt={diagrams[0].alt}
-                        class="max-h-[76vh] w-auto max-w-full object-contain"
-                        loading="lazy"
-                        data-load-image
-                        data-diagram-dialog-image
-                      />
-                    </div>
+                    <DiagramCanvas src={assetPath(diagrams[0].src)} alt={diagrams[0].alt} title={diagrams[0].title} expanded />
                   </div>
                 </dialog>
               </div>
@@ -726,10 +748,16 @@ const diagrams =
       demoOpenButton.addEventListener("click", () => {
         const src = demoOpenButton.dataset.demoSrc;
 
+        if (demoOpenButton.disabled || !src) {
+          return;
+        }
+
         if (src && demoFrame instanceof HTMLIFrameElement) {
           const embedUrl = new URL(src);
-          embedUrl.searchParams.set("origin", window.location.origin);
-          embedUrl.searchParams.set("widget_referrer", window.location.href);
+          if (embedUrl.hostname === "www.youtube-nocookie.com") {
+            embedUrl.searchParams.set("origin", window.location.origin);
+            embedUrl.searchParams.set("widget_referrer", window.location.href);
+          }
           demoFrame.src = embedUrl.toString();
         }
 

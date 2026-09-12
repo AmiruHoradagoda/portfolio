@@ -1,0 +1,69 @@
+---
+import { Maximize2, Minimize2, ZoomIn, ZoomOut } from "@lucide/astro";
+interface Props { src: string; alt: string; title: string; expanded?: boolean }
+const { src, alt, title, expanded = false } = Astro.props;
+const buttonClass = "inline-flex h-11 w-11 items-center justify-center rounded-lg text-blue-100 transition hover:bg-blue-400/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-300 disabled:cursor-not-allowed disabled:opacity-35";
+---
+<div class="relative min-w-0 bg-[#080d24]" data-diagram-canvas>
+  <div
+    class:list={["image-load-frame diagram-image-frame overflow-auto overscroll-contain", expanded ? "h-[calc(90dvh-5rem)]" : "h-[clamp(18rem,48vw,32rem)]"]}
+    style="overflow: auto;"
+    data-image-frame data-zoom-viewport tabindex="0" aria-label="Diagram; scroll to explore when zoomed in"
+  >
+    <div class="flex min-h-full min-w-full items-center justify-center" data-zoom-stage>
+      <img src={src} alt={alt} class="block shrink-0 object-contain" style="max-width: none;" loading="lazy" draggable="false" data-load-image
+        data-diagram-image={!expanded || undefined} data-diagram-dialog-image={expanded || undefined} data-diagram-label={title} />
+    </div>
+  </div>
+  <div class="absolute bottom-3 right-3 z-10 flex items-center gap-1 rounded-xl border border-white/20 bg-[#0a0e27]/95 p-1 shadow-lg shadow-black/30 backdrop-blur" role="group" aria-label="Diagram controls">
+    <button class={buttonClass} type="button" data-zoom-out aria-label="Zoom out" title="Zoom out" disabled><ZoomOut class="h-5 w-5" /></button>
+    <output class="w-12 text-center text-xs font-semibold tabular-nums text-slate-300" data-zoom-level aria-live="polite">100%</output>
+    <button class={buttonClass} type="button" data-zoom-in aria-label="Zoom in" title="Zoom in"><ZoomIn class="h-5 w-5" /></button>
+    <span class="mx-1 h-6 w-px bg-white/15" aria-hidden="true"></span>
+    <button class={buttonClass} type="button" data-diagram-open={!expanded || undefined} data-diagram-collapse={expanded || undefined}
+      aria-label={expanded ? "Exit full screen" : "Open full screen"} title={expanded ? "Exit full screen" : "Open full screen"}>
+      {expanded ? <Minimize2 class="h-5 w-5" /> : <Maximize2 class="h-5 w-5" />}
+    </button>
+  </div>
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>("[data-diagram-canvas]").forEach((canvas) => {
+    const viewport = canvas.querySelector<HTMLElement>("[data-zoom-viewport]")!;
+    const stage = canvas.querySelector<HTMLElement>("[data-zoom-stage]")!;
+    const image = canvas.querySelector<HTMLImageElement>("img")!;
+    const plus = canvas.querySelector<HTMLButtonElement>("[data-zoom-in]")!;
+    const minus = canvas.querySelector<HTMLButtonElement>("[data-zoom-out]")!;
+    const level = canvas.querySelector<HTMLOutputElement>("[data-zoom-level]")!;
+    let zoom = 1;
+    function render() {
+      const width = viewport.clientWidth;
+      const height = viewport.clientHeight;
+      if (!width || !height || !image.naturalWidth) return;
+      const fit = Math.min((width - 24) / image.naturalWidth, (height - 80) / image.naturalHeight);
+      const imageWidth = image.naturalWidth * fit * zoom;
+      const imageHeight = image.naturalHeight * fit * zoom;
+      image.style.width = `${imageWidth}px`;
+      image.style.height = `${imageHeight}px`;
+      stage.style.width = `${Math.max(width, imageWidth + 24)}px`;
+      stage.style.height = `${Math.max(height, imageHeight + 80)}px`;
+      stage.style.paddingBottom = "56px";
+      level.value = `${Math.round(zoom * 100)}%`;
+      minus.disabled = zoom <= 1;
+      plus.disabled = zoom >= 4;
+    }
+    function changeZoom(delta: number) {
+      const centerX = (viewport.scrollLeft + viewport.clientWidth / 2) / stage.offsetWidth;
+      const centerY = (viewport.scrollTop + viewport.clientHeight / 2) / stage.offsetHeight;
+      zoom = Math.max(1, Math.min(4, zoom + delta));
+      render();
+      viewport.scrollLeft = centerX * stage.offsetWidth - viewport.clientWidth / 2;
+      viewport.scrollTop = centerY * stage.offsetHeight - viewport.clientHeight / 2;
+    }
+    plus.addEventListener("click", () => changeZoom(0.25));
+    minus.addEventListener("click", () => changeZoom(-0.25));
+    image.addEventListener("load", () => { zoom = 1; render(); viewport.scrollTo(0, 0); });
+    new ResizeObserver(render).observe(viewport);
+    canvas.querySelector("[data-diagram-collapse]")?.addEventListener("click", () => canvas.closest("dialog")?.close());
+    render();
+  });
+</script>

@@ -6,14 +6,36 @@ import { profile, projects } from "../data/profile";
 
 const title = `Projects | ${profile.name}`;
 const description = "Project work by Amiru Horadagoda across full-stack development, DevOps, mobile applications, and AI.";
+const projectYears = [...new Set(projects.map((project) => project.year))]
+  .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+const timeline = projectYears.map((year) => ({
+  year,
+  projects: projects.filter((project) => project.year === year),
+}));
 ---
 
 <BaseLayout title={title} description={description}>
   <Header />
   <main>
-    <section class="py-12 sm:py-14">
-      <div class="mx-auto grid max-w-6xl gap-8 px-5 sm:px-6 md:grid-cols-2 lg:px-8">
-        {projects.map((project) => <ProjectCard project={project} />)}
+    <section class="py-12 sm:py-14" aria-label="Projects by year">
+      <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+        <div class="space-y-12 sm:space-y-16">
+          {timeline.map(({ year, projects: yearProjects }) => (
+            <section aria-labelledby={`projects-year-${year}`}>
+              <div class="mb-6 flex items-center gap-4 sm:mb-8">
+                <span class="h-3 w-3 flex-none rounded-full bg-blue-400 ring-4 ring-blue-400/15" aria-hidden="true"></span>
+                <h2 id={`projects-year-${year}`} class="text-3xl font-bold tracking-tight text-white">{year}</h2>
+                <span class="rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1 text-sm font-medium text-blue-200">
+                  {yearProjects.length} {yearProjects.length === 1 ? "project" : "projects"}
+                </span>
+                <span class="h-px flex-1 bg-gradient-to-r from-blue-400/30 to-transparent" aria-hidden="true"></span>
+              </div>
+              <div class="grid gap-8 md:grid-cols-2">
+                {yearProjects.map((project) => <ProjectCard project={project} />)}
+              </div>
+            </section>
+          ))}
+        </div>
       </div>
     </section>
   </main>
