@@ -167,3 +167,19 @@ footer { font-size: var(--type-small); line-height: 1.7; }
 :root { --section-space: clamp(64px, 8vw, 112px); }
 #featured-projects, #skills { padding-block: var(--section-space); }
 @media (max-width: 380px) { :root { --type-hero: 2.65rem; --type-section: 2rem; } }
+
+/* Shared geometric canvas, fixed so it continues across every section. */
+body { position: relative; isolation: isolate; }
+body::before, body::after { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+body::before {
+  background:
+    linear-gradient(135deg, transparent 40%, rgb(147 197 253 / 4%) 40% 60%, transparent 60%) left top / 420px 560px repeat-y,
+    linear-gradient(225deg, transparent 35%, rgb(167 139 250 / 4%) 35% 58%, transparent 58%) right 100px / 380px 620px repeat-y;
+}
+body::after {
+  background: repeating-linear-gradient(45deg, rgb(147 197 253 / 6%) 0 1px, transparent 1px 12px);
+  mask-image: linear-gradient(90deg, #000, transparent 16% 84%, #000);
+  -webkit-mask-image: linear-gradient(90deg, #000, transparent 16% 84%, #000);
+  opacity: .45;
+}
+@media (max-width: 767px) { body::before { opacity: .55; } body::after { opacity: .22; } }

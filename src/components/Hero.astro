@@ -6,6 +6,13 @@ const githubUrl = profile.links.find(link => link.label === "GitHub")?.href;
 const linkedinUrl = profile.links.find(link => link.label === "LinkedIn")?.href;
 ---
 <section class="hero-section relative overflow-hidden px-5 text-white sm:px-6 lg:px-8" aria-labelledby="hero-title">
+  <div class="hero-pattern" aria-hidden="true">
+    <span class="pattern-shape pattern-left"></span>
+    <span class="pattern-shape pattern-right"></span>
+    <span class="pattern-shape pattern-bottom"></span>
+    <span class="pattern-stripes stripes-left"></span>
+    <span class="pattern-stripes stripes-right"></span>
+  </div>
   <div class="hero-grid mx-auto grid max-w-6xl">
     <div class="hero-copy">
       <p class="eyebrow hero-tagline">Ready to contribute</p>
@@ -32,6 +39,17 @@ const linkedinUrl = profile.links.find(link => link.label === "LinkedIn")?.href;
 </section>
 
 <style>
+  .hero-section { isolation: isolate; background: linear-gradient(115deg, transparent 25%, rgb(16 24 49 / 35%) 72%, rgb(21 25 52 / 35%)); }
+  .hero-pattern { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+  .pattern-shape { position: absolute; display: block; }
+  .pattern-left { left: -110px; top: 25px; width: 290px; height: 370px; background: linear-gradient(140deg, #93c5fd0d, #8b5cf606); clip-path: polygon(0 0, 65% 0, 100% 28%, 65% 28%, 65% 100%, 0 60%); }
+  .pattern-right { right: -45px; top: 30px; width: 350px; height: 440px; background: linear-gradient(155deg, #93c5fd12, #a78bfa08); clip-path: polygon(30% 0, 60% 22%, 60% 4%, 100% 34%, 100% 100%, 55% 67%, 55% 90%, 0 46%, 30% 46%); }
+  .pattern-bottom { left: 14%; bottom: -80px; width: 520px; height: 200px; background: linear-gradient(100deg, #5b8cff0c, #a78bfa0a); clip-path: polygon(0 100%, 30% 15%, 50% 70%, 67% 0, 100% 100%); }
+  .pattern-stripes { position: absolute; width: 125px; height: 160px; background: repeating-linear-gradient(45deg, #93c5fd14 0 1px, transparent 1px 10px); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+  .stripes-left { top: 36px; left: 8%; opacity: .65; }
+  .stripes-right { bottom: 24px; right: 5%; transform: rotate(180deg); opacity: .65; }
+  @media (max-width: 767px) { .pattern-left { opacity: .5; } .pattern-right { width: 250px; opacity: .65; } .pattern-bottom { left: -15%; opacity: .5; } .stripes-left { left: 0; } }
+
   .hero-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; gap: 52px; min-height: auto; padding-top: clamp(64px, 8vw, 104px); padding-bottom: 48px; }
   .hero-copy { min-width: 0; animation: hero-enter 650ms ease-out both; }
   .hero-tagline { margin-bottom: 20px; }
@@ -60,7 +78,7 @@ const linkedinUrl = profile.links.find(link => link.label === "LinkedIn")?.href;
   @keyframes hero-enter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes portrait-enter { from { opacity: 0; transform: translateY(15px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
   @media (max-width: 1023px) { .hero-grid { grid-template-columns: minmax(0, 1fr) 290px; gap: 32px; } }
-  @media (max-width: 767px) { .hero-grid { grid-template-columns: 1fr; gap: 48px; padding-top: 56px; padding-bottom: 40px; } .hero-portrait { max-width: 340px; margin: 0 auto; } }
+  @media (max-width: 767px) { .hero-grid { grid-template-columns: 1fr; gap: 48px; padding-top: 56px; padding-bottom: 40px; } .hero-portrait { grid-row: 1; max-width: 300px; margin: 0 auto; } }
   @media (min-width: 768px) and (max-width: 1023px) { .hero-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hero-actions :global(.primary-action) { grid-column: 1 / -1; } }
   @media (max-width: 480px) { .hero-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hero-actions :global(.primary-action) { grid-column: 1 / -1; } }
   @media (prefers-reduced-motion: reduce) { .hero-copy, .hero-portrait { animation: none; } }
