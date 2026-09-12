@@ -1,0 +1,64 @@
+---
+import { Code2, GraduationCap, ArrowUpRight, Zap } from "@lucide/astro";
+import { profile, education } from "../data/profile";
+const socialLinks = profile.links.filter(link => ["LinkedIn", "GitHub"].includes(link.label)).sort((a, b) => a.label === "LinkedIn" ? -1 : 1);
+---
+
+<section id="about" class="about-section scroll-mt-24 border-t border-white/5" aria-labelledby="about-title">
+  <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+    <header class="about-heading">
+      <p class="eyebrow">ABOUT ME</p>
+      <h2 id="about-title">How I Approach <span>Engineering</span></h2>
+    </header>
+    <div class="about-layout">
+      <div class="about-story">
+        <p>I'm interested in <strong>understanding the problem behind the software</strong>, not just implementing the feature. I enjoy thinking about architecture, maintainability, performance, and how technical decisions affect the final product.</p>
+        <p>Through academic projects and hands-on development, I've learned to <strong>approach problems systematically</strong>, validate assumptions, and improve solutions rather than stopping once something works.</p>
+        <p>My goal is to grow into an engineer who can <strong>take ownership of a problem</strong> from requirements and design through implementation, deployment, and continuous improvement.</p>
+      </div>
+      <aside class="about-details" aria-label="Education and focus">
+        <dl class="about-cards">
+          <div class="about-card">
+            <span class="about-icon"><GraduationCap size={21} aria-hidden="true" /></span>
+            <div><dt>Education</dt><dd><strong>Computer Engineering</strong><span>{education[0].institution}</span><small>Degree conferment expected 2027</small></dd></div>
+          </div>
+          <div class="about-card">
+            <span class="about-icon"><Zap size={21} aria-hidden="true" /></span>
+            <div><dt>Focus</dt><dd><strong>Software Engineering</strong><span>AI &amp; Data</span><span>Backend Systems</span></dd></div>
+          </div>
+        </dl>
+        <div class="about-socials">
+          {socialLinks.map(link => <a href={link.href}>{link.label === "LinkedIn" ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="8" width="4" height="13" rx=".5"/><circle cx="5" cy="4" r="2"/><path d="M11 21V8h4v2c3-4 7-2 7 3v8h-4v-7c0-3-3-3-3 0v7z"/></svg> : <Code2 size={16} aria-hidden="true" />}{link.label}<ArrowUpRight size={13} aria-hidden="true" /></a>)}
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-section { padding-top: 52px; padding-bottom: var(--section-space); }
+  .about-heading { margin-bottom: 40px; }
+  .about-heading h2 { margin-top: 10px; font-size: var(--type-section); line-height: 1.18; font-weight: 800; letter-spacing: -.025em; color: #fff; }
+  .about-heading h2 span { background: linear-gradient(110deg, #93c5fd, #c4b5fd); background-clip: text; color: transparent; }
+  .about-subtitle { margin-top: 14px; color: var(--portfolio-muted); font-size: 16px; line-height: 1.6; }
+  .about-introduction { font-size: clamp(26px, 3vw, 32px); line-height: 1.25; letter-spacing: -.025em; font-weight: 650; color: #fff; }
+  .about-introduction span { color: #93c5fd; }
+  .about-story .about-lead { margin-top: -10px; font-size: 19px; line-height: 1.65; color: #cbd5e1; }
+  .about-layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 44px; align-items: start; }
+  .about-story { max-width: 65ch; display: grid; gap: 23px; font-size: var(--type-description); line-height: 1.75; color: var(--portfolio-muted); }
+  .about-story strong { color: var(--portfolio-text); font-weight: 600; }
+  .about-cards { display: grid; gap: 16px; }
+  .about-card { display: flex; align-items: flex-start; gap: 16px; padding: 20px; border: 1px solid var(--portfolio-border); border-radius: 12px; background: linear-gradient(135deg, #ffffff07, #ffffff03); }
+  .about-card > div { min-width: 0; }
+  .about-icon { display: grid; place-items: center; flex-shrink: 0; width: 36px; height: 36px; border-radius: 8px; background: rgb(59 130 246 / 12%); color: #93c5fd; }
+  .about-card dt { margin-bottom: 5px; color: var(--portfolio-muted); text-transform: uppercase; font-size: 12px; letter-spacing: .08em; }
+  .about-card dd { font-size: 14px; line-height: 1.5; }
+  .about-card dd strong { display: block; color: var(--portfolio-text); font-weight: 600; }
+  .about-card dd span { display: block; color: var(--portfolio-muted); font-size: 14px; }
+  .about-card dd .education-badge { display: inline-block; padding: 2px 9px; margin-top: 9px; border-radius: 20px; background: rgb(59 130 246 / 12%); color: #93c5fd; font-size: 14px; }
+  .about-card small { display: block; margin-top: 6px; font-size: 12px; color: var(--portfolio-muted); }
+  .about-socials { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .about-socials a { display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 8px 13px; border: 1px solid var(--portfolio-border); border-radius: 8px; background: #ffffff04; color: var(--portfolio-text); font-size: 12px; font-weight: 500; transition: color .2s, border-color .2s; }
+  .about-socials a:hover { color: #93c5fd; border-color: #93c5fd80; }
+  @media (max-width: 767px) { .about-section { padding-top: 52px; padding-bottom: var(--section-space); } .about-layout { grid-template-columns: 1fr; gap: 32px; } .about-heading { margin-bottom: 26px; } }
+</style>

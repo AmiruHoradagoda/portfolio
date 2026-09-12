@@ -1,6 +1,17 @@
 const devicon = "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons";
 
 export const techLogoMap = {
+  "Apache Airflow": `${devicon}/apacheairflow/apacheairflow-original.svg`,
+  NestJS: `${devicon}/nestjs/nestjs-original.svg`,
+  GraphQL: `${devicon}/graphql/graphql-plain.svg`,
+  Redis: `${devicon}/redis/redis-original.svg`,
+  "Three.js": `${devicon}/threejs/threejs-original.svg`,
+  FastAPI: `${devicon}/fastapi/fastapi-original.svg`,
+  PostgreSQL: `${devicon}/postgresql/postgresql-original.svg`,
+  PyTorch: `${devicon}/pytorch/pytorch-original.svg`,
+  "Hugging Face Transformers": "https://cdn.simpleicons.org/huggingface",
+  "Apache Kafka": `${devicon}/apachekafka/apachekafka-original.svg`,
+  "Apache Spark": `${devicon}/apachespark/apachespark-original.svg`,
   HTML: `${devicon}/html5/html5-original.svg`,
   CSS: `${devicon}/css3/css3-original.svg`,
   "Tailwind CSS": `${devicon}/tailwindcss/tailwindcss-original.svg`,
@@ -12,6 +23,7 @@ export const techLogoMap = {
   TypeScript: `${devicon}/typescript/typescript-original.svg`,
   Flutter: `${devicon}/flutter/flutter-original.svg`,
   Java: `${devicon}/java/java-original.svg`,
+  "Java 17": `${devicon}/java/java-original.svg`,
   JavaFX: `${devicon}/java/java-original.svg`,
   PHP: `${devicon}/php/php-original.svg`,
   "Spring Boot": `${devicon}/spring/spring-original.svg`,

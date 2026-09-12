@@ -11,7 +11,7 @@
   --portfolio-bg: #0a0e27;
   --portfolio-card: #131b3d;
   --portfolio-border: rgba(255, 255, 255, 0.14);
-  --portfolio-muted: #94a3b8;
+  --portfolio-muted: #9aa7c5;
   --portfolio-text: #e0e7ff;
 }
 
@@ -120,3 +120,50 @@ a {
     transform: none;
   }
 }
+
+/* Shared refinements retain the original blue / violet identity. */
+:focus-visible { outline: 2px solid #93c5fd; outline-offset: 5px; }
+.eyebrow { color: #93c5fd; font-size: .7rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; }
+.hero-section { background: radial-gradient(ellipse at 80% 35%, #5241ac18, transparent 55%); }
+.hero-name { background: linear-gradient(110deg, #93c5fd, #c4b5fd); background-clip: text; color: transparent; }
+.primary-action, .secondary-action { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: .6rem; border-radius: .7rem; padding: .75rem 1.2rem; font-size: .875rem; font-weight: 600; transition: background .2s, border-color .2s, transform .2s; }
+.primary-action { background: linear-gradient(110deg, #2563eb, #7c3aed); color: white; border: 1px solid #ffffff18; }
+.secondary-action { border: 1px solid #ffffff25; background: #ffffff04; color: #e2e8f0; }
+.primary-action:hover, .secondary-action:hover { transform: translateY(-2px); border-color: #93c5fd80; background-color: #ffffff0a; }
+.portrait-orbit { position: absolute; inset: -14px -14px 46px; border: 1px solid #818cf820; border-radius: 50%; pointer-events: none; }
+.portrait-label { position: absolute; bottom: 55px; left: -12px; display: flex; align-items: center; gap: 12px; padding: 16px 20px; border: 1px solid #818cf830; border-radius: 14px; background: #11172ef2; box-shadow: 0 16px 40px #0004; }
+.profile-facts { border: 1px solid #ffffff12; border-radius: 18px; padding: 6px 24px; background: #ffffff03; }
+.profile-facts > div { padding: 20px 0; }
+.profile-facts > div + div { border-top: 1px solid #ffffff0d; }
+.profile-facts dt { margin-bottom: 8px; color: #94a3b8; font-size: .75rem; }
+.profile-facts dd { color: #e2e8f0; font-size: .9rem; font-weight: 500; line-height: 1.6; }
+.profile-facts dd span { display: block; color: #94a3b8; font-size: .8rem; font-weight: 400; }
+#featured-projects { border-block: 1px solid #ffffff08; background: #ffffff02; }
+.glass-card { background: linear-gradient(135deg, #ffffff07, #ffffff03); border-color: #ffffff14; }
+[data-skill-panel] .group { border: 1px solid #ffffff0c; border-radius: 12px; padding: 16px 8px 12px; background: #ffffff03; }
+@media (max-width: 1023px) { .portrait-wrap { max-width: 280px; } }
+@media (prefers-reduced-motion: reduce) { :root { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+
+.portrait-label { z-index: 2; }
+
+/* Shared typography: Manrope headings and Inter body/UI. */
+:root {
+  --font-heading: Manrope, Inter, ui-sans-serif, system-ui, sans-serif;
+  --type-hero: clamp(3rem, 5vw, 4.5rem);
+  --type-section: clamp(36px, 4vw, 44px);
+  --type-card: clamp(18px, 1.8vw, 20px);
+  --type-body-lg: clamp(17px, 1.6vw, 18px);
+  --type-description: clamp(16px, 1.4vw, 17px);
+  --type-small: 14px;
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .13em; }
+.section-title { font-size: var(--type-section); line-height: 1.18; font-weight: 800; letter-spacing: -.03em; }
+.section-description { max-width: 65ch; font-size: var(--type-description); line-height: 1.7; }
+.card-title { font-size: var(--type-card); line-height: 1.4; font-weight: 700; }
+.card-description { font-size: 15px; line-height: 1.6; }
+footer { font-size: var(--type-small); line-height: 1.7; }
+
+:root { --section-space: clamp(64px, 8vw, 112px); }
+#featured-projects, #skills { padding-block: var(--section-space); }
+@media (max-width: 380px) { :root { --type-hero: 2.65rem; --type-section: 2rem; } }

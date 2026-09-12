@@ -94,7 +94,7 @@ export const profile = {
     },
     {
       label: "LinkedIn",
-      href: "https://www.linkedin.com/in/amiru-mithsara-42642614b/",
+      href: "https://www.linkedin.com/in/amiru-horadagoda-42642614b/",
     },
     {
       label: "Email",
@@ -163,64 +163,210 @@ export const certifications = [
 
 export const skillTabs = [
   {
-    id: "frontend",
-    label: "Frontend",
-    description: "Interfaces, stateful web apps, styling systems, and responsive UI delivery.",
-    items: [
-      "HTML",
-      "CSS",
-      "Tailwind CSS",
-      "Bootstrap",
-      "React",
-      "Angular",
-      "JavaScript",
-      "TypeScript",
-      "Flutter",
-    ],
+    "id": "frontend",
+    "label": "Frontend",
+    "description": "Building responsive and interactive user interfaces.",
+    "items": [
+      {
+        "name": "React",
+        "confidence": "Proficient"
+      },
+      {
+        "name": "HTML & CSS",
+        "confidence": "Proficient"
+      },
+      {
+        "name": "Angular",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "TypeScript",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "Three.js",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "Flutter",
+        "confidence": "Familiar"
+      }
+    ]
   },
   {
-    id: "backend",
-    label: "Backend",
-    description: "APIs, business logic, authentication flows, databases, and service integration.",
-    items: ["Java", "PHP", "Spring Boot", "Node.js", "Express.js", "Python", "REST APIs", "MySQL", "MongoDB"],
+    "id": "backend",
+    "label": "Backend",
+    "description": "Designing APIs, services, and application logic.",
+    "items": [
+      {
+        "name": "Java",
+        "confidence": "Proficient"
+      },
+      {
+        "name": "Spring Boot",
+        "confidence": "Proficient"
+      },
+      {
+        "name": "Python",
+        "confidence": "Proficient"
+      },
+      {
+        "name": "REST APIs",
+        "confidence": "Proficient"
+      },
+      {
+        "name": "FastAPI",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "Node.js / Express.js",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "Microservices",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "NestJS",
+        "confidence": "Familiar"
+      },
+      {
+        "name": "GraphQL",
+        "confidence": "Familiar"
+      }
+    ]
   },
   {
-    id: "devops",
-    label: "DevOps",
-    description: "Delivery pipelines, containerized environments, cloud deployment, and automation.",
-    items: ["Docker", "Jenkins", "GitHub Actions", "AWS", "Linux", "Nginx", "CI/CD", "Git"],
+    "id": "database",
+    "label": "Database",
+    "description": "Working with relational and NoSQL data stores.",
+    "items": [
+      {
+        "name": "MySQL",
+        "confidence": "Proficient"
+      },
+      {
+        "name": "MongoDB",
+        "confidence": "Proficient"
+      },
+      {
+        "name": "PostgreSQL",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "Redis",
+        "confidence": "Familiar"
+      }
+    ]
   },
   {
-    id: "ai",
-    label: "AI",
-    description: "Applied machine learning, computer vision, data processing, and AI integration.",
-    items: ["Python", "OpenCV", "Scikit-learn", "NumPy", "Jupyter Notebook", "Machine Learning"],
+    "id": "ai",
+    "label": "AI / ML",
+    "description": "Building and integrating machine learning solutions.",
+    "items": [
+      {
+        "name": "PyTorch",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "Scikit-learn",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "Hugging Face Transformers",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "LLM / RAG",
+        "confidence": "Familiar"
+      }
+    ]
   },
   {
-    id: "other",
-    label: "Other",
-    description: "Engineering practices and tools that support collaboration and reliable delivery.",
-    items: ["GitHub", "Firebase", "Postman", "Figma", "Adobe Photoshop", "Agile", "OOP", "Design Patterns", "Testing", "QA"],
-  },
+    "id": "data",
+    "label": "Data Engineering",
+    "description": "Building pipelines and working with streaming and analytical data.",
+    "items": [
+      {
+        "name": "Apache Kafka",
+        "confidence": "Proficient"
+      },
+      {
+        "name": "Apache Avro",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "ETL / ELT",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "Data Warehousing",
+        "confidence": "Intermediate"
+      },
+      {
+        "name": "Apache Spark",
+        "confidence": "Familiar"
+      },
+      {
+        "name": "Apache Airflow",
+        "confidence": "Familiar"
+      }
+    ]
+  }
 ];
 
 export const experience = [
   {
-    company: "Sri Lanka Ports Authority",
-    department: "Information Systems Division",
-    role: "Software Engineering Intern",
-    period: "Jun 2025 - Dec 2025",
-    duration: "6-month internship",
-    project: "EDDS / Document Digitization System",
-    summary:
-      "Worked with the Information Systems Division on the EDDS project, contributing to document digitization workflows and feature development for the Discipline Department.",
-    highlights: [
-      "Implemented and improved backend features using Spring Boot with MySQL database integration.",
-      "Contributed to frontend work using AngularJS, HTML, CSS, and TypeScript.",
-      "Participated in testing and quality assurance to improve reliability during project rollout.",
+    "company": "Sri Lanka Ports Authority",
+    "department": "Information Systems Division",
+    "role": "Software Engineering Intern",
+    "period": "Jun 2025 - Dec 2025",
+    "duration": "6-month internship",
+    "project": "EDDS / Document & Workflow Management",
+    "summary": "Contributed to EDDS, a digital document and workflow management system supporting employee records and disciplinary inquiries. Worked across backend and frontend development to translate operational requirements into working software features.",
+    "highlights": [
+      "Backend Engineering: Developed REST APIs with Java 17 and Spring Boot for inquiry creation, editing, status management, activity history, teams, file handling, and role-based permissions.",
+      "Frontend Development: Built Angular components for inquiry workflows, activity history, uploads, file views, and management screens. Connected them to backend services and resolved API integration issues.",
+      "Data & System Design: Worked with ER diagrams, entity relationships, DTO mappings, and layered architecture. Applied validation, exception handling, and audit logging to improve maintainability and reliability.",
+      "Performance & Data Access: Implemented pagination, search, filtering, and sorting to make larger datasets easier to retrieve and navigate.",
+      "Document Management: Contributed to bulk file uploads, dynamic metadata and file forms, document categorization, and document-viewing workflows.",
+      "Testing & Debugging: Tested APIs and end-to-end workflows using Postman, logs, database verification, and frontend testing. Fixed validation, response-mapping, and UI consistency issues."
     ],
-    stack: ["Spring Boot", "MySQL", "AngularJS", "TypeScript", "HTML", "CSS", "Testing", "QA"],
-  },
+    "contributions": [
+      {
+        "title": "Backend Engineering",
+        "description": "Developed REST APIs with Java 17 and Spring Boot for inquiry creation, editing, status management, activity history, teams, file handling, and role-based permissions."
+      },
+      {
+        "title": "Frontend Development",
+        "description": "Built Angular components for inquiry workflows, activity history, uploads, file views, and management screens. Connected them to backend services and resolved API integration issues."
+      },
+      {
+        "title": "Data & System Design",
+        "description": "Worked with ER diagrams, entity relationships, DTO mappings, and layered architecture. Applied validation, exception handling, and audit logging to improve maintainability and reliability."
+      },
+      {
+        "title": "Performance & Data Access",
+        "description": "Implemented pagination, search, filtering, and sorting to make larger datasets easier to retrieve and navigate."
+      },
+      {
+        "title": "Document Management",
+        "description": "Contributed to bulk file uploads, dynamic metadata and file forms, document categorization, and document-viewing workflows."
+      },
+      {
+        "title": "Testing & Debugging",
+        "description": "Tested APIs and end-to-end workflows using Postman, logs, database verification, and frontend testing. Fixed validation, response-mapping, and UI consistency issues."
+      }
+    ],
+    "stack": [
+      "Java 17",
+      "Spring Boot",
+      "Angular",
+      "TypeScript",
+      "MySQL",
+      "Postman"
+    ]
+  }
 ];
 
 export const projects: Project[] = [

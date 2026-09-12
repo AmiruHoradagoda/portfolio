@@ -1,67 +1,42 @@
 ---
+import { ArrowRight } from "@lucide/astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ContactSection from "../components/ContactSection.astro";
 import Header from "../components/Header.astro";
 import Hero from "../components/Hero.astro";
+import AboutSection from "../components/AboutSection.astro";
 import Section from "../components/Section.astro";
 import SkillTabs from "../components/SkillTabs.astro";
-import { profile } from "../data/profile";
-
+import ProjectCard from "../components/ProjectCard.astro";
+import ExperienceCard from "../components/ExperienceCard.astro";
+import { profile, projects, experience } from "../data/profile";
+import { assetPath } from "../utils/paths";
 const title = `${profile.name} | ${profile.headline}`;
-const description =
-  "Portfolio of Amiru Horadagoda, a Computer Engineer focused on full-stack development, DevOps, and AI projects.";
+const description = "Portfolio of Amiru Horadagoda, a Computer Engineer focused on full-stack development, DevOps, and AI projects.";
 ---
-
 <BaseLayout title={title} description={description}>
   <Header />
-  <main>
+  <main id="main-content">
     <Hero />
-
-    <section id="about" class="scroll-mt-24 py-16 sm:py-20">
-      <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-        <div class="mb-12 text-center">
-          <h2 class="text-4xl font-bold text-white">About Me</h2>
-          <div class="mx-auto mt-4 h-1 w-20 rounded-full bg-gradient-to-r from-blue-400 to-violet-500"></div>
-        </div>
-
-        <article class="relative mx-auto max-w-5xl px-2 py-4 text-center sm:px-6">
-          <div class="mx-auto grid max-w-4xl gap-3 text-lg leading-8 text-slate-300 sm:text-xl sm:leading-9">
-            <p class="mx-auto max-w-4xl">
-              Programming enthusiast studying in the third year of the Computer Engineering specialization programme,
-            </p>
-            <p class="mx-auto max-w-3xl">
-              interested in competitive coding as much as web development.
-            </p>
-            <p class="mx-auto max-w-2xl">
-              Always ready to dive head down into new technologies.
-            </p>
-            <p class="mx-auto max-w-xl font-semibold text-blue-200">
-              Passionate about embracing change.
-            </p>
-          </div>
-
-          <div class="relative mx-auto mt-8 h-10 w-36">
-            <span class="absolute left-1/2 top-0 h-px w-24 origin-left rotate-[35deg] bg-blue-300/60"></span>
-            <span class="absolute right-1/2 top-0 h-px w-24 origin-right rotate-[-35deg] bg-violet-300/60"></span>
-          </div>
-        </article>
+    <AboutSection />
+    <Section id="experience" eyebrow="Professional experience" title="Experience">
+      {experience.map(item => <ExperienceCard item={item} />)}
+    </Section>
+    <Section id="featured-projects" eyebrow="Selected work" title="Selected Projects" intro="A few projects that best represent how I approach software engineering.">
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {projects.slice(0, 3).map((project) => <ProjectCard project={project} />)}
       </div>
-    </section>
-
-    <Section
-      id="skills"
-      title="Skills & Expertise"
-      intro="A comprehensive overview of my technical abilities and areas of expertise."
-    >
+      <div class="mt-9 text-center"><a class="secondary-action" href={assetPath('projects/')}>Explore all projects <ArrowRight size={18} aria-hidden="true" /></a></div>
+    </Section>
+    <Section id="skills" eyebrow="Technical Skills" title="Skills & Technologies" intro="Technologies I've used through hands-on projects and coursework.">
       <SkillTabs />
     </Section>
-
     <ContactSection />
   </main>
-  <footer class="border-t border-white/10 bg-blue-600/5 py-8">
-    <div class="mx-auto flex max-w-6xl flex-col gap-2 px-5 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-      <p>{profile.name}</p>
-      <p>{profile.location}</p>
+  <footer class="border-t border-white/10 py-8">
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 px-5 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <p>{profile.name} <span class="ml-2 text-slate-600">© {new Date().getFullYear()}</span></p>
+      <div class="flex gap-5">{profile.links.map((link) => <a class="hover:text-blue-300" href={link.href}>{link.label}</a>)}</div>
     </div>
   </footer>
 </BaseLayout>

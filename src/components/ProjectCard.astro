@@ -15,6 +15,7 @@ interface Props {
     year: string;
     type: string;
     status: string;
+    summary?: string;
     stack: string[];
     links: Link[];
     accent?: string;
@@ -41,7 +42,9 @@ const linkIcons = {
   <a class="block" href={detailUrl} aria-label={`Open ${project.title} project details`}>
     <ProjectVisual title={project.title} stack={project.stack} accent={project.accent} image={leadImage?.src} imageAlt={leadImage?.alt} />
     <div class="relative z-10 p-6">
-      <h3 class="text-xl font-bold text-white transition group-hover:text-blue-300">{project.title}</h3>
+      <h3 class="card-title text-white transition group-hover:text-blue-300">{project.title}</h3>
+      {project.summary && <p class="card-description mt-3 line-clamp-3 text-slate-400">{project.summary}</p>}
+      <div class="mt-4 flex flex-wrap gap-2">{project.stack.slice(0, 3).map((tech) => <span class="rounded-md border border-blue-300/10 bg-blue-400/5 px-2 py-1 text-xs text-blue-200">{tech}</span>)}</div>
     </div>
   </a>
 

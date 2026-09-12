@@ -1,155 +1,95 @@
 ---
-import { Download, Mail, MapPin, Phone, Send } from "@lucide/astro";
+import { Mail, Send } from "@lucide/astro";
 import { profile } from "../data/profile";
 import { assetPath } from "../utils/paths";
 
-const cvUrl = assetPath(profile.cvPath);
 const web3FormsAccessKey = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY ?? "";
 const contactSource = "Portfolio Website (https://amiruhoradagoda.github.io/portfolio/)";
 const contactEmailSubject = "New Portfolio Contact Message - Amiru Horadagoda";
-const contactItems = [
-  {
-    label: "Email",
-    value: profile.email,
-    href: `mailto:${profile.email}`,
-    Icon: Mail,
-  },
-  {
-    label: "Phone",
-    value: profile.phone,
-    href: `tel:${profile.phone.replace(/\s/g, "")}`,
-    Icon: Phone,
-  },
-  {
-    label: "Location",
-    value: profile.location,
-    href: undefined,
-    Icon: MapPin,
-  },
-];
 ---
 
-<section id="contact" class="scroll-mt-24 border-t border-white/10 bg-blue-600/5 py-16 text-white sm:py-20">
-  <div class="mx-auto grid max-w-6xl gap-10 px-5 sm:px-6 lg:grid-cols-[0.9fr_1.5fr] lg:px-8">
-    <aside>
-      <p class="text-sm font-semibold uppercase tracking-[0.16em] text-blue-300">Contact</p>
-      <h2 class="mt-3 text-4xl font-bold sm:text-5xl">Build something useful.</h2>
-      <p class="mt-4 text-base leading-7 text-slate-400">
-        Send a message for internships, collaborations, full-stack work, DevOps automation, or AI-focused projects.
-      </p>
-
-      <div class="mt-7 grid gap-5">
-        {
-          contactItems.map(({ label, value, href, Icon }) => (
-            <div class="flex gap-4">
-              <Icon class="mt-1 h-5 w-5 flex-none text-blue-300" aria-hidden="true" stroke-width={2} />
-              <div>
-                <h3 class="text-sm font-semibold text-white">{label}</h3>
-                {
-                  href ? (
-                    <a class="mt-1 block text-sm text-slate-400 transition hover:text-blue-300" href={href}>
-                      {value}
-                    </a>
-                  ) : (
-                    <p class="mt-1 text-sm text-slate-400">{value}</p>
-                  )
-                }
-              </div>
-            </div>
-          ))
-        }
+<section id="contact" class="contact-section scroll-mt-24" aria-labelledby="contact-title">
+  <div class="contact-container">
+    <div class="contact-layout">
+      <div class="contact-art" aria-hidden="true">
+        <img src={assetPath("contact-illustration.png")} alt="" width="1122" height="1402" loading="lazy" />
       </div>
-
-      <a
-        class="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
-        href={cvUrl}
-        download
-      >
-        <Download class="h-4 w-4" aria-hidden="true" stroke-width={2} />
-        Download Resume (PDF)
-      </a>
-    </aside>
-
-    <form
-      class="glass-card grid gap-4 rounded-2xl p-5 sm:p-6"
-      action="https://api.web3forms.com/submit"
-      method="post"
-      data-contact-form
-    >
-      <input type="hidden" name="access_key" value={web3FormsAccessKey} />
-      <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" />
-      <input type="hidden" name="redirect" value={assetPath("#contact")} />
-      <input type="hidden" name="subject" value={contactEmailSubject} />
-      <input type="hidden" name="Source" value={contactSource} />
-
-      <div class="grid gap-4 md:grid-cols-2">
-        <label class="grid gap-2 text-sm font-semibold">
-          Name
-          <input
-            class="min-h-12 rounded-xl border border-white/20 bg-white/10 px-4 text-base font-normal text-white outline-none transition placeholder:text-slate-500 focus:border-blue-400/60 focus:ring-4 focus:ring-blue-500/20"
-            type="text"
-            name="Name"
-            placeholder="Your name"
-            autocomplete="name"
-            required
-          />
-        </label>
-        <label class="grid gap-2 text-sm font-semibold">
-          Email
-          <input
-            class="min-h-12 rounded-xl border border-white/20 bg-white/10 px-4 text-base font-normal text-white outline-none transition placeholder:text-slate-500 focus:border-blue-400/60 focus:ring-4 focus:ring-blue-500/20"
-            type="email"
-            name="email"
-            placeholder="Your email"
-            autocomplete="email"
-            required
-          />
-        </label>
+      <div class="contact-main">
+        <header class="contact-heading">
+          <p class="contact-eyebrow">Have something in mind?</p>
+          <h2 id="contact-title">Let's <span>connect.</span></h2>
+          <p>Have an opportunity, project, or idea to share? I'd be happy to hear from you.</p>
+        </header>
+      <form class="contact-form" action="https://api.web3forms.com/submit" method="post" data-contact-form>
+        <input type="hidden" name="access_key" value={web3FormsAccessKey} />
+        <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" />
+        <input type="hidden" name="redirect" value={assetPath("#contact")} />
+        <input type="hidden" name="subject" value={contactEmailSubject} />
+        <input type="hidden" name="Source" value={contactSource} />
+        <label><span>Name <em>*</em></span><input type="text" name="Name" placeholder="Your name" autocomplete="name" required /></label>
+        <label><span>Email <em>*</em></span><input type="email" name="email" placeholder="your.email@company.com" autocomplete="email" required /></label>
+        <label><span>Subject <em>*</em></span><select name="Inquiry Subject" required><option value="" disabled selected>Select a subject...</option><option>Job opportunity</option><option>Freelance project</option><option>Collaboration</option><option>Open source</option><option>Other</option></select></label>
+        <label><span>Message <em>*</em></span><textarea name="Message" placeholder="Tell me about the opportunity, project, or what you'd like to discuss..." minlength="50" aria-describedby="message-help message-count" required></textarea></label>
+        <div class="message-help"><p id="message-help">Minimum 50 characters</p><p id="message-count" data-message-count hidden></p></div>
+        <p class="hidden rounded-xl border px-4 py-3 text-sm font-semibold" data-contact-status role="status" aria-live="polite"></p>
+        <div class="contact-actions"><button class="contact-send" type="submit" data-contact-submit><Send size={17} aria-hidden="true" /> Send Message</button><a class="email-direct" href={`mailto:${profile.email}`}>Email me directly <Mail size={16} aria-hidden="true" /></a></div>
+      </form>
       </div>
-
-      <label class="grid gap-2 text-sm font-semibold">
-        Subject
-        <input
-          class="min-h-12 rounded-xl border border-white/20 bg-white/10 px-4 text-base font-normal text-white outline-none transition placeholder:text-slate-500 focus:border-blue-400/60 focus:ring-4 focus:ring-blue-500/20"
-          type="text"
-          name="Inquiry Subject"
-          placeholder="Project, internship, or collaboration"
-          required
-        />
-      </label>
-
-      <label class="grid gap-2 text-sm font-semibold">
-        Message
-        <textarea
-          class="min-h-36 resize-y rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-base font-normal text-white outline-none transition placeholder:text-slate-500 focus:border-blue-400/60 focus:ring-4 focus:ring-blue-500/20"
-          name="Message"
-          placeholder="Tell me what you want to build"
-          required
-        ></textarea>
-      </label>
-
-      <p class="hidden rounded-xl border px-4 py-3 text-sm font-semibold" data-contact-status></p>
-
-      <div class="flex justify-start md:justify-end">
-        <button
-          class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-3 text-base font-semibold text-white transition hover:from-blue-700 hover:to-violet-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
-          type="submit"
-          data-contact-submit
-        >
-          <Send class="h-5 w-5" aria-hidden="true" stroke-width={2} />
-          Send Message
-        </button>
-      </div>
-    </form>
+    </div>
   </div>
 </section>
+
+<style>
+  .contact-section { padding: var(--section-space) 24px 56px; color: var(--portfolio-text); border-top: 1px solid #ffffff0a; background: linear-gradient(180deg, #5b8cff03, transparent); }
+  .contact-container { max-width: 1088px; margin: auto; }
+  .contact-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 64px; }
+  .contact-art { position: relative; isolation: isolate; }
+  .contact-art::before { content: ''; position: absolute; z-index: -1; inset: 18% 3% 12%; border-radius: 50%; background: radial-gradient(ellipse, #5b8cff1c, #8b5cf608 55%, transparent 72%); }
+  .contact-art img { display: block; width: 100%; max-height: 620px; object-fit: contain; height: auto; }
+  .contact-main { min-width: 0; }
+  .contact-heading { margin-bottom: 26px; }
+  .contact-eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 12px; font-weight: 600; color: #93c5fd; margin-bottom: 12px; }
+  .contact-heading h2 { font-size: clamp(38px, 4.8vw, 54px); font-weight: 800; line-height: 1.15; letter-spacing: -.035em; color: #f5f7ff; }
+  .contact-heading h2 span { color: #a5b4fc; }
+  .contact-heading > p:not([class]) { margin-top: 16px; max-width: 48ch; font-size: 16px; line-height: 1.7; color: var(--portfolio-muted); }
+  .response-note { display: flex; align-items: center; gap: 7px; margin-top: 14px; color: #9aa7c5; font-size: 12px; }
+  .contact-form { display: flex; flex-direction: column; gap: 18px; }
+  .contact-form label { display: grid; gap: 8px; font-size: 13px; font-weight: 500; color: #e0e7ff; }
+  .contact-form em { color: #93c5fd; font-style: normal; }
+  .contact-form input:not([type=hidden]):not([type=checkbox]), .contact-form select, .contact-form textarea { width: 100%; min-width: 0; border: 1px solid #94a3b82e; border-radius: 8px; background: #11193680; color: #fff; padding: 12px 14px; font: inherit; font-size: 16px; font-weight: 400; outline: none; transition: border-color .2s, box-shadow .2s; }
+  .contact-form input::placeholder, .contact-form textarea::placeholder { color: #8996b2; opacity: 1; }
+  .contact-form select option { background: #111936; color: #fff; }
+  .contact-form textarea { min-height: 130px; resize: vertical; line-height: 1.6; }
+  .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus { border-color: #93c5fd; box-shadow: 0 0 0 3px #5b8cff15; }
+  .message-help { display: flex; justify-content: space-between; gap: 12px; margin-top: -10px; color: var(--portfolio-muted); font-size: 12px; }
+  [data-message-count].is-valid { color: #6ee7b7; }
+  .contact-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; }
+  .contact-send { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 46px; padding: 12px 20px; border-radius: 8px; border: 1px solid #93c5fd40; background: #3765b0; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: background .2s; }
+  .contact-send:hover { background: #4273bf; }
+  .email-direct { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 13px; color: #b8c5df; transition: color .2s; }
+  .email-direct:hover { color: #fff; }
+  @media (max-width: 900px) { .contact-layout { gap: 32px; } }
+  @media (max-width: 640px) { .contact-section { padding-inline: 20px; } .contact-layout { grid-template-columns: 1fr; gap: 28px; } .contact-main { grid-row: 1; } .contact-art { max-width: 280px; margin: auto; } .contact-art img { max-height: 300px; } }
+</style>
 
 <script>
   const contactForm = document.querySelector("[data-contact-form]");
   const contactStatus = document.querySelector("[data-contact-status]");
   const contactSubmit = document.querySelector("[data-contact-submit]");
   let contactStatusTimeout;
-
+  const messageInput = document.querySelector('[data-contact-form] textarea');
+  const messageCount = document.querySelector('[data-message-count]');
+  function updateMessageCount() {
+    if (messageInput instanceof HTMLTextAreaElement && messageCount instanceof HTMLElement) {
+      const length = messageInput.value.length;
+      messageCount.hidden = length === 0;
+      messageCount.textContent = `${length} / 50`;
+      messageCount.classList.toggle('is-valid', length >= 50);
+    }
+  }
+  messageInput?.addEventListener('input', updateMessageCount);
+  updateMessageCount();
+  contactForm?.addEventListener('reset', () => window.setTimeout(updateMessageCount, 0));
   function setContactStatus(message, type) {
     if (!(contactStatus instanceof HTMLElement)) {
       return;

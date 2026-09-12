@@ -21,8 +21,10 @@ const { title, description } = Astro.props;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
-    <link rel="icon" type="image/svg+xml" href={assetPath("favicon.svg")} />
-    <link rel="icon" href={assetPath("favicon.ico")} />
+    <link rel="icon" type="image/png" href={assetPath("favicon.png")} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Inter:wght@400;500;600;700&family=Manrope:wght@600;650;700;750;800&display=swap" rel="stylesheet" />
     <title>{title}</title>
   </head>
   <body class="min-h-screen bg-[#0a0e27] text-[#e0e7ff] antialiased">
