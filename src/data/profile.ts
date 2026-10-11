@@ -39,6 +39,7 @@ export type Project = {
   accent?: string;
   media: ProjectMedia[];
   demoVideo?: ProjectDemoVideo;
+  demoNote?: string;
   details?: Partial<ProjectDetails>;
 };
 
@@ -65,12 +66,22 @@ export type ProjectDiagram = {
   title: string;
   src: string;
   alt: string;
+  section?: "overview" | "challenges" | "architecture" | "decisions";
+  caption?: string;
+};
+
+export type ChallengeSolution = {
+  title?: string;
+  problem: string;
+  solution: string;
 };
 
 export type ProjectDetails = {
   background: string;
   overviewHeading?: string;
   qualityHeading?: string;
+  challengeSolutions?: ChallengeSolution[];
+  showSupportingRequirements?: boolean;
   engineeringRequirements?: string[];
   eventFlow?: string[];
   eventSchema?: { field: string; type: string; description: string }[];
@@ -385,39 +396,51 @@ export const projects: Project[] = [
     slug: "event-ticket-booking-platform",
     title: "Event Ticket Booking Platform",
     year: "2026",
-    type: "Cloud Microservices Project",
-    status: "Completed",
-    role: "Backend and DevOps Engineer",
+    type: "Distributed Systems / Cloud Engineering",
+    status: "Final Validation",
+    role: "Backend, Reliability & DevOps Engineer",
     summary:
-      "A cloud-based event management and ticket booking platform built with independently deployable services, asynchronous messaging, and Kubernetes deployment workflows.",
+      "Preventing overselling, duplicate bookings, and inconsistent state across independently failing services.",
+    subtitle:
+      "Preventing overselling, duplicate bookings, and inconsistent state across independently failing services.",
     description:
-      "This project applies microservices architecture to a complete event booking domain. Separate services handle authentication, event management, booking, notifications, gateway routing, service discovery, and configuration, while RabbitMQ supports asynchronous communication and Kubernetes on GKE provides scalable cloud deployment.",
+      "A distributed booking workflow that protects limited inventory and makes retries safe. Compensation and transactional outbox processing support recovery after partial failures, while backend role and ownership checks control access.",
     stack: [
+      "Java 17",
       "Spring Boot",
-      "Java",
-      "TypeScript",
+      "Spring Cloud Gateway",
+      "Keycloak",
       "RabbitMQ",
+      "MySQL",
+      "MongoDB",
+      "Next.js",
+      "Angular",
+      "TypeScript",
       "Docker",
       "Kubernetes",
-      "GCP",
+      "Kustomize",
+      "GCP / GKE",
       "GitHub Actions",
-      "Next.js",
-      "MongoDB",
-      "MySQL",
-      "Express.js",
-      "Angular",
-      "Keycloak",
+      "AWS S3",
+      "Testcontainers",
+      "k6",
     ],
     features: [
-      "User authentication, registration, avatar, and password recovery workflows",
-      "Event creation, category management, and booking-oriented service boundaries",
-      "RabbitMQ-based messaging between loosely coupled services",
-      "Docker image build and deployment flow targeting Kubernetes on GKE",
-      "GitHub Actions CI/CD pipeline with build, test, quality scan, image push, and rollout stages",
+      "Concurrency-safe inventory reservation prevents overselling.",
+      "Idempotency keys and request fingerprints make booking retries safe.",
+      "Payment-failure compensation and reservation-expiry recovery restore inventory.",
+      "Transactional outbox processing protects committed work before RabbitMQ publication.",
+      "Stale outbox claim recovery and optimistic version checks protect async workers.",
+      "RabbitMQ publisher confirmation, retry/DLQ handling, and consumer event deduplication.",
+      "Backend authorization enforces ADMIN scope, HOST ownership, and CUSTOMER access.",
+      "CUSTOMER → host application → ADMIN approval → Keycloak HOST role assignment.",
+      "Kustomize base/local/GKE overlays separate deployment environments.",
     ],
     challenges: [
-      "Separating domain responsibilities across independently deployable microservices.",
-      "Coordinating service communication, configuration, and rollout behavior in a Kubernetes environment.",
+      "Concurrent demand and ambiguous client timeouts at the inventory boundary.",
+      "Partial payment failures across independently owned services.",
+      "Abandoned async work, stale workers, and message redelivery.",
+      "Ownership boundaries between hosts sharing the same platform.",
     ],
     links: [
       {
@@ -428,8 +451,9 @@ export const projects: Project[] = [
     demoVideo: {
       type: "youtube",
       id: "WyCTZabMX3A",
-      title: "Event Ticket Booking Platform Demo",
+      title: "Original Product Demo — UI & Core Booking Flow",
     },
+    demoNote: "Recorded before the later reliability and system-design improvements.",
     accent: "emerald",
     media: [
       {
@@ -439,72 +463,128 @@ export const projects: Project[] = [
       },
     ],
     details: {
+      overviewHeading: "Keeping bookings correct under concurrency and failure",
+      showSupportingRequirements: false,
+      background:
+        "A single booking crosses inventory, payment, persistence, and notification boundaries. Once those responsibilities are separated into services, failures can occur between individual steps.\n\nI evolved the original event-booking platform around these failure cases using concurrency-safe inventory reservation, idempotent booking, compensation and recovery, transactional outbox processing, asynchronous messaging, and backend ownership authorization.",
       functionalRequirements: [
         {
           id: "ETB-FR-01",
-          area: "Identity & Access",
+          area: "Inventory Consistency",
           requirement:
-            "Users must be able to register and log in, Keycloak must issue JWTs carrying the user's role, the system must support Customer, Host, and Admin roles, and other services must be able to resolve a user's internal ID from email through AuthServiceClient.",
+            "Prevent overselling when multiple customers attempt to reserve the same limited ticket inventory at the same time.",
           priority: "High",
         },
         {
           id: "ETB-FR-02",
-          area: "Event Management",
+          area: "Idempotent Booking",
           requirement:
-            "Hosts and admins must be able to create events with title, description, start date/time, and banner image; support multiple ticket types per event with price and quantity; allow users to browse or search published events; expose /internal/events/{id}/booking-info for booking validation; allow bookings only for published future events; and store uploaded banners in AWS S3.",
+            "Retrying the same logical booking request must not create another booking or deduct inventory twice.",
           priority: "High",
         },
         {
           id: "ETB-FR-03",
-          area: "Ticket Booking",
+          area: "Failure Recovery",
           requirement:
-            "Customers must be able to book one or more ticket types and quantities for a published future event, while the system validates ticket types and quantities, calculates totals, processes simulated payment including SIMULATED_FAIL testing, snapshots event details onto the booking, supports paginated customer booking history, supports booking detail views for customers and admins/hosts, provides booking summaries per event, and generates unique booking and transaction references.",
+            "If payment or inventory compensation fails, the system must preserve enough state to recover the reservation safely.",
           priority: "High",
         },
         {
           id: "ETB-FR-04",
-          area: "Notifications",
+          area: "Reliable Messaging",
           requirement:
-            "The system must send booking confirmation emails when bookings are confirmed, publish auth and booking events asynchronously through RabbitMQ, consume those events in the notification service, send email through Brevo, and expose admin/internal notification management endpoints.",
+            "A committed booking must not silently lose notification work when RabbitMQ, a publisher, or a worker fails.",
           priority: "High",
         },
         {
           id: "ETB-FR-05",
-          area: "API Gateway",
+          area: "Authorization",
           requirement:
-            "The gateway must route all client requests to downstream services by path, such as /user-service, /event-service, and /booking-service, and must be discoverable via Eureka so it can route to dynamically registered service instances.",
+            "ADMIN can manage the platform; HOST users can manage only resources they own; CUSTOMER users can access public events and their own bookings.",
           priority: "High",
         },
+      ],
+      qualityAttributes: [
         {
-          id: "ETB-FR-06",
-          area: "Service Infrastructure",
-          requirement:
-            "All services must register themselves with Eureka for service discovery and fetch centralized configuration from the Config Server backed by config-repo.",
-          priority: "High",
+          attribute: "Consistency",
+          scenario: "Two customers try to reserve the last available ticket at the same time.",
+          response: "Inventory reservation is performed atomically so successful concurrent requests cannot reduce available stock below zero.",
         },
         {
-          id: "ETB-FR-07",
-          area: "Customer Web App",
-          requirement:
-            "Customers must be able to browse events, view event details, select tickets, complete a booking end-to-end through the Next.js UI, and view booking history through their dashboard.",
-          priority: "High",
+          attribute: "Idempotency",
+          scenario: "A client times out and retries the same booking request.",
+          response: "Each booking uses an Idempotency-Key and request fingerprint. The same request returns the existing booking, while a changed request using the same key is rejected.",
         },
         {
-          id: "ETB-FR-08",
-          area: "Admin Dashboard",
-          requirement:
-            "Admins and hosts must be able to manage events and view bookings and statistics through a dedicated admin UI.",
-          priority: "High",
+          attribute: "Recoverability",
+          scenario: "Payment can fail after inventory has already been reserved, and recovery work can also fail or be interrupted.",
+          response: "Failed payment triggers inventory compensation. If immediate release fails, reservation-expiry recovery retries the release using persisted booking state.",
+        },
+        {
+          attribute: "Security & Ownership",
+          scenario: "A HOST must not be able to manage another HOST's events or booking information.",
+          response: "Authorization is enforced in the backend using JWT roles and resource ownership checks rather than relying only on frontend visibility.",
         },
       ],
       diagrams: [
         {
-          title: "Context Diagram",
-          src: "projects/event-booking/Context_diagram_c1.png",
-          alt: "Event Ticket Booking Platform context diagram",
+          title: "System Architecture",
+          section: "overview",
+          src: "projects/event-booking/system_architecture.svg",
+          alt: "Event Ticket Booking Platform system architecture showing client applications, gateway, Auth, Event, Booking and Notification services, RabbitMQ, service-owned databases, Keycloak, S3, Brevo, Config Server and Eureka.",
+        },
+        {
+          title: "Reliable Booking Flow",
+          section: "challenges",
+          src: "projects/event-booking/reliable_booking_sequence.svg",
+          alt: "Booking workflow showing idempotency checks, concurrency-safe inventory reservation, payment, booking transaction, transactional outbox publication and notification processing.",
+        },
+        {
+          title: "Outbox & Failure Recovery",
+          section: "architecture",
+          src: "projects/event-booking/outbox_failure_recovery.svg",
+          alt: "Failure recovery flow showing outbox state recovery, optimistic version protection, RabbitMQ publication, retries, dead-letter handling and event deduplication.",
+        },
+        {
+          title: "Host Onboarding & Authorization",
+          section: "architecture",
+          src: "projects/event-booking/host_onboarding_authorization.svg",
+          alt: "Host application approval flow and backend authorization boundaries for Admin, Host and Customer roles.",
         },
       ],
-      designPatterns: [],
+      tradeOffs: [
+        "At-least-once messaging\nRabbitMQ can redeliver events. The system therefore uses stable event IDs and consumer-side deduplication instead of claiming exactly-once delivery.",
+        "Compensation instead of 2PC\nBooking and inventory remain separate local transactions. This avoids distributed transaction coordination, but partial failures require explicit compensation and recovery logic.",
+        "Consistency vs concurrency\nCritical inventory operations prioritize correctness under contention. This can serialize some highly contested updates, but prevents invalid ticket availability.",
+        "Microservices complexity\nIndependent services improve domain ownership and failure isolation, but require additional configuration, discovery, messaging, deployment, and operational coordination.",
+      ],
+      designPatterns: [
+        {
+          pattern: "Idempotency Key",
+          where: "Booking requests are identified by a user-scoped idempotency key and request fingerprint.",
+          why: "Makes retries safe and prevents duplicate bookings or repeated inventory deduction.",
+        },
+        {
+          pattern: "Transactional Outbox",
+          where: "Booking state and an outgoing event are stored before asynchronous RabbitMQ publication.",
+          why: "The database and message broker cannot participate in one normal local transaction, so the outbox preserves publication work after the booking commit.",
+        },
+        {
+          pattern: "Compensating Transaction",
+          where: "When payment fails after inventory reservation, the Booking Service releases the reserved inventory.",
+          why: "Event and Booking services own separate transactions, so compensation is used instead of a distributed two-phase commit.",
+        },
+        {
+          pattern: "Retry + Consumer Idempotency",
+          where: "Notification processing retries transient failures and uses stable event IDs to identify previously processed events.",
+          why: "The messaging model is at-least-once, so redelivery must be handled safely rather than assuming every event arrives once.",
+        },
+        {
+          pattern: "Database per Service",
+          where: "Auth, Event, Booking, and Notification services own their own persistence.",
+          why: "This keeps service boundaries explicit and avoids cross-service database coupling.",
+        },
+      ],
     },
   },
   kafkaOrderPipeline,

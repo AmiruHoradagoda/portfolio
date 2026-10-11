@@ -7,10 +7,10 @@ const buttonClass = "inline-flex h-11 w-11 items-center justify-center rounded-l
 <div class="relative min-w-0 bg-[#080d24]" data-diagram-canvas>
   <div
     class:list={["image-load-frame diagram-image-frame overflow-auto overscroll-contain", expanded ? "h-[calc(90dvh-5rem)]" : "h-[clamp(18rem,48vw,32rem)]"]}
-    style="overflow: auto;"
+    style={`overflow: auto; scrollbar-gutter: stable;${/\.svg(?:[?#]|$)/i.test(src) ? "background: #080d24;" : ""}`}
     data-image-frame data-zoom-viewport tabindex="0" aria-label="Diagram; scroll to explore when zoomed in"
   >
-    <div class="flex min-h-full min-w-full items-center justify-center" data-zoom-stage>
+    <div class="flex items-center justify-center" data-zoom-stage>
       <img src={src} alt={alt} class="block shrink-0 object-contain" style="max-width: none;" loading="lazy" draggable="false" data-load-image
         data-diagram-image={!expanded || undefined} data-diagram-dialog-image={expanded || undefined} data-diagram-label={title} />
     </div>
@@ -37,11 +37,12 @@ const buttonClass = "inline-flex h-11 w-11 items-center justify-center rounded-l
     let zoom = 1;
     function render() {
       const width = viewport.clientWidth;
-      const height = viewport.clientHeight;
+      // The outer height stays fixed when a horizontal zoom scrollbar appears.
+      const height = viewport.offsetHeight;
       if (!width || !height || !image.naturalWidth) return;
-      const fit = Math.min((width - 24) / image.naturalWidth, (height - 80) / image.naturalHeight);
-      const imageWidth = image.naturalWidth * fit * zoom;
-      const imageHeight = image.naturalHeight * fit * zoom;
+      const fit = Math.max(0, Math.min((width - 24) / image.naturalWidth, (height - 80) / image.naturalHeight));
+      const imageWidth = Math.floor(image.naturalWidth * fit * zoom);
+      const imageHeight = Math.floor(image.naturalHeight * fit * zoom);
       image.style.width = `${imageWidth}px`;
       image.style.height = `${imageHeight}px`;
       stage.style.width = `${Math.max(width, imageWidth + 24)}px`;
@@ -62,7 +63,11 @@ const buttonClass = "inline-flex h-11 w-11 items-center justify-center rounded-l
     plus.addEventListener("click", () => changeZoom(0.25));
     minus.addEventListener("click", () => changeZoom(-0.25));
     image.addEventListener("load", () => { zoom = 1; render(); viewport.scrollTo(0, 0); });
-    new ResizeObserver(render).observe(viewport);
+    let resizeFrame = 0;
+    new ResizeObserver(() => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(render);
+    }).observe(viewport, { box: "border-box" });
     canvas.querySelector("[data-diagram-collapse]")?.addEventListener("click", () => canvas.closest("dialog")?.close());
     render();
   });

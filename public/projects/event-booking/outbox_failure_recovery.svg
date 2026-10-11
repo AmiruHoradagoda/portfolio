@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+<title id="title">Outbox &amp; Failure Recovery</title><desc id="desc">Explicit recovery paths for interrupted publication and abandoned worker claims</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#67e8f9"/></marker></defs>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#e2e8f0;font-size:24px} .title{font-size:38px;font-weight:700;fill:#f8fafc}.sub{fill:#94a3b8;font-size:23px}.label{font-size:21px;fill:#67e8f9;font-weight:700}.heading{font-weight:700;fill:#f8fafc}.edge{fill:none;stroke:#67e8f9;stroke-width:2.5;stroke-linejoin:round;marker-end:url(#arrow)}.dash{stroke-dasharray:7 6}</style>
+<rect width="1600" height="900" rx="24" fill="#080d24"/>
+<text x="60" y="65" class="title">Outbox &amp; Failure Recovery</text><text x="60" y="105" class="sub">Explicit recovery paths for interrupted publication and abandoned worker claims</text>
+<rect x="60" y="140" width="700" height="655" rx="18" fill="#0b142b" stroke="#243958"/>
+<text x="82" y="178" class="label">OUTBOX WORKER</text>
+<rect x="100" y="210" width="250" height="65" rx="14" fill="#12304a" stroke="#22d3ee" stroke-width="2"/>
+<text x="120" y="250.5" class="heading">PENDING</text>
+<path d="M225 275V325" class="edge"/>
+<rect x="100" y="325" width="250" height="65" rx="14" fill="#12304a" stroke="#22d3ee" stroke-width="2"/>
+<text x="120" y="365.5" class="heading">PROCESSING</text>
+<path d="M225 390V490" class="edge"/>
+<rect x="100" y="490" width="250" height="95" rx="14" fill="#101d38" stroke="#36537c" stroke-width="2"/>
+<text x="120" y="515" class="heading">RabbitMQ publish</text>
+<text x="120" y="545">Publisher</text><text x="120" y="575">confirmation</text>
+<path d="M225 585V660" class="edge"/>
+<rect x="100" y="660" width="250" height="65" rx="14" fill="#101d38" stroke="#36537c" stroke-width="2"/>
+<text x="120" y="700.5" class="heading">SENT</text>
+<path d="M350 355H420" class="edge"/>
+<rect x="420" y="310" width="300" height="95" rx="14" fill="#101d38" stroke="#36537c" stroke-width="2"/>
+<text x="440" y="350.5" class="heading">Worker crash /</text>
+<text x="440" y="380.5">stale timeout</text>
+<path d="M570 405V480" class="edge"/>
+<rect x="420" y="480" width="300" height="95" rx="14" fill="#101d38" stroke="#36537c" stroke-width="2"/>
+<text x="440" y="520.5" class="heading">Recover stale claim</text>
+<text x="440" y="550.5">→ PENDING</text>
+<path d="M720 525H740V245H350" class="edge dash"/>
+<text x="100" y="765" class="sub">Optimistic version protection rejects stale updates.</text>
+<rect x="800" y="140" width="740" height="655" rx="18" fill="#0b142b" stroke="#243958"/>
+<text x="822" y="178" class="label">NOTIFICATION DELIVERY</text>
+<rect x="840" y="205" width="280" height="65" rx="14" fill="#12304a" stroke="#22d3ee" stroke-width="2"/>
+<text x="860" y="245.5" class="heading">RabbitMQ</text>
+<path d="M980 270V310" class="edge"/>
+<rect x="840" y="310" width="280" height="65" rx="14" fill="#101d38" stroke="#36537c" stroke-width="2"/>
+<text x="860" y="333" class="heading">Notification</text><text x="860" y="363">Consumer</text>
+<path d="M980 375V420" class="edge"/>
+<rect x="840" y="420" width="280" height="80" rx="14" fill="#12304a" stroke="#22d3ee" stroke-width="2"/>
+<text x="860" y="450" class="heading">ProcessedEvent</text><text x="860" y="480">check</text>
+<path d="M1120 460H1190" class="edge"/>
+<rect x="1190" y="415" width="310" height="95" rx="14" fill="#101d38" stroke="#36537c" stroke-width="2"/>
+<text x="1210" y="455.5" class="heading">Already processed</text>
+<text x="1210" y="485.5">Suppress duplicate work</text>
+<path d="M980 500V555" class="edge"/>
+<rect x="840" y="555" width="280" height="65" rx="14" fill="#101d38" stroke="#36537c" stroke-width="2"/>
+<text x="860" y="595.5" class="heading">New event → process</text>
+<path d="M980 620V690" class="edge"/>
+<rect x="840" y="690" width="280" height="65" rx="14" fill="#101d38" stroke="#36537c" stroke-width="2"/>
+<text x="860" y="730.5" class="heading">Success</text>
+<path d="M1120 585H1150V570H1190" class="edge"/>
+<rect x="1190" y="540" width="310" height="80" rx="14" fill="#101d38" stroke="#36537c" stroke-width="2"/>
+<text x="1210" y="573" class="heading">Transient failure</text>
+<text x="1210" y="603">Retry</text>
+<path d="M1500 580H1520V345H1120" class="edge dash"/>
+<path d="M1120 600H1150V710H1190" class="edge"/>
+<rect x="1190" y="655" width="310" height="110" rx="14" fill="#101d38" stroke="#36537c" stroke-width="2"/>
+<text x="1210" y="688" class="heading">Retries exhausted /</text>
+<text x="1210" y="718">permanent failure</text>
+<text x="1210" y="748">→ DLQ</text>
+<text x="60" y="855" class="label">At-least-once, not exactly-once.</text>
+</svg>

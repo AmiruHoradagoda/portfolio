@@ -1,0 +1,206 @@
+---
+import { Code2, Database, FileText, Network, Server, X } from "@lucide/astro";
+import DiagramCanvas from "./DiagramCanvas.astro";
+import type { ProjectDiagram } from "../data/profile";
+import { assetPath } from "../utils/paths";
+interface Props { diagrams: ProjectDiagram[]; idPrefix: string }
+const { diagrams, idPrefix } = Astro.props;
+const diagramIconRules = [
+  { pattern: /\ber\b|entity relationship/i, Icon: Database },
+  { pattern: /document/i, Icon: FileText },
+  { pattern: /code/i, Icon: Code2 },
+  { pattern: /container/i, Icon: Server },
+  { pattern: /context|component|c4/i, Icon: Network },
+];
+
+function getDiagramIcon(title: string) {
+  return (
+    diagramIconRules.find(({ pattern }) => pattern.test(title))?.Icon ?? Network
+  );
+}
+
+---
+{diagrams.length > 0 && (
+  <section class="mt-8 min-w-0 overflow-hidden rounded-xl border border-white/10 bg-[#0a0e27]/45" aria-label="Supporting diagrams" data-diagram-viewer>
+    {diagrams.length > 1 ? (
+      <div class="flex gap-2 overflow-x-auto border-b border-white/10 p-4" role="tablist" aria-label="Supporting diagrams">
+        {diagrams.map((diagram, index) => {
+          const Icon = getDiagramIcon(diagram.title);
+          return (
+            <button class:list={["inline-flex min-h-14 w-60 flex-none items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm font-semibold transition", index === 0 ? "border-blue-400/50 bg-blue-500/20 text-white" : "border-white/10 bg-white/[0.04] text-slate-400 hover:border-white/25 hover:bg-white/10 hover:text-white"]}
+              id={`${idPrefix}-diagram-tab-${index}`} type="button" role="tab" aria-selected={index === 0 ? "true" : "false"}
+              aria-controls={`${idPrefix}-diagram-panel`} tabindex={index === 0 ? 0 : -1}
+              data-diagram-trigger data-diagram-src={assetPath(diagram.src)} data-diagram-alt={diagram.alt} data-diagram-label={diagram.title} data-diagram-caption={diagram.caption ?? ""}>
+              <Icon class="h-5 w-5 flex-none text-blue-200" aria-hidden="true" stroke-width={2} />
+              <span class="min-w-0 break-words">{diagram.title}</span>
+            </button>
+          );
+        })}
+      </div>
+    ) : (
+      <h4 class="border-b border-white/10 px-5 py-4 text-base font-bold text-blue-200">{diagrams[0].title}</h4>
+    )}
+    <figure class="min-w-0" id={`${idPrefix}-diagram-panel`} role={diagrams.length > 1 ? "tabpanel" : undefined} aria-labelledby={diagrams.length > 1 ? `${idPrefix}-diagram-tab-0` : undefined}>
+      <DiagramCanvas src={assetPath(diagrams[0].src)} alt={diagrams[0].alt} title={diagrams[0].title} />
+      <figcaption class:list={["border-t border-white/10 px-5 py-3 text-sm leading-6 text-slate-400", { hidden: !diagrams[0].caption }]} data-diagram-caption>{diagrams[0].caption}</figcaption>
+    </figure>
+    <dialog class="diagram-dialog w-[min(96vw,78rem)] max-w-none overflow-hidden rounded-2xl border border-white/15 bg-[#080d24] p-0 text-white shadow-2xl shadow-black/50" data-diagram-dialog aria-labelledby={`${idPrefix}-diagram-dialog-title`}>
+      <div class="flex flex-col">
+        <div class="flex items-center justify-between gap-4 border-b border-white/10 bg-[#0a0e27] px-4 py-3 sm:px-5">
+          <h3 id={`${idPrefix}-diagram-dialog-title`} class="text-base font-bold text-white sm:text-lg" data-diagram-dialog-title>{diagrams[0].title}</h3>
+          <button class="inline-flex h-10 w-10 flex-none items-center justify-center rounded-xl border border-white/15 bg-white/10 text-white transition hover:bg-white/20" type="button" aria-label="Close diagram viewer" data-diagram-close><X class="h-5 w-5" aria-hidden="true" stroke-width={2} /></button>
+        </div>
+        <DiagramCanvas src={assetPath(diagrams[0].src)} alt={diagrams[0].alt} title={diagrams[0].title} expanded />
+        <p class="hidden px-5 py-3 text-sm leading-6 text-slate-400" data-diagram-dialog-caption></p>
+      </div>
+    </dialog>
+  </section>
+)}
+
+<script>
+    document.querySelectorAll("[data-diagram-viewer]").forEach((viewer) => {
+      const triggers = Array.from(
+        viewer.querySelectorAll<HTMLButtonElement>("[data-diagram-trigger]"),
+      );
+      const caption = viewer.querySelector("figcaption");
+      const dialogCaption = viewer.querySelector("[data-diagram-dialog-caption]");
+      const figure = viewer.querySelector("figure");
+      const image = viewer.querySelector("[data-diagram-image]");
+      const openButton = viewer.querySelector("[data-diagram-open]");
+      const dialog = viewer.querySelector("[data-diagram-dialog]");
+      const dialogTitle = viewer.querySelector("[data-diagram-dialog-title]");
+      const dialogImage = viewer.querySelector("[data-diagram-dialog-image]");
+      const closeButton = viewer.querySelector("[data-diagram-close]");
+
+      if (
+        !(image instanceof HTMLImageElement) ||
+        !(openButton instanceof HTMLButtonElement) ||
+        !(dialog instanceof HTMLDialogElement) ||
+        !(dialogTitle instanceof HTMLElement) ||
+        !(dialogImage instanceof HTMLImageElement)
+      ) {
+        return;
+      }
+
+      function markImageLoaded(targetImage: HTMLImageElement) {
+        const frame = targetImage.closest("[data-image-frame]");
+        if (frame instanceof HTMLElement) {
+          frame.dataset.imageLoaded = "true";
+        }
+      }
+
+      function prepareImageLoad(targetImage: HTMLImageElement) {
+        const frame = targetImage.closest("[data-image-frame]");
+        if (frame instanceof HTMLElement) {
+          frame.dataset.imageLoaded = "false";
+        }
+
+        targetImage.addEventListener(
+          "load",
+          () => markImageLoaded(targetImage),
+          { once: true },
+        );
+        targetImage.addEventListener(
+          "error",
+          () => markImageLoaded(targetImage),
+          { once: true },
+        );
+      }
+
+      function setImage(targetImage: HTMLImageElement, src: string, alt: string) {
+        prepareImageLoad(targetImage);
+        const frame = targetImage.closest<HTMLElement>("[data-image-frame]");
+        if (frame) frame.style.background = /\.svg(?:[?#]|$)/i.test(src) ? "#080d24" : "";
+        targetImage.src = src;
+        targetImage.alt = alt;
+
+        if (targetImage.complete && targetImage.naturalWidth > 0) {
+          markImageLoaded(targetImage);
+        }
+      }
+
+      function getCurrentDiagram() {
+        return {
+          src: image.currentSrc || image.src,
+          alt: image.alt,
+          title: image.dataset.diagramLabel ?? "Project diagram",
+        };
+      }
+
+      function selectDiagram(trigger: HTMLButtonElement) {
+        if (!(trigger instanceof HTMLButtonElement)) {
+          return;
+        }
+
+        const src = trigger.dataset.diagramSrc;
+        const alt = trigger.dataset.diagramAlt ?? "";
+        const diagramTitle = trigger.dataset.diagramLabel ?? "Project diagram";
+
+        if (!src) {
+          return;
+        }
+
+        triggers.forEach((item) => {
+          const isSelected = item === trigger;
+          item.setAttribute("aria-selected", String(isSelected));
+          (item as HTMLButtonElement).tabIndex = isSelected ? 0 : -1;
+          item.classList.toggle("border-blue-400/50", isSelected);
+          item.classList.toggle("bg-blue-500/20", isSelected);
+          item.classList.toggle("text-white", isSelected);
+          item.classList.toggle("border-white/10", !isSelected);
+          item.classList.toggle("bg-white/[0.04]", !isSelected);
+          item.classList.toggle("text-slate-400", !isSelected);
+        });
+
+        if (caption instanceof HTMLElement) {
+          caption.textContent = trigger.dataset.diagramCaption ?? "";
+          caption.classList.toggle("hidden", !caption.textContent);
+        }
+        figure?.setAttribute("aria-labelledby", trigger.id);
+        trigger.scrollIntoView({ block: "nearest", inline: "nearest" });
+        setImage(image, src, alt);
+        image.dataset.diagramLabel = diagramTitle;
+      }
+
+      triggers.forEach((trigger) => {
+        trigger.addEventListener("click", () => selectDiagram(trigger));
+        trigger.addEventListener("keydown", (event: KeyboardEvent) => {
+          const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
+          if (!keys.includes(event.key)) return;
+          event.preventDefault();
+          const current = triggers.indexOf(trigger);
+          const index = event.key === "Home" ? 0 : event.key === "End" ? triggers.length - 1 : (current + (event.key === "ArrowRight" ? 1 : -1) + triggers.length) % triggers.length;
+          const next = triggers[index] as HTMLButtonElement;
+          selectDiagram(next);
+          next.focus();
+        });
+      });
+
+      openButton.addEventListener("click", () => {
+        const current = getCurrentDiagram();
+        dialogTitle.textContent = current.title;
+        if (dialogCaption instanceof HTMLElement) {
+          dialogCaption.textContent = caption?.textContent ?? "";
+          dialogCaption.classList.toggle("hidden", !dialogCaption.textContent);
+        }
+        setImage(dialogImage, current.src, current.alt);
+        dialog.showModal();
+        document.documentElement.classList.add("overflow-hidden");
+      });
+
+      if (closeButton instanceof HTMLButtonElement) {
+        closeButton.addEventListener("click", () => dialog.close());
+      }
+
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) {
+          dialog.close();
+        }
+      });
+
+      dialog.addEventListener("close", () => {
+        document.documentElement.classList.remove("overflow-hidden");
+      });
+    });
+
+</script>

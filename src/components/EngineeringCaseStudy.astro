@@ -1,0 +1,188 @@
+---
+import { Code2, Database, FileText, Network } from "@lucide/astro";
+import type { Project } from "../data/profile";
+import { getProjectCaseStudy } from "../utils/projectCaseStudy";
+import { getTechLogo } from "../utils/techLogos";
+import CaseStudyDiagrams from "./CaseStudyDiagrams.astro";
+
+interface Props { project: Project }
+const { project } = Astro.props;
+const { details, challenges, diagramsBySection } = getProjectCaseStudy(project);
+const tabs = [
+  { id: "overview", label: "Overview", Icon: FileText },
+  { id: "challenges", label: "Challenges & Solutions", Icon: Network },
+  { id: "architecture", label: "Architecture & Design", Icon: Code2 },
+  { id: "decisions", label: "Decisions & Trade-offs", Icon: Database },
+];
+const hasRequirements = details.functionalRequirements.length > 0 || !!details.engineeringRequirements?.length;
+const showRequirements = hasRequirements && details.showSupportingRequirements !== false;
+const metadata = [
+  { label: "Role", value: project.role },
+  { label: "Type", value: project.type },
+  { label: "Status", value: project.status },
+  { label: "Year", value: project.year },
+];
+---
+
+<section class="overflow-hidden rounded-2xl border border-white/10 bg-[#101632] shadow-2xl shadow-blue-950/20" data-project-breakdown>
+  <div class="border-b border-white/10 bg-white/[0.04] p-5 sm:p-6">
+    <h2 class="text-3xl font-bold text-white">Engineering Case Study</h2>
+  </div>
+  <div class="grid min-w-0 lg:grid-cols-[18rem_1fr]">
+    <div class="min-w-0 border-b border-white/10 bg-[#0a0e27]/55 p-4 lg:border-b-0 lg:border-r">
+      <div class="grid grid-cols-2 gap-2 lg:grid-cols-1" role="tablist" aria-label="Engineering case study sections">
+        {tabs.map(({ id, label, Icon }, index) => (
+          <button class:list={["inline-flex min-h-12 min-w-0 items-center gap-2 rounded-xl border px-3 py-3 text-left text-sm font-semibold transition sm:gap-3", index === 0 ? "border-blue-400/50 bg-blue-500/20 text-white" : "border-white/10 bg-white/[0.04] text-slate-400 hover:border-white/25 hover:bg-white/10 hover:text-white"]}
+            id={`${project.slug}-case-tab-${id}`} type="button" role="tab" aria-selected={index === 0 ? "true" : "false"}
+            aria-controls={`${project.slug}-case-panel-${id}`} tabindex={index === 0 ? 0 : -1} data-case-tab={id}>
+            <Icon class="h-4 w-4 flex-none text-blue-200" aria-hidden="true" stroke-width={2} />
+            <span class="min-w-0 break-words">{label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="min-w-0 p-5 [overflow-wrap:anywhere] sm:p-6" data-case-content>
+      <section id={`${project.slug}-case-panel-overview`} role="tabpanel" aria-labelledby={`${project.slug}-case-tab-overview`} tabindex="0" data-case-panel="overview">
+        <p class="text-sm font-semibold uppercase tracking-[0.16em] text-blue-300">Background</p>
+        <h3 class="mt-2 text-2xl font-bold text-white">{details.overviewHeading ?? "What this project solves"}</h3>
+        {details.background.split(/\n\s*\n/).map((paragraph) => (
+          <p class="mt-4 text-base leading-8 text-slate-300">
+            {paragraph.split(/(\*\*.*?\*\*)/g).map((part) => part.startsWith("**") && part.endsWith("**")
+              ? <strong class="font-semibold text-white">{part.slice(2, -2)}</strong> : part)}
+          </p>
+        ))}
+        <dl class="mt-6 grid gap-x-6 gap-y-4 border-y border-white/10 py-5 sm:grid-cols-2 xl:grid-cols-4">
+          {metadata.map(({ label, value }) => (
+            <div class="min-w-0"><dt class="text-sm font-semibold text-slate-500">{label}</dt><dd class="mt-1 break-words text-sm leading-6 text-slate-200">{value}</dd></div>
+          ))}
+        </dl>
+        <div class="mt-8">
+          <h4 class="text-sm font-semibold uppercase tracking-[0.16em] text-slate-300">Technology Stack</h4>
+          <div class="mt-4 flex flex-wrap gap-3">
+            {project.stack.map((item) => (
+              <span class="inline-flex min-h-11 max-w-full items-center gap-3 rounded-xl border border-blue-500/25 bg-blue-500/15 px-3 py-2 text-sm font-semibold text-blue-100">
+                <span class="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-white p-1.5 shadow-sm"><img src={getTechLogo(item)} alt={`${item} logo`} class="h-full w-full object-contain" loading="lazy" /></span>
+                <span class="min-w-0 break-words">{item}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+        <CaseStudyDiagrams diagrams={diagramsBySection.overview} idPrefix={`${project.slug}-overview`} />
+      </section>
+
+      <section class="hidden" hidden id={`${project.slug}-case-panel-challenges`} role="tabpanel" aria-labelledby={`${project.slug}-case-tab-challenges`} tabindex="0" data-case-panel="challenges">
+        <h3 class="text-2xl font-bold text-white">{details.qualityHeading ?? "Challenges & Solutions"}</h3>
+        {challenges.length > 0 && (
+          <div class="mt-6 divide-y divide-white/10 rounded-2xl border border-white/10 bg-[#0a0e27]/45">
+            <div class="hidden grid-cols-2 gap-4 px-5 py-4 text-xs font-semibold uppercase tracking-wider text-blue-300 xl:grid" aria-hidden="true">
+              <span>Challenge</span>
+              <span>Solution</span>
+            </div>
+            {challenges.map((item) => (
+              <article class="px-4 py-5 sm:px-5">
+                {item.title && <h4 class="mb-3 text-base font-bold text-blue-200">{item.title}</h4>}
+                <div class="grid gap-4 xl:grid-cols-2">
+                  <div><p class="text-xs font-semibold uppercase tracking-wider text-blue-300 xl:sr-only">Challenge</p><p class="mt-2 text-base leading-7 text-slate-200 xl:mt-0">{item.problem}</p></div>
+                  <div><p class="text-xs font-semibold uppercase tracking-wider text-blue-300 xl:sr-only">Solution</p><p class="mt-2 text-base leading-7 text-slate-300 xl:mt-0">{item.solution}</p></div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+        {challenges.length === 0 && project.challenges.length > 0 && (
+          <ul class="mt-5 list-disc space-y-3 pl-5 text-base leading-7 text-slate-300">{project.challenges.map((item) => <li>{item}</li>)}</ul>
+        )}
+        {showRequirements ? (
+          <details class="mt-6 rounded-2xl border border-white/10 bg-[#0a0e27]/45 p-4 sm:p-5" open={challenges.length === 0}>
+            <summary class="cursor-pointer text-base font-bold text-blue-200">What needed to be solved</summary>
+            <ul class="mt-4 space-y-4 text-base leading-7 text-slate-300">
+              {details.functionalRequirements.map((item) => <li><span class="font-semibold text-slate-200">{item.area}: </span>{item.requirement}</li>)}
+              {details.engineeringRequirements?.map((item) => <li>{item}</li>)}
+            </ul>
+          </details>
+        ) : challenges.length === 0 && project.challenges.length === 0 && (
+          <div class="mt-6 text-base leading-7 text-slate-300">
+            <p>No project-specific challenges documented yet.</p>
+          </div>
+        )}
+        {!!details.eventFlow?.length && (
+          <div class="mt-8"><h4 class="text-xl font-bold text-white">Event Flow</h4><ol class="mt-4 list-decimal space-y-3 pl-6 text-base leading-7 text-slate-300">{details.eventFlow.map((step) => <li class="pl-1">{step}</li>)}</ol></div>
+        )}
+        <CaseStudyDiagrams diagrams={diagramsBySection.challenges} idPrefix={`${project.slug}-challenges`} />
+      </section>
+
+      <section class="hidden" hidden id={`${project.slug}-case-panel-architecture`} role="tabpanel" aria-labelledby={`${project.slug}-case-tab-architecture`} tabindex="0" data-case-panel="architecture">
+        <h3 class="text-2xl font-bold text-white">Architecture & Design</h3>
+        {details.designPatterns.length > 0 ? (
+          <div class="mt-6 divide-y divide-white/10 rounded-2xl border border-white/10 bg-[#0a0e27]/45">
+            {details.designPatterns.map((item, index) => (
+              <details class="group" open={index === 0}>
+                <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4 transition hover:bg-white/[0.04] sm:px-5"><h4 class="text-base font-bold text-white">{item.pattern}</h4><span class="text-lg leading-none text-blue-200 transition group-open:rotate-45">+</span></summary>
+                <div class="px-4 pb-5 sm:px-5"><p class="text-base leading-7 text-slate-200">{item.where}</p><p class="mt-3 text-base leading-7 text-slate-400">{item.why}</p></div>
+              </details>
+            ))}
+          </div>
+        ) : diagramsBySection.architecture.length === 0 && !details.eventSchema?.length && <p class="mt-4 text-base leading-7 text-slate-400">No project-specific architecture notes documented yet.</p>}
+        {!!details.eventSchema?.length && (
+          <div class="mt-8 min-w-0">
+            <h4 class="text-xl font-bold text-white">Event Schema</h4>
+            <div class="mt-4 overflow-x-auto" role="region" aria-label="Event schema" tabindex="0">
+              <table class="w-full min-w-[32rem] text-left text-base leading-7 text-slate-300">
+                <caption class="sr-only">Event fields and validation rules</caption>
+                <thead class="border-b border-white/15 text-blue-200"><tr><th scope="col" class="p-3">Field</th><th scope="col" class="p-3">Type</th><th scope="col" class="p-3">Description</th></tr></thead>
+                <tbody>{details.eventSchema.map((item) => <tr class="border-b border-white/10 last:border-0"><th scope="row" class="p-3 font-mono font-medium text-white">{item.field}</th><td class="p-3 font-mono">{item.type}</td><td class="p-3">{item.description}</td></tr>)}</tbody>
+              </table>
+            </div>
+          </div>
+        )}
+        <CaseStudyDiagrams diagrams={diagramsBySection.architecture} idPrefix={`${project.slug}-architecture`} />
+      </section>
+
+      <section class="hidden" hidden id={`${project.slug}-case-panel-decisions`} role="tabpanel" aria-labelledby={`${project.slug}-case-tab-decisions`} tabindex="0" data-case-panel="decisions">
+        <h3 class="text-2xl font-bold text-white">Decisions & Trade-offs</h3>
+        {details.tradeOffs?.length ? (
+          <ul class="mt-5 divide-y divide-white/10 rounded-2xl border border-white/10 bg-[#0a0e27]/45">
+            {details.tradeOffs.map((item) => {
+              const [heading, ...body] = item.split("\n");
+              return <li class="px-4 py-5 sm:px-5">
+                {body.length > 0 ? <><h4 class="text-base font-bold text-blue-200">{heading}</h4><p class="mt-2 text-base leading-7 text-slate-300">{body.join("\n")}</p></> : <p class="text-base leading-7 text-slate-300">{item}</p>}
+              </li>;
+            })}
+          </ul>
+        ) : <p class="mt-4 text-base leading-7 text-slate-400">No project-specific decisions or trade-offs documented yet.</p>}
+        <CaseStudyDiagrams diagrams={diagramsBySection.decisions} idPrefix={`${project.slug}-decisions`} />
+      </section>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-project-breakdown]").forEach((breakdown) => {
+    const tabs = Array.from(breakdown.querySelectorAll<HTMLButtonElement>("[data-case-tab]"));
+    const panels = Array.from(breakdown.querySelectorAll<HTMLElement>("[data-case-panel]"));
+    function selectTab(tab: HTMLButtonElement) {
+      tabs.forEach((item) => {
+        const selected = item === tab;
+        item.setAttribute("aria-selected", String(selected));
+        item.tabIndex = selected ? 0 : -1;
+        ["border-blue-400/50", "bg-blue-500/20", "text-white"].forEach((name) => item.classList.toggle(name, selected));
+        ["border-white/10", "bg-white/[0.04]", "text-slate-400"].forEach((name) => item.classList.toggle(name, !selected));
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.casePanel !== tab.dataset.caseTab;
+        panel.classList.toggle("hidden", panel.hidden);
+      });
+    }
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => selectTab(tab));
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (index + (["ArrowRight", "ArrowDown"].includes(event.key) ? 1 : -1) + tabs.length) % tabs.length;
+        selectTab(tabs[nextIndex]);
+        tabs[nextIndex].focus();
+      });
+    });
+  });
+</script>
