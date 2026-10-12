@@ -13,6 +13,11 @@ export const kafkaOrderPipeline: Project = {
   subtitle: "Reliable event processing with Kafka, Avro, retries, DLQ handling, and real-time aggregation.",
   description: "A focused event-driven engineering project using Kafka to decouple order publication from processing, with a shared Avro contract and observable failure handling.",
   stack: ["Apache Kafka", "Python", "Avro", "Docker"],
+  stackGroups: [
+    { title: "Backend", items: ["Python"] },
+    { title: "Messaging & Serialization", items: ["Apache Kafka", "Avro"] },
+    { title: "Infrastructure", items: ["Docker"] },
+  ],
   cardStack: ["Apache Kafka", "Python", "Avro", "Docker"],
   features: ["Avro order events", "Running count, total, and average", "Bounded retries and DLQ inspection", "Explicit source-offset commits"],
   challenges: ["Coordinating processing outcomes with offset commits", "Keeping failure behavior observable without overstating delivery guarantees"],
@@ -59,6 +64,6 @@ export const kafkaOrderPipeline: Project = {
       { pattern: "Schema-Based Messaging", where: "schemas/order.avsc defines the shared Order record.", why: "The same field contract governs encoding and decoding." },
       { pattern: "Explicit Acknowledgement", where: "The main consumer disables automatic commits and deliberately commits source offsets.", why: "Processing outcomes determine when progress is recorded; the DLQ monitor uses default automatic commits." },
     ],
-    diagrams: [{ title: "Order Processing Architecture", src: "projects/kafka-order-pipeline/architecture.png", alt: "Resilient Kafka Order Processing Pipeline architecture diagram" }],
+    diagrams: [{ title: "Order Processing Architecture", src: "projects/kafka-order-pipeline/archi&design/architecture.png", alt: "Resilient Kafka Order Processing Pipeline architecture diagram" }],
   },
 };

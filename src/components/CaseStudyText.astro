@@ -1,0 +1,36 @@
+---
+interface Props { text: string }
+const { text } = Astro.props;
+const inlineParts = (value: string) => value.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).map(part => ({
+  kind: part.startsWith("**") ? "bold" : part.startsWith("`") ? "code" : "text",
+  text: part.startsWith("**") ? part.slice(2, -2) : part.startsWith("`") ? part.slice(1, -1) : part,
+}));
+const blocks = text.split(/(```[\s\S]*?```)/g).flatMap(part =>
+  part.startsWith("```") ? [part] : part.split(/\n\s*\n/)
+).filter(block => block.trim()).map(block => {
+  const isCode = block.startsWith("```");
+  const isList = !isCode && block.split("\n").every(line => line.startsWith("- "));
+  return {
+    kind: isCode ? "code" : isList ? "list" : "paragraph",
+    code: isCode ? block.replace(/^```[^\n]*\n/, "").replace(/\n```$/, "") : "",
+    lines: isList ? block.split("\n").map(line => inlineParts(line.slice(2))) : [inlineParts(block)],
+  };
+});
+---
+<div class="space-y-4 text-base leading-7 text-slate-300">
+  {blocks.map(block => block.kind === "code" ? (
+    <pre class="max-w-full whitespace-pre-wrap break-words rounded-lg border border-white/10 bg-[#080d24] p-4 text-sm leading-6 text-blue-100"><code>{block.code}</code></pre>
+  ) : block.kind === "list" ? (
+    <ul class="list-disc space-y-2 pl-5">
+      {block.lines.map(line => <li>{line.map(part =>
+        part.kind === "bold" ? <strong class="font-semibold text-white">{part.text}</strong> :
+        part.kind === "code" ? <code class="rounded bg-white/5 px-1 py-0.5 text-[0.9em] text-blue-200">{part.text}</code> : part.text
+      )}</li>)}
+    </ul>
+  ) : (
+    <p>{block.lines[0].map(part =>
+      part.kind === "bold" ? <strong class="font-semibold text-white">{part.text}</strong> :
+      part.kind === "code" ? <code class="rounded bg-white/5 px-1 py-0.5 text-[0.9em] text-blue-200">{part.text}</code> : part.text
+    )}</p>
+  ))}
+</div>

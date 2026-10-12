@@ -30,6 +30,7 @@ export type Project = {
   cardStack?: string[];
   description: string;
   stack: string[];
+  stackGroups?: { title: string; items: string[] }[];
   features: string[];
   challenges: string[];
   links: {
@@ -73,14 +74,20 @@ export type ProjectDiagram = {
 export type SystemDesign = {
   title: string;
   whereImplemented?: string;
-  howImplemented: string;
+  howImplemented?: string;
+  content?: string;
   whyUsed?: string;
   diagram?: ProjectDiagram;
+  diagramPlaceholder?: string;
 };
 
-export type OopDesignPattern = DesignPattern & {
+export type OopDesignPattern = {
+  pattern: string;
+  where?: string;
+  why?: string;
   howImplemented?: string;
   diagram?: ProjectDiagram;
+  diagramPlaceholder?: string;
 };
 
 export type ChallengeSolution = {
@@ -93,6 +100,7 @@ export type ProjectDetails = {
   background: string;
   overviewDiagrams?: ProjectDiagram[];
   dataModelDiagrams?: ProjectDiagram[];
+  dataModelPlaceholders?: string[];
   systemDesigns?: SystemDesign[];
   oopDesignPatterns?: OopDesignPattern[];
   unclassifiedDiagrams?: ProjectDiagram[];
@@ -412,6 +420,15 @@ export const experience = [
 export const projects: Project[] = [
   {
     slug: "event-ticket-booking-platform",
+    stackGroups: [
+      { title: "Backend", items: ["Java 17", "Spring Boot", "Spring Cloud Gateway"] },
+      { title: "Frontend", items: ["Next.js", "Angular", "TypeScript"] },
+      { title: "Data & Messaging", items: ["MySQL", "MongoDB", "RabbitMQ"] },
+      { title: "Security", items: ["Keycloak"] },
+      { title: "Infrastructure", items: ["Docker", "Kubernetes", "Kustomize", "Google Cloud / GKE", "AWS S3"] },
+      { title: "CI/CD", items: ["GitHub Actions"] },
+      { title: "Testing", items: ["Testcontainers", "k6"] },
+    ],
     title: "Event Ticket Booking Platform",
     year: "2026",
     type: "Distributed Systems / Cloud Engineering",
@@ -482,43 +499,159 @@ export const projects: Project[] = [
     ],
     details: {
       overviewHeading: "Keeping bookings correct under concurrency and failure",
+      dataModelDiagrams: [
+        {
+          title: "Auth Service ER Diagram",
+          src: "projects/event-booking/archi&design/datamodelerdesign/auth-service-er.png",
+          alt: "Auth Service entity relationship diagram",
+        },
+        {
+          title: "Event Service ER Diagram",
+          src: "projects/event-booking/archi&design/datamodelerdesign/event-service-er.png",
+          alt: "Event Service entity relationship diagram",
+        },
+        {
+          title: "Booking Service ER Diagram",
+          src: "projects/event-booking/archi&design/datamodelerdesign/booking-service-er.png",
+          alt: "Booking Service entity relationship diagram",
+        },
+        {
+          title: "Notification Service Document Model",
+          src: "projects/event-booking/archi&design/datamodelerdesign/notification-service-dm.png",
+          alt: "Notification Service document model diagram",
+        },
+      ],
+      systemDesigns: [
+        {
+          "title": "Microservice Architecture & Database per Service",
+          "content": "The platform is divided into separate **Auth, Event, Booking, and Notification services**, with the API Gateway acting as the main entry point.\n\nEach service owns its own persistence instead of directly sharing another service's database. Services communicate through REST APIs for synchronous operations and RabbitMQ for asynchronous workflows.\n\nThis keeps service responsibilities separated and reduces tight coupling between domains.",
+          "diagramPlaceholder": "<Figure Microservice Architecture>"
+        },
+        {
+          "title": "Concurrency-Safe Ticket Inventory",
+          "content": "Ticket inventory is limited, so multiple customers may attempt to reserve the same remaining tickets at the same time.\n\nThe Event Service performs inventory changes at the database level using atomic update operations and locking where necessary instead of relying on a simple read-then-update flow.\n\nA reservation succeeds only when enough inventory is still available.\n\nThis prevents **overselling under concurrent booking requests**.",
+          "diagramPlaceholder": "<Figure Concurrent Ticket Reservation Flow>"
+        },
+        {
+          "title": "Idempotent Booking",
+          "content": "A client may retry a booking request after a timeout without knowing whether the original request already succeeded.\n\nThe Booking Service requires an **Idempotency-Key** and stores an `IdempotencyRecord` with the request fingerprint.\n\n- Same key + same request → return the existing booking\n- Same key + different request → reject as a conflict\n\nThis prevents retries from creating duplicate bookings or reserving inventory twice.",
+          "diagramPlaceholder": "<Figure Idempotent Booking Flow>"
+        },
+        {
+          "title": "Compensation & Reservation Recovery",
+          "content": "Inventory may be reserved successfully before a later booking step, such as payment, fails.\n\nBecause Booking Service and Event Service use separate local transactions, one database rollback cannot undo both operations.\n\nWhen payment fails, Booking Service requests Event Service to release the reserved inventory. The release uses a stable `releaseId`, allowing repeated compensation requests to be handled safely.\n\nIf immediate compensation fails, the booking stores a reservation expiry time so a scheduled recovery process can retry the inventory release later.\n\nThis allows the system to recover from **partial distributed failures without using two-phase commit**.",
+          "diagramPlaceholder": "<Figure Booking Compensation & Reservation Recovery Flow>"
+        },
+        {
+          "title": "Transactional Outbox",
+          "content": "Saving a booking and publishing a RabbitMQ message are two separate operations.\n\nWithout additional handling, the booking could commit successfully while message publication fails, causing notification work to be lost.\n\nThe Booking Service stores an `OutboxEvent` together with booking-related state. A separate worker later claims pending outbox records and publishes them to RabbitMQ.\n\nThe design also handles stale `PROCESSING` records so work abandoned by a failed worker can be recovered.\n\nThis reduces the risk of losing asynchronous work after the main database transaction succeeds.",
+          "diagram": {
+            "title": "Transactional Outbox & Failure Recovery Flow",
+            "src": "projects/event-booking/archi&design/outbox_failure_recovery.svg",
+            "alt": "Failure recovery flow showing outbox state recovery, optimistic version protection, RabbitMQ publication, retries, dead-letter handling and event deduplication."
+          }
+        },
+        {
+          "title": "At-Least-Once Messaging, Retry & Deduplication",
+          "content": "RabbitMQ messages may be delivered more than once, and notification processing may fail temporarily.\n\nThe notification workflow therefore uses retry handling and dead-letter processing for failed messages.\n\nStable event IDs are used to detect previously processed events so message redelivery does not repeatedly execute the same application-level operation.\n\nThe design follows **at-least-once delivery**, rather than claiming exactly-once messaging.",
+          "diagramPlaceholder": "<Figure Notification Retry & Deduplication Flow>"
+        },
+        {
+          "title": "Role & Resource Ownership Authorization",
+          "content": "Authentication alone is not enough for this system because users with the same role may still own different resources.\n\nKeycloak provides authenticated identities and roles such as:\n\n- CUSTOMER\n- HOST\n- ADMIN\n\nBackend services then apply resource ownership checks. For example, a HOST can manage only events owned by that HOST, while ADMIN users have platform-wide access.\n\nThe host onboarding workflow also follows:\n\n`CUSTOMER → Host Application → ADMIN Review → HOST Role`\n\nThis ensures authorization is enforced by backend services rather than depending only on frontend visibility.",
+          "diagram": {
+            "title": "Host Onboarding & Ownership Authorization Flow",
+            "src": "projects/event-booking/archi&design/host_onboarding_authorization.svg",
+            "alt": "Host application approval flow and backend authorization boundaries for Admin, Host and Customer roles."
+          }
+        }
+      ],
+      oopDesignPatterns: [
+        {
+          "pattern": "Repository Pattern",
+          "where": "Across the Spring Boot services using repositories such as:\n\n- `BookingRepository`\n- `PaymentRepository`\n- `IdempotencyRecordRepository`\n- `OutboxEventRepository`\n- `EventRepository`\n- `TicketTypeRepository`\n- `HostApplicationRepo`",
+          "howImplemented": "Repository interfaces extend Spring Data JPA repositories and expose database operations required by the service layer. More specialized queries are used where locking or domain-specific persistence behavior is required.",
+          "why": "It separates persistence logic from business logic and keeps services focused on application workflows rather than direct database access."
+        },
+        {
+          "pattern": "Builder Pattern",
+          "where": "Used extensively in entities and DTOs such as:\n\n- `Booking`\n- `BookingItem`\n- `Payment`\n- `IdempotencyRecord`\n- `OutboxEvent`\n- request and response DTOs",
+          "howImplemented": "Lombok `@Builder` provides builder-style object construction instead of relying on large constructors with many parameters.\n\nExample conceptually:\n\n```\nBooking.builder()\n    .userId(...)\n    .eventId(...)\n    .status(...)\n    .totalAmount(...)\n    .build();\n```",
+          "why": "It improves readability when constructing objects with many fields and reduces errors caused by long constructor argument lists."
+        },
+        {
+          "pattern": "Adapter Pattern",
+          "where": "`JwtAuthConverter` in the Auth and Event services.",
+          "howImplemented": "`JwtAuthConverter` implements Spring's:\n\n```\nConverter<Jwt, AbstractAuthenticationToken>\n```\n\nIt takes the JWT issued through Keycloak, extracts realm roles, converts them into Spring Security `GrantedAuthority` objects, and returns a `JwtAuthenticationToken`.\n\nSo conceptually:\n\n```\nKeycloak JWT\n      ↓\nJwtAuthConverter\n      ↓\nSpring Security AuthenticationToken\n```",
+          "why": "Keycloak's JWT representation and Spring Security's authorization model are different. The converter adapts one representation into the form expected by Spring Security without spreading JWT parsing logic throughout controllers and services.",
+          "diagramPlaceholder": "<Figure JWT Authentication Adapter>"
+        },
+        {
+          "pattern": "Facade Pattern",
+          "where": "`FileService` / `FileServiceImpl` in the Event Service.",
+          "howImplemented": "Application code does not directly deal with all AWS S3 operations.\n\nInstead, it calls simple methods such as:\n\n```\ncreateResource(...)\ndeleteResource(...)\n```\n\n`FileServiceImpl` internally handles:\n\n- filename generation\n- S3 metadata\n- object upload\n- S3 resource URL generation\n- deletion\n- error handling",
+          "why": "It hides AWS S3-specific complexity behind a small application-level interface, allowing event-management code to work with a simpler abstraction.",
+          "diagramPlaceholder": "<Figure File Storage Facade>"
+        }
+      ],
       showSupportingRequirements: false,
       background:
-        "A single booking crosses inventory, payment, persistence, and notification boundaries. Once those responsibilities are separated into services, failures can occur between individual steps.\n\nI evolved the original event-booking platform around these failure cases using concurrency-safe inventory reservation, idempotent booking, compensation and recovery, transactional outbox processing, asynchronous messaging, and backend ownership authorization.",
+        "The Event Ticket Booking Platform is a distributed event-management and ticket-booking system built using microservices. Customers can discover events and book tickets, while hosts manage their own events and administrators manage platform-level operations.\n\nThe main engineering focus was keeping the booking workflow reliable when multiple users compete for limited ticket inventory and when failures occur across independently running services. The system uses separate Auth, Event, Booking, and Notification services, with asynchronous messaging and cloud-oriented deployment.",
       functionalRequirements: [
         {
           id: "ETB-FR-01",
-          area: "Inventory Consistency",
+          area: "User Authentication & Account Management",
           requirement:
-            "Prevent overselling when multiple customers attempt to reserve the same limited ticket inventory at the same time.",
+            "Users can register, verify their account, log in securely, and access features according to their assigned role.",
           priority: "High",
         },
         {
           id: "ETB-FR-02",
-          area: "Idempotent Booking",
+          area: "Event Discovery",
           requirement:
-            "Retrying the same logical booking request must not create another booking or deduct inventory twice.",
+            "Customers can browse available events, view event details, ticket types, prices, and availability.",
           priority: "High",
         },
         {
           id: "ETB-FR-03",
-          area: "Failure Recovery",
+          area: "Ticket Booking",
           requirement:
-            "If payment or inventory compensation fails, the system must preserve enough state to recover the reservation safely.",
+            "Customers can select tickets and create a booking for available inventory.",
           priority: "High",
         },
         {
           id: "ETB-FR-04",
-          area: "Reliable Messaging",
+          area: "Booking Management",
           requirement:
-            "A committed booking must not silently lose notification work when RabbitMQ, a publisher, or a worker fails.",
+            "Customers can view and manage access to their own booking information.",
           priority: "High",
         },
         {
           id: "ETB-FR-05",
-          area: "Authorization",
+          area: "Host Event Management",
           requirement:
-            "ADMIN can manage the platform; HOST users can manage only resources they own; CUSTOMER users can access public events and their own bookings.",
+            "Approved hosts can create and manage events and related resources they own.",
+          priority: "High",
+        },
+        {
+          id: "ETB-FR-06",
+          area: "Host Application & Approval",
+          requirement:
+            "Customers can apply to become hosts, while administrators approve or reject those applications.",
+          priority: "High",
+        },
+        {
+          id: "ETB-FR-07",
+          area: "Administrator Management",
+          requirement:
+            "Administrators can perform platform-wide management operations.",
+          priority: "High",
+        },
+        {
+          id: "ETB-FR-08",
+          area: "Notifications",
+          requirement:
+            "The platform sends notifications for important booking and account workflows.",
           priority: "High",
         },
       ],
@@ -546,27 +679,33 @@ export const projects: Project[] = [
       ],
       diagrams: [
         {
-          title: "System Architecture",
+          title: "C4 Context Diagram",
           section: "overview",
-          src: "projects/event-booking/system_architecture.svg",
-          alt: "Event Ticket Booking Platform system architecture showing client applications, gateway, Auth, Event, Booking and Notification services, RabbitMQ, service-owned databases, Keycloak, S3, Brevo, Config Server and Eureka.",
+          src: "projects/event-booking/c4/Context_diagram_c1.png",
+          alt: "Event Ticket Booking Platform C4 system context diagram",
+        },
+        {
+          title: "C4 Container Diagram",
+          section: "overview",
+          src: "projects/event-booking/c4/container-diagram_c2.svg",
+          alt: "Event Ticket Booking Platform C4 container diagram",
         },
         {
           title: "Reliable Booking Flow",
           section: "challenges",
-          src: "projects/event-booking/reliable_booking_sequence.svg",
+          src: "projects/event-booking/archi&design/reliable_booking_sequence.svg",
           alt: "Booking workflow showing idempotency checks, concurrency-safe inventory reservation, payment, booking transaction, transactional outbox publication and notification processing.",
         },
         {
           title: "Outbox & Failure Recovery",
           section: "architecture",
-          src: "projects/event-booking/outbox_failure_recovery.svg",
+          src: "projects/event-booking/archi&design/outbox_failure_recovery.svg",
           alt: "Failure recovery flow showing outbox state recovery, optimistic version protection, RabbitMQ publication, retries, dead-letter handling and event deduplication.",
         },
         {
           title: "Host Onboarding & Authorization",
           section: "architecture",
-          src: "projects/event-booking/host_onboarding_authorization.svg",
+          src: "projects/event-booking/archi&design/host_onboarding_authorization.svg",
           alt: "Host application approval flow and backend authorization boundaries for Admin, Host and Customer roles.",
         },
       ],
@@ -608,6 +747,11 @@ export const projects: Project[] = [
   kafkaOrderPipeline,
   {
     slug: "securedns",
+    stackGroups: [
+      { title: "Backend", items: ["Python"] },
+      { title: "Networking & Security", items: ["DNS", "AES-GCM", "RSA"] },
+      { title: "Infrastructure", items: ["Docker", "Ubuntu"] },
+    ],
     title: "SecureDNS",
     year: "2026",
     type: "Network Security Project",
@@ -659,18 +803,23 @@ export const projects: Project[] = [
       ],
       designPatterns: [],
       diagrams: [
-        { title: "DNS Request Flow", src: "projects/securedns/dns-request-flow.png", alt: "DNS request flow from the browser through the gateway and attacker proxy to the DNS server" },
-        { title: "Full Communication: Alice, Bob & Trudy", src: "projects/securedns/full-communication.png", alt: "SecureDNS communication between Alice the gateway, Bob the server, and Trudy the attacker" },
-        { title: "DNS Sniffing: Insecure", src: "projects/securedns/sniffing-insecure.png", alt: "Insecure DNS sniffing demonstration exposing the requested domain" },
-        { title: "DNS Sniffing: Secure", src: "projects/securedns/sniffing-secure.png", alt: "SecureDNS sniffing demonstration with encrypted DNS traffic" },
-        { title: "DNS Tampering: Insecure", src: "projects/securedns/tampering-insecure.png", alt: "Insecure DNS tampering demonstration redirecting the browser to a fake bank" },
-        { title: "DNS Tampering: Secure", src: "projects/securedns/tampering-secure.png", alt: "SecureDNS tampering demonstration rejecting a modified response" },
-        { title: "Flood Protection", src: "projects/securedns/flood-protection.png", alt: "SecureDNS flood attack demonstration showing rate limiting" },
+        { title: "DNS Request Flow", src: "projects/securedns/archi&design/dns-request-flow.png", alt: "DNS request flow from the browser through the gateway and attacker proxy to the DNS server" },
+        { title: "Full Communication: Alice, Bob & Trudy", src: "projects/securedns/archi&design/full-communication.png", alt: "SecureDNS communication between Alice the gateway, Bob the server, and Trudy the attacker" },
+        { title: "DNS Sniffing: Insecure", src: "projects/securedns/archi&design/sniffing-insecure.png", alt: "Insecure DNS sniffing demonstration exposing the requested domain" },
+        { title: "DNS Sniffing: Secure", src: "projects/securedns/archi&design/sniffing-secure.png", alt: "SecureDNS sniffing demonstration with encrypted DNS traffic" },
+        { title: "DNS Tampering: Insecure", src: "projects/securedns/archi&design/tampering-insecure.png", alt: "Insecure DNS tampering demonstration redirecting the browser to a fake bank" },
+        { title: "DNS Tampering: Secure", src: "projects/securedns/archi&design/tampering-secure.png", alt: "SecureDNS tampering demonstration rejecting a modified response" },
+        { title: "Flood Protection", src: "projects/securedns/archi&design/flood-protection.png", alt: "SecureDNS flood attack demonstration showing rate limiting" },
       ],
     },
   },
   {
     slug: "spare-part-sales-service-platform",
+    stackGroups: [
+      { title: "Backend", items: ["Spring Boot"] },
+      { title: "Frontend", items: ["Angular", "Tailwind CSS"] },
+      { title: "Data", items: ["MySQL"] },
+    ],
     title: "Spare Part Sales and Service Platform",
     year: "2024",
     type: "Team Project",
@@ -848,18 +997,25 @@ export const projects: Project[] = [
       diagrams: [
         {
           title: "ER Diagram",
-          src: "projects/bike-parts-hub/er_diagram.png",
+          src: "projects/bike-parts-hub/archi&design/er_diagram.png",
           alt: "Bike Parts Hub ER diagram showing users, products, orders, services, appointments, and related entities",
         },
       ],
       erDiagram: {
-        src: "projects/bike-parts-hub/er_diagram.png",
+        src: "projects/bike-parts-hub/archi&design/er_diagram.png",
         alt: "Bike Parts Hub ER diagram showing users, products, orders, services, appointments, and related entities",
       },
     },
   },
   {
     slug: "leckeep",
+    stackGroups: [
+      { title: "Backend", items: ["Spring Boot"] },
+      { title: "Frontend", items: ["React", "Tailwind CSS"] },
+      { title: "Data", items: ["MongoDB"] },
+      { title: "Infrastructure", items: ["Docker", "AWS"] },
+      { title: "CI/CD", items: ["Jenkins"] },
+    ],
     title: "LecKeep",
     year: "2024",
     type: "Personal Project",
@@ -985,27 +1141,27 @@ export const projects: Project[] = [
       diagrams: [
         {
           title: "C4 Context Diagram",
-          src: "projects/leckeep/Context_diagram_c1.png",
+          src: "projects/leckeep/c4/Context_diagram_c1.png",
           alt: "LecKeep C4 context diagram",
         },
         {
           title: "C4 Container Diagram",
-          src: "projects/leckeep/Container_diagram_c2.png",
+          src: "projects/leckeep/c4/Container_diagram_c2.png",
           alt: "LecKeep C4 container diagram",
         },
         {
           title: "C4 Component Diagram",
-          src: "projects/leckeep/Components_diagram_c3.png",
+          src: "projects/leckeep/c4/Components_diagram_c3.png",
           alt: "LecKeep C4 component diagram",
         },
         {
           title: "C4 Code Diagram",
-          src: "projects/leckeep/Code Diagram_c4.png",
+          src: "projects/leckeep/c4/Code Diagram_c4.png",
           alt: "LecKeep C4 code diagram",
         },
         {
           title: "Document Model",
-          src: "projects/leckeep/document_model.png",
+          src: "projects/leckeep/archi&design/document_model.png",
           alt: "LecKeep document model diagram",
         },
       ],
@@ -1013,6 +1169,11 @@ export const projects: Project[] = [
   },
   {
     slug: "simple-pos-system",
+    stackGroups: [
+      { title: "Application", items: ["Java"] },
+      { title: "Desktop UI", items: ["JavaFX"] },
+      { title: "Data", items: ["MySQL"] },
+    ],
     title: "Simple Point-of-Sale System",
     year: "2023",
     type: "Academic Project",
@@ -1111,6 +1272,10 @@ export const projects: Project[] = [
   },
   {
     slug: "service-finder-mobile",
+    stackGroups: [
+      { title: "Mobile", items: ["Flutter"] },
+      { title: "Backend & Data", items: ["Firebase"] },
+    ],
     title: "Service Finder Mobile",
     year: "2024",
     type: "Team Project",
@@ -1178,12 +1343,12 @@ export const projects: Project[] = [
       diagrams: [
         {
           title: "Context Diagram",
-          src: "projects/service-finder/Context_diagram_c1.png",
+          src: "projects/service-finder/c4/Context_diagram_c1.png",
           alt: "Service Finder context diagram",
         },
         {
           title: "Document Model",
-          src: "projects/service-finder/document_model.png",
+          src: "projects/service-finder/archi&design/document_model.png",
           alt: "Service Finder document model diagram",
         },
       ],
@@ -1191,6 +1356,11 @@ export const projects: Project[] = [
   },
   {
     slug: "pharmacy-sales-inventory-system",
+    stackGroups: [
+      { title: "Backend", items: ["Spring Boot"] },
+      { title: "Frontend", items: ["React", "Tailwind CSS"] },
+      { title: "Data", items: ["MySQL"] },
+    ],
     title: "Pharmacy Sales and Inventory Management System",
     year: "2024",
     type: "Full-Stack Project",
@@ -1320,12 +1490,12 @@ export const projects: Project[] = [
       diagrams: [
         {
           title: "Context Diagram",
-          src: "projects/pharmacy/Context_diagram_c1.png",
+          src: "projects/pharmacy/c4/Context_diagram_c1.png",
           alt: "Pharmacy sales and inventory system context diagram",
         },
         {
           title: "ER Diagram",
-          src: "projects/pharmacy/er_diagram.png",
+          src: "projects/pharmacy/archi&design/er_diagram.png",
           alt: "Pharmacy sales and inventory system ER diagram",
         },
       ],

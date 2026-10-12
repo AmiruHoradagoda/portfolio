@@ -1,14 +1,15 @@
 ---
 import { Maximize2, Minimize2, ZoomIn, ZoomOut } from "@lucide/astro";
-interface Props { src: string; alt: string; title: string; expanded?: boolean }
-const { src, alt, title, expanded = false } = Astro.props;
+interface Props { src: string; alt: string; title: string; expanded?: boolean; size?: "default" | "large" | "natural" }
+const { src, alt, title, expanded = false, size = "default" } = Astro.props;
+const canvasBackground = expanded || !/\.svg(?:[?#]|$)/i.test(src) || /^C4\b/i.test(title) ? "#ffffff" : "#080d24";
 const buttonClass = "inline-flex h-11 w-11 items-center justify-center rounded-lg text-blue-100 transition hover:bg-blue-400/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-300 disabled:cursor-not-allowed disabled:opacity-35";
 ---
-<div class="relative min-w-0 bg-[#080d24]" data-diagram-canvas>
+<div class="relative min-w-0" style={`background: ${canvasBackground};`} data-diagram-canvas>
   <div
-    class:list={["image-load-frame diagram-image-frame overflow-auto overscroll-contain", expanded ? "h-[calc(90dvh-5rem)]" : "h-[clamp(18rem,48vw,32rem)]"]}
-    style={`overflow: auto; scrollbar-gutter: stable;${/\.svg(?:[?#]|$)/i.test(src) ? "background: #080d24;" : ""}`}
-    data-image-frame data-zoom-viewport tabindex="0" aria-label="Diagram; scroll to explore when zoomed in"
+    class:list={["image-load-frame diagram-image-frame overflow-auto overscroll-contain", expanded ? "h-[calc(90dvh-5rem)]" : size === "large" ? "h-[clamp(28rem,70dvh,48rem)]" : "h-[clamp(18rem,48vw,32rem)]"]}
+    style={`overflow: auto; scrollbar-gutter: stable; background: ${canvasBackground};`}
+    data-image-frame data-zoom-viewport data-natural-height={size === "natural" && !expanded || undefined} tabindex="0" aria-label="Diagram; drag or scroll to explore when zoomed in"
   >
     <div class="flex items-center justify-center" data-zoom-stage>
       <img src={src} alt={alt} class="block shrink-0 object-contain" style="max-width: none;" loading="lazy" draggable="false" data-load-image
@@ -35,11 +36,43 @@ const buttonClass = "inline-flex h-11 w-11 items-center justify-center rounded-l
     const minus = canvas.querySelector<HTMLButtonElement>("[data-zoom-out]")!;
     const level = canvas.querySelector<HTMLOutputElement>("[data-zoom-level]")!;
     let zoom = 1;
+    let drag: { pointerId: number; x: number; y: number; left: number; top: number } | undefined;
+    function finishDrag() {
+      const pointerId = drag?.pointerId;
+      drag = undefined;
+      if (pointerId !== undefined && viewport.hasPointerCapture(pointerId)) viewport.releasePointerCapture(pointerId);
+      viewport.style.cursor = zoom > 1 ? "grab" : "auto";
+    }
+    viewport.addEventListener("pointerdown", (event) => {
+      // Touch keeps native swipe scrolling; capture mouse/pen drags only.
+      if (zoom <= 1 || event.pointerType === "touch" || !event.isPrimary || event.button !== 0) return;
+      const bounds = viewport.getBoundingClientRect();
+      if (event.clientX >= bounds.left + viewport.clientWidth || event.clientY >= bounds.top + viewport.clientHeight) return;
+      event.preventDefault();
+      viewport.focus({ preventScroll: true });
+      drag = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, left: viewport.scrollLeft, top: viewport.scrollTop };
+      viewport.setPointerCapture(event.pointerId);
+      viewport.style.cursor = "grabbing";
+    });
+    viewport.addEventListener("pointermove", (event) => {
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      viewport.scrollLeft = drag.left - (event.clientX - drag.x);
+      viewport.scrollTop = drag.top - (event.clientY - drag.y);
+    });
+    viewport.addEventListener("pointerup", finishDrag);
+    viewport.addEventListener("pointercancel", finishDrag);
+    viewport.addEventListener("lostpointercapture", finishDrag);
     function render() {
       const width = viewport.clientWidth;
       // The outer height stays fixed when a horizontal zoom scrollbar appears.
-      const height = viewport.offsetHeight;
+      let height = viewport.offsetHeight;
       if (!width || !height || !image.naturalWidth) return;
+      if (viewport.hasAttribute("data-natural-height")) {
+        // Size the unzoomed figure to the available width, independently of zoom.
+        // This avoids shrinking detailed C4 views into a short letterboxed frame.
+        height = Math.max(288, Math.ceil((width - 24) * image.naturalHeight / image.naturalWidth) + 80);
+        viewport.style.height = `${height}px`;
+      }
       const fit = Math.max(0, Math.min((width - 24) / image.naturalWidth, (height - 80) / image.naturalHeight));
       const imageWidth = Math.floor(image.naturalWidth * fit * zoom);
       const imageHeight = Math.floor(image.naturalHeight * fit * zoom);
@@ -51,8 +84,11 @@ const buttonClass = "inline-flex h-11 w-11 items-center justify-center rounded-l
       level.value = `${Math.round(zoom * 100)}%`;
       minus.disabled = zoom <= 1;
       plus.disabled = zoom >= 4;
+      viewport.style.cursor = zoom > 1 ? (drag ? "grabbing" : "grab") : "auto";
+      viewport.style.userSelect = zoom > 1 ? "none" : "";
     }
     function changeZoom(delta: number) {
+      finishDrag();
       const centerX = (viewport.scrollLeft + viewport.clientWidth / 2) / stage.offsetWidth;
       const centerY = (viewport.scrollTop + viewport.clientHeight / 2) / stage.offsetHeight;
       zoom = Math.max(1, Math.min(4, zoom + delta));
@@ -62,7 +98,7 @@ const buttonClass = "inline-flex h-11 w-11 items-center justify-center rounded-l
     }
     plus.addEventListener("click", () => changeZoom(0.25));
     minus.addEventListener("click", () => changeZoom(-0.25));
-    image.addEventListener("load", () => { zoom = 1; render(); viewport.scrollTo(0, 0); });
+    image.addEventListener("load", () => { finishDrag(); zoom = 1; render(); viewport.scrollTo(0, 0); });
     let resizeFrame = 0;
     new ResizeObserver(() => {
       cancelAnimationFrame(resizeFrame);

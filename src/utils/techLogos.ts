@@ -36,6 +36,7 @@ export const techLogoMap = {
   Docker: `${devicon}/docker/docker-original.svg`,
   Kubernetes: `${devicon}/kubernetes/kubernetes-plain.svg`,
   GCP: `${devicon}/googlecloud/googlecloud-original.svg`,
+  "Google Cloud / GKE": `${devicon}/googlecloud/googlecloud-original.svg`,
   Jenkins: `${devicon}/jenkins/jenkins-original.svg`,
   "GitHub Actions": `${devicon}/githubactions/githubactions-original.svg`,
   Keycloak: "https://cdn.simpleicons.org/keycloak/4D4D4D",

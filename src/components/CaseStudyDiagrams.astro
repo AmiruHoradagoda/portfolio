@@ -3,8 +3,9 @@ import { Code2, Database, FileText, Network, Server, X } from "@lucide/astro";
 import DiagramCanvas from "./DiagramCanvas.astro";
 import type { ProjectDiagram } from "../data/profile";
 import { assetPath } from "../utils/paths";
-interface Props { diagrams: ProjectDiagram[]; idPrefix: string }
-const { diagrams, idPrefix } = Astro.props;
+interface Props { diagrams: ProjectDiagram[]; idPrefix: string; variant?: "default" | "data-model" | "overview" }
+const { diagrams, idPrefix, variant = "default" } = Astro.props;
+const isDataModel = variant === "data-model";
 const diagramIconRules = [
   { pattern: /\ber\b|entity relationship/i, Icon: Database },
   { pattern: /document/i, Icon: FileText },
@@ -23,16 +24,18 @@ function getDiagramIcon(title: string) {
 {diagrams.length > 0 && (
   <section class="mt-8 min-w-0 overflow-hidden rounded-xl border border-white/10 bg-[#0a0e27]/45" aria-label="Supporting diagrams" data-diagram-viewer>
     {diagrams.length > 1 ? (
-      <div class="flex gap-2 overflow-x-auto border-b border-white/10 p-4" role="tablist" aria-label="Supporting diagrams">
+      <div class:list={["gap-2 border-b border-white/10 p-3 sm:p-4", isDataModel ? "grid grid-cols-2 sm:grid-cols-4" : "flex overflow-x-auto"]} role="tablist" aria-label="Supporting diagrams">
         {diagrams.map((diagram, index) => {
           const Icon = getDiagramIcon(diagram.title);
           return (
-            <button class:list={["inline-flex min-h-14 w-60 flex-none items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm font-semibold transition", index === 0 ? "border-blue-400/50 bg-blue-500/20 text-white" : "border-white/10 bg-white/[0.04] text-slate-400 hover:border-white/25 hover:bg-white/10 hover:text-white"]}
+            <button class:list={["inline-flex min-h-14 items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm font-semibold transition", isDataModel ? "min-w-0" : "w-60 flex-none", index === 0 ? "border-blue-400/50 bg-blue-500/20 text-white" : "border-white/10 bg-white/[0.04] text-slate-400 hover:border-white/25 hover:bg-white/10 hover:text-white"]}
               id={`${idPrefix}-diagram-tab-${index}`} type="button" role="tab" aria-selected={index === 0 ? "true" : "false"}
               aria-controls={`${idPrefix}-diagram-panel`} tabindex={index === 0 ? 0 : -1}
               data-diagram-trigger data-diagram-src={assetPath(diagram.src)} data-diagram-alt={diagram.alt} data-diagram-label={diagram.title} data-diagram-caption={diagram.caption ?? ""}>
               <Icon class="h-5 w-5 flex-none text-blue-200" aria-hidden="true" stroke-width={2} />
-              <span class="min-w-0 break-words">{diagram.title}</span>
+              <span class="min-w-0 break-words">
+                {isDataModel ? <><span class="block">{diagram.title.replace(/\s+(ER Diagram|Document Model)$/i, "")}</span><span class="mt-1 block text-xs font-normal text-slate-400">{/document/i.test(diagram.title) ? "Document Model" : "ER Diagram"}</span></> : diagram.title}
+              </span>
             </button>
           );
         })}
@@ -41,7 +44,7 @@ function getDiagramIcon(title: string) {
       <h4 class="border-b border-white/10 px-5 py-4 text-base font-bold text-blue-200">{diagrams[0].title}</h4>
     )}
     <figure class="min-w-0" id={`${idPrefix}-diagram-panel`} role={diagrams.length > 1 ? "tabpanel" : undefined} aria-labelledby={diagrams.length > 1 ? `${idPrefix}-diagram-tab-0` : undefined}>
-      <DiagramCanvas src={assetPath(diagrams[0].src)} alt={diagrams[0].alt} title={diagrams[0].title} />
+      <DiagramCanvas src={assetPath(diagrams[0].src)} alt={diagrams[0].alt} title={diagrams[0].title} size={isDataModel ? "large" : variant === "overview" ? "natural" : "default"} />
       <figcaption class:list={["border-t border-white/10 px-5 py-3 text-sm leading-6 text-slate-400", { hidden: !diagrams[0].caption }]} data-diagram-caption>{diagrams[0].caption}</figcaption>
     </figure>
     <dialog class="diagram-dialog w-[min(96vw,78rem)] max-w-none overflow-hidden rounded-2xl border border-white/15 bg-[#080d24] p-0 text-white shadow-2xl shadow-black/50" data-diagram-dialog aria-labelledby={`${idPrefix}-diagram-dialog-title`}>
@@ -107,10 +110,15 @@ function getDiagramIcon(title: string) {
         );
       }
 
-      function setImage(targetImage: HTMLImageElement, src: string, alt: string) {
+      function setImage(targetImage: HTMLImageElement, src: string, alt: string, title: string) {
         prepareImageLoad(targetImage);
         const frame = targetImage.closest<HTMLElement>("[data-image-frame]");
-        if (frame) frame.style.background = /\.svg(?:[?#]|$)/i.test(src) ? "#080d24" : "";
+        if (frame) {
+          const background = targetImage.closest("dialog") || !/\.svg(?:[?#]|$)/i.test(src) || /^C4\b/i.test(title) ? "#ffffff" : "#080d24";
+          frame.style.background = background;
+          const canvas = frame.closest<HTMLElement>("[data-diagram-canvas]");
+          if (canvas) canvas.style.background = background;
+        }
         targetImage.src = src;
         targetImage.alt = alt;
 
@@ -158,7 +166,7 @@ function getDiagramIcon(title: string) {
         }
         figure?.setAttribute("aria-labelledby", trigger.id);
         trigger.scrollIntoView({ block: "nearest", inline: "nearest" });
-        setImage(image, src, alt);
+        setImage(image, src, alt, diagramTitle);
         image.dataset.diagramLabel = diagramTitle;
       }
 
@@ -183,7 +191,7 @@ function getDiagramIcon(title: string) {
           dialogCaption.textContent = caption?.textContent ?? "";
           dialogCaption.classList.toggle("hidden", !dialogCaption.textContent);
         }
-        setImage(dialogImage, current.src, current.alt);
+        setImage(dialogImage, current.src, current.alt, current.title);
         dialog.showModal();
         document.documentElement.classList.add("overflow-hidden");
       });

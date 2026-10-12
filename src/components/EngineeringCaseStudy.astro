@@ -4,10 +4,16 @@ import type { Project } from "../data/profile";
 import { getProjectCaseStudy } from "../utils/projectCaseStudy";
 import { getTechLogo } from "../utils/techLogos";
 import CaseStudyDiagrams from "./CaseStudyDiagrams.astro";
+import CaseStudyText from "./CaseStudyText.astro";
 
 interface Props { project: Project }
 const { project } = Astro.props;
 const { details } = getProjectCaseStudy(project);
+const stackGroups = project.stackGroups ?? [{ title: "Technologies", items: project.stack }];
+const overviewViews = [
+  { id: "context", heading: "System Context", placeholder: "<Figure C4 Context Diagram>", diagrams: details.overviewDiagrams.filter(diagram => /\bcontext\b/i.test(diagram.title)) },
+  { id: "container", heading: "Container / Service View", placeholder: "<Figure C4 Container Diagram>", diagrams: details.overviewDiagrams.filter(diagram => !/\bcontext\b/i.test(diagram.title)) },
+];
 const tabs = [
   { id: "overview", label: "Overview", Icon: FileText },
   { id: "requirements", label: "Main Functional Requirements", Icon: Network },
@@ -35,25 +41,38 @@ const tabs = [
 
     <div class="min-w-0 p-5 [overflow-wrap:anywhere] sm:p-6" data-case-content>
       <section id={`${project.slug}-case-panel-overview`} role="tabpanel" aria-labelledby={`${project.slug}-case-tab-overview`} tabindex="0" data-case-panel="overview">
-        <p class="text-sm font-semibold uppercase tracking-[0.16em] text-blue-300">Background</p>
-        <h3 class="mt-2 text-2xl font-bold text-white">{details.overviewHeading ?? "What this project solves"}</h3>
+        <h3 class="text-2xl font-bold text-white">Project Introduction</h3>
         {details.background.split(/\n\s*\n/).map((paragraph) => (
           <p class="mt-4 text-base leading-8 text-slate-300">
             {paragraph.split(/(\*\*.*?\*\*)/g).map((part) => part.startsWith("**") && part.endsWith("**")
               ? <strong class="font-semibold text-white">{part.slice(2, -2)}</strong> : part)}
           </p>
         ))}
-        {details.overviewDiagrams.map((diagram, index) => (
-          <CaseStudyDiagrams diagrams={[diagram]} idPrefix={`${project.slug}-overview-${index}`} />
+        {overviewViews.map((view) => (
+          <section class="mt-8" aria-labelledby={`${project.slug}-${view.id}-heading`}>
+            <h3 id={`${project.slug}-${view.id}-heading`} class="text-2xl font-bold text-white">{view.heading}</h3>
+            {view.diagrams.length > 0 ? view.diagrams.map((diagram, index) => (
+              <CaseStudyDiagrams diagrams={[diagram]} idPrefix={`${project.slug}-overview-${view.id}-${index}`} variant="overview" />
+            )) : (
+              <p class="mt-4 rounded-xl border border-dashed border-white/15 bg-white/[0.025] px-5 py-6 text-sm text-slate-400">{view.placeholder}</p>
+            )}
+          </section>
         ))}
         <div class="mt-8">
-          <h4 class="text-sm font-semibold uppercase tracking-[0.16em] text-slate-300">Technologies Used</h4>
-          <div class="mt-4 flex flex-wrap gap-3">
-            {project.stack.map((item) => (
-              <span class="inline-flex min-h-11 max-w-full items-center gap-3 rounded-xl border border-blue-500/25 bg-blue-500/15 px-3 py-2 text-sm font-semibold text-blue-100">
-                <span class="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-white p-1.5 shadow-sm"><img src={getTechLogo(item)} alt={`${item} logo`} class="h-full w-full object-contain" loading="lazy" /></span>
-                <span class="min-w-0 break-words">{item}</span>
-              </span>
+          <h3 class="text-2xl font-bold text-white">Technologies Used</h3>
+          <div class="mt-5 grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
+            {stackGroups.filter(group => group.items.length > 0).map((group) => (
+              <div class="min-w-0 rounded-xl border border-white/[0.08] bg-white/[0.025] p-4 sm:p-5">
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-blue-300">{group.title}</h4>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  {group.items.map((item) => (
+                    <span class="inline-flex min-h-9 max-w-full items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.04] px-2.5 py-1.5 text-sm text-slate-200">
+                      <span class="flex h-5 w-5 flex-none items-center justify-center rounded bg-white p-0.5"><img src={getTechLogo(item)} alt={`${item} logo`} class="h-full w-full object-contain" loading="lazy" /></span>
+                      <span class="min-w-0 break-words leading-5">{item}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -61,13 +80,15 @@ const tabs = [
       </section>
 
       <section class="hidden" hidden id={`${project.slug}-case-panel-requirements`} role="tabpanel" aria-labelledby={`${project.slug}-case-tab-requirements`} tabindex="0" data-case-panel="requirements">
-        <h3 class="text-2xl font-bold text-white">Main Functional Requirements</h3>
         {details.functionalRequirements.length > 0 && (
-          <ul class="mt-6 divide-y divide-white/10 rounded-2xl border border-white/10 bg-[#0a0e27]/45">
+          <ul class="grid gap-x-8 md:grid-cols-2" role="list">
             {details.functionalRequirements.map((item) => (
-              <li class="px-4 py-5 sm:px-5">
-                <h4 class="text-base font-bold text-blue-200">{item.area}</h4>
-                <p class="mt-2 text-base leading-7 text-slate-300">{item.requirement}</p>
+              <li class="flex min-w-0 gap-3 border-b border-white/10 py-4">
+                <span class="mt-2.5 h-1.5 w-1.5 flex-none rounded-full bg-blue-400" aria-hidden="true"></span>
+                <div class="min-w-0">
+                  <h3 class="text-lg font-semibold leading-7 text-white">{item.area}</h3>
+                  <p class="mt-2 text-base leading-7 text-slate-200">{item.requirement}</p>
+                </div>
               </li>
             ))}
           </ul>
@@ -76,10 +97,13 @@ const tabs = [
 
       <section class="hidden" hidden id={`${project.slug}-case-panel-architecture`} role="tabpanel" aria-labelledby={`${project.slug}-case-tab-architecture`} tabindex="0" data-case-panel="architecture">
         <h3 class="text-2xl font-bold text-white">Architecture & Design</h3>
-        {details.dataModelDiagrams.length > 0 && (
+        {(details.dataModelDiagrams.length > 0 || !!details.dataModelPlaceholders?.length) && (
           <section class="mt-8" data-data-models>
             <h4 class="text-xl font-bold text-blue-200">Data Model / ER Design</h4>
-            <CaseStudyDiagrams diagrams={details.dataModelDiagrams} idPrefix={`${project.slug}-data-models`} />
+            <CaseStudyDiagrams diagrams={details.dataModelDiagrams} idPrefix={`${project.slug}-data-models`} variant="data-model" />
+            {details.dataModelPlaceholders?.map(placeholder => (
+              <p class="mt-4 rounded-xl border border-dashed border-white/15 bg-white/[0.025] px-5 py-6 text-sm text-slate-400">{placeholder}</p>
+            ))}
           </section>
         )}
         {details.systemDesigns.length > 0 && (
@@ -90,10 +114,13 @@ const tabs = [
                 <details class="group" open={index === 0}>
                   <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4 transition hover:bg-white/[0.04] sm:px-5"><h5 class="text-base font-bold text-white">{item.title}</h5><span class="text-lg leading-none text-blue-200 transition group-open:rotate-45" aria-hidden="true">+</span></summary>
                   <div class="space-y-4 px-4 pb-5 sm:px-5">
-                    {item.whereImplemented && <div><p class="text-xs font-semibold uppercase tracking-wider text-blue-300">Where implemented</p><p class="mt-2 text-base leading-7 text-slate-300">{item.whereImplemented}</p></div>}
-                    <div><p class="text-xs font-semibold uppercase tracking-wider text-blue-300">How implemented</p><p class="mt-2 text-base leading-7 text-slate-300">{item.howImplemented}</p></div>
-                    {item.whyUsed && <div><p class="text-xs font-semibold uppercase tracking-wider text-blue-300">Why used</p><p class="mt-2 text-base leading-7 text-slate-300">{item.whyUsed}</p></div>}
+                    {item.content ? <CaseStudyText text={item.content} /> : <>
+                      {item.whereImplemented && <div><p class="text-xs font-semibold uppercase tracking-wider text-blue-300">Where implemented</p><p class="mt-2 text-base leading-7 text-slate-300">{item.whereImplemented}</p></div>}
+                      {item.howImplemented && <div><p class="text-xs font-semibold uppercase tracking-wider text-blue-300">How implemented</p><p class="mt-2 text-base leading-7 text-slate-300">{item.howImplemented}</p></div>}
+                      {item.whyUsed && <div><p class="text-xs font-semibold uppercase tracking-wider text-blue-300">Why used</p><p class="mt-2 text-base leading-7 text-slate-300">{item.whyUsed}</p></div>}
+                    </>}
                     {item.diagram && <CaseStudyDiagrams diagrams={[item.diagram]} idPrefix={`${project.slug}-system-${index}`} />}
+                    {!item.diagram && item.diagramPlaceholder && <p class="rounded-xl border border-dashed border-white/15 bg-white/[0.025] px-5 py-6 text-sm text-slate-400">{item.diagramPlaceholder}</p>}
                   </div>
                 </details>
               ))}
@@ -105,15 +132,16 @@ const tabs = [
             <h4 class="text-xl font-bold text-blue-200">OOP Design Patterns</h4>
             <div class="mt-4 divide-y divide-white/10 rounded-2xl border border-white/10 bg-[#0a0e27]/45">
               {details.oopDesignPatterns.map((item, index) => (
-                <details class="group" open={index === 0}>
+                item.where || item.howImplemented || item.why || item.diagram || item.diagramPlaceholder ? <details class="group" open={index === 0}>
                   <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-4 transition hover:bg-white/[0.04] sm:px-5"><h5 class="text-base font-bold text-white">{item.pattern}</h5><span class="text-lg leading-none text-blue-200 transition group-open:rotate-45" aria-hidden="true">+</span></summary>
                   <div class="space-y-4 px-4 pb-5 sm:px-5">
-                    <div><p class="text-xs font-semibold uppercase tracking-wider text-blue-300">Where implemented</p><p class="mt-2 text-base leading-7 text-slate-300">{item.where}</p></div>
-                    {item.howImplemented && <div><p class="text-xs font-semibold uppercase tracking-wider text-blue-300">How implemented</p><p class="mt-2 text-base leading-7 text-slate-300">{item.howImplemented}</p></div>}
-                    <div><p class="text-xs font-semibold uppercase tracking-wider text-blue-300">Why used</p><p class="mt-2 text-base leading-7 text-slate-300">{item.why}</p></div>
+                    {item.where && <div><p class="mb-2 text-xs font-semibold uppercase tracking-wider text-blue-300">Where implemented</p><CaseStudyText text={item.where} /></div>}
+                    {item.howImplemented && <div><p class="mb-2 text-xs font-semibold uppercase tracking-wider text-blue-300">How implemented</p><CaseStudyText text={item.howImplemented} /></div>}
+                    {item.why && <div><p class="mb-2 text-xs font-semibold uppercase tracking-wider text-blue-300">Why used</p><CaseStudyText text={item.why} /></div>}
                     {item.diagram && <CaseStudyDiagrams diagrams={[item.diagram]} idPrefix={`${project.slug}-oop-${index}`} />}
+                    {!item.diagram && item.diagramPlaceholder && <p class="rounded-xl border border-dashed border-white/15 bg-white/[0.025] px-5 py-6 text-sm text-slate-400">{item.diagramPlaceholder}</p>}
                   </div>
-                </details>
+                </details> : <div class="px-4 py-4 sm:px-5"><h5 class="text-base font-bold text-white">{item.pattern}</h5></div>
               ))}
             </div>
           </section>
