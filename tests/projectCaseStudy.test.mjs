@@ -9,62 +9,74 @@ const project = {
   features: ["Preserve feature-only projects"], challenges: ["Unanswered challenge"],
   media: [], links: [],
 };
+const diagram = title => ({ title, src: title + ".png", alt: title + " original alt", caption: "Original caption" });
 
-test("legacy quality scenarios become challenge/response pairs without losing requirements", () => {
+test("requirements and legacy content survive unchanged; feature fallback does not invent copy", () => {
   const requirement = { id: "R1", area: "Inventory", requirement: "Avoid overselling", priority: "High" };
-  const result = getProjectCaseStudy({ ...project, details: {
-    functionalRequirements: [requirement], engineeringRequirements: ["Allow recovery"],
-    qualityAttributes: [{ attribute: "Consistency", scenario: "Concurrent buyers", response: "Atomic reservation" }],
-  } });
-  assert.deepEqual(result.challenges, [{ title: "Consistency", problem: "Concurrent buyers", solution: "Atomic reservation" }]);
-  assert.deepEqual(result.details.functionalRequirements, [requirement]);
-  assert.deepEqual(result.details.engineeringRequirements, ["Allow recovery"]);
+  const legacy = { functionalRequirements: [requirement], qualityAttributes: [{ attribute: "Consistency", scenario: "Concurrent buyers", response: "Atomic reservation" }], tradeOffs: ["Existing trade-off"] };
+  const { details } = getProjectCaseStudy({ ...project, details: legacy });
+  assert.deepEqual(details.functionalRequirements, [requirement]);
+  assert.deepEqual(details.qualityAttributes, legacy.qualityAttributes);
+  assert.deepEqual(details.tradeOffs, legacy.tradeOffs);
+  const fallback = getProjectCaseStudy(project).details;
+  assert.equal(fallback.background, project.description);
+  assert.equal(fallback.functionalRequirements[0].requirement, project.features[0]);
+  assert.deepEqual(fallback.systemDesigns, []);
+  assert.deepEqual(fallback.oopDesignPatterns, []);
 });
 
-test("explicit challenge solutions take precedence over legacy quality data", () => {
-  const explicit = [{ title: "Recovery", problem: "Worker crash", solution: "Recover stale work" }];
-  const result = getProjectCaseStudy({ ...project, details: {
-    challengeSolutions: explicit,
-    qualityAttributes: [{ attribute: "Legacy", scenario: "Old problem", response: "Old response" }],
-  } });
-  assert.deepEqual(result.challenges, explicit);
+test("C4 views sort context before container, data models separate, ambiguous diagrams survive", () => {
+  const diagrams = ["C4 Container Diagram", "Document Model", "Context Diagram", "C4 Component Diagram", "Reliable Booking Flow", "Host Onboarding & Authorization"].map(diagram);
+  const { details } = getProjectCaseStudy({ ...project, details: { diagrams } });
+  assert.deepEqual(details.overviewDiagrams.map(d => d.title), ["C4 Context Diagram", "C4 Container Diagram"]);
+  assert.equal(details.overviewDiagrams[0].src, diagrams[2].src);
+  assert.equal(details.overviewDiagrams[0].alt, diagrams[2].alt);
+  assert.deepEqual(details.dataModelDiagrams, [diagrams[1]]);
+  assert.deepEqual(details.unclassifiedDiagrams, diagrams.slice(3));
 });
 
-test("requirement-only and feature-only projects do not receive invented solutions or trade-offs", () => {
-  const result = getProjectCaseStudy(project);
-  assert.equal(result.details.background, project.description);
-  assert.equal(result.details.functionalRequirements[0].requirement, project.features[0]);
-  assert.deepEqual(result.challenges, []);
-  assert.deepEqual(result.details.designPatterns, []);
-  assert.equal(result.details.tradeOffs, undefined);
-  assert.deepEqual(Object.values(result.diagramsBySection).flat(), []);
+test("multiple service data models and legacy ER coexist without duplicate assets", () => {
+  const auth = diagram("Auth Service ER Diagram"), booking = diagram("Booking Service Database Model");
+  const { details } = getProjectCaseStudy({ ...project, details: { diagrams: [auth, booking], erDiagram: auth } });
+  assert.deepEqual(details.dataModelDiagrams, [auth, booking]);
+  assert.equal(getProjectCaseStudy({ ...project, details: { erDiagram: auth } }).details.dataModelDiagrams[0].src, auth.src);
 });
 
-test("diagram placement supports every tab, defaults legacy entries, and preserves captions/order", () => {
-  const diagram = { title: "Legacy", src: "legacy.svg", alt: "Legacy architecture" };
-  const assigned = ["overview", "challenges", "architecture", "decisions"].map(section => ({
-    title: section, src: section + ".svg", alt: section, section, caption: "Context for " + section,
-  }));
-  const result = getProjectCaseStudy({ ...project, details: { diagrams: [diagram, ...assigned] } });
-  assert.deepEqual(result.diagramsBySection.architecture, [diagram, assigned[2]]);
-  for (const section of ["overview", "challenges", "decisions"]) {
-    assert.deepEqual(result.diagramsBySection[section], assigned.filter(d => d.section === section));
-  }
+test("architectural and OOP patterns preserve exact wording without inventing implementation text", () => {
+  const entries = ["Transactional Outbox", "Strategy Pattern", "Chain of Responsibility Pattern", "Unknown Pattern"].map(pattern => ({ pattern, where: "Original where " + pattern, why: "Original why " + pattern }));
+  const outbox = diagram("Outbox & Failure Recovery");
+  const { details } = getProjectCaseStudy({ ...project, details: { designPatterns: entries, diagrams: [outbox] } });
+  assert.deepEqual(details.systemDesigns.map(d => d.title), ["Transactional Outbox", "Unknown Pattern"]);
+  assert.equal(details.systemDesigns[0].howImplemented, entries[0].where);
+  assert.equal(details.systemDesigns[0].whyUsed, entries[0].why);
+  assert.equal(details.systemDesigns[0].whereImplemented, undefined);
+  assert.deepEqual(details.systemDesigns[0].diagram, outbox);
+  assert.deepEqual(details.oopDesignPatterns, entries.slice(1, 3));
+  assert.equal(details.oopDesignPatterns[0].howImplemented, undefined);
 });
 
-test("legacy ER diagrams fall back to Architecture & Design", () => {
-  const result = getProjectCaseStudy({ ...project, details: { erDiagram: { src: "er.png", alt: "Owned entities" } } });
-  assert.deepEqual(result.diagramsBySection.architecture, [{ title: "ER Diagram", src: "er.png", alt: "Owned entities" }]);
-});
-
-test("empty optional collections stay empty while event flow/schema and trade-offs survive mapping", () => {
-  const supplied = { functionalRequirements: [], qualityAttributes: [], designPatterns: [], diagrams: [],
-    eventFlow: ["Publish", "Consume"], eventSchema: [{ field: "id", type: "string", description: "Event ID" }],
-    tradeOffs: ["In-memory aggregation is not durable"],
+test("new optional collections take precedence, explicit diagram associations are preserved", () => {
+  const overview = diagram("C4 Container Diagram"), er = diagram("ER Diagram"), flow = diagram("Flow");
+  const supplied = {
+    functionalRequirements: [], overviewDiagrams: [overview], dataModelDiagrams: [er],
+    systemDesigns: [{ title: "Explicit", whereImplemented: "Location", howImplemented: "Mechanism", whyUsed: "Reason", diagram: flow }],
+    oopDesignPatterns: [], designPatterns: [{ pattern: "Strategy", where: "Legacy", why: "Legacy" }],
+    diagrams: [overview, er, flow],
   };
-  const result = getProjectCaseStudy({ ...project, details: supplied });
-  assert.deepEqual(result.details.functionalRequirements, []);
-  assert.deepEqual(result.details.eventFlow, supplied.eventFlow);
-  assert.deepEqual(result.details.eventSchema, supplied.eventSchema);
-  assert.deepEqual(result.details.tradeOffs, supplied.tradeOffs);
+  const { details } = getProjectCaseStudy({ ...project, details: supplied });
+  assert.deepEqual(details.systemDesigns, supplied.systemDesigns);
+  assert.deepEqual(details.oopDesignPatterns, []);
+  assert.deepEqual(details.functionalRequirements, []);
+  assert.deepEqual(details.overviewDiagrams, [overview]);
+  assert.deepEqual(details.dataModelDiagrams, [er]);
+  assert.deepEqual(details.unclassifiedDiagrams, []);
+  assert.equal(supplied.systemDesigns[0].diagram, flow);
+});
+
+test("high-level existing architecture is displayed without claiming it is a C4 view", () => {
+  const view = diagram("System Architecture");
+  const { details } = getProjectCaseStudy({ ...project, details: { diagrams: [view], eventFlow: ["Original step"], eventSchema: [{ field: "id", type: "string", description: "Original description" }] } });
+  assert.deepEqual(details.overviewDiagrams, [view]);
+  assert.deepEqual(details.eventFlow, ["Original step"]);
+  assert.equal(details.eventSchema[0].description, "Original description");
 });

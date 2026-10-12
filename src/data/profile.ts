@@ -70,6 +70,19 @@ export type ProjectDiagram = {
   caption?: string;
 };
 
+export type SystemDesign = {
+  title: string;
+  whereImplemented?: string;
+  howImplemented: string;
+  whyUsed?: string;
+  diagram?: ProjectDiagram;
+};
+
+export type OopDesignPattern = DesignPattern & {
+  howImplemented?: string;
+  diagram?: ProjectDiagram;
+};
+
 export type ChallengeSolution = {
   title?: string;
   problem: string;
@@ -78,6 +91,11 @@ export type ChallengeSolution = {
 
 export type ProjectDetails = {
   background: string;
+  overviewDiagrams?: ProjectDiagram[];
+  dataModelDiagrams?: ProjectDiagram[];
+  systemDesigns?: SystemDesign[];
+  oopDesignPatterns?: OopDesignPattern[];
+  unclassifiedDiagrams?: ProjectDiagram[];
   overviewHeading?: string;
   qualityHeading?: string;
   challengeSolutions?: ChallengeSolution[];
@@ -87,8 +105,8 @@ export type ProjectDetails = {
   eventSchema?: { field: string; type: string; description: string }[];
   tradeOffs?: string[];
   functionalRequirements: TableRequirement[];
-  qualityAttributes: QualityAttribute[];
-  designPatterns: DesignPattern[];
+  qualityAttributes?: QualityAttribute[];
+  designPatterns?: DesignPattern[];
   diagrams?: ProjectDiagram[];
   erDiagram?: {
     src: string;
