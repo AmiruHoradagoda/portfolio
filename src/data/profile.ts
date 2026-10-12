@@ -524,46 +524,56 @@ export const projects: Project[] = [
       systemDesigns: [
         {
           "title": "Microservice Architecture & Database per Service",
-          "content": "The platform is divided into separate **Auth, Event, Booking, and Notification services**, with the API Gateway acting as the main entry point.\n\nEach service owns its own persistence instead of directly sharing another service's database. Services communicate through REST APIs for synchronous operations and RabbitMQ for asynchronous workflows.\n\nThis keeps service responsibilities separated and reduces tight coupling between domains.",
-          "diagramPlaceholder": "<Figure Microservice Architecture>"
+          "content": "The platform is divided into independent **Auth, Event, Booking, and Notification services**, with an API Gateway providing the main entry point for client applications.\n\nEach service owns its persistence and exposes functionality through APIs or asynchronous messaging rather than directly accessing another service's database. This keeps domain boundaries clear and reduces coupling between services.\n\nThe overall service structure is shown in the C4 Container Diagram in the Overview section."
         },
         {
           "title": "Concurrency-Safe Ticket Inventory",
-          "content": "Ticket inventory is limited, so multiple customers may attempt to reserve the same remaining tickets at the same time.\n\nThe Event Service performs inventory changes at the database level using atomic update operations and locking where necessary instead of relying on a simple read-then-update flow.\n\nA reservation succeeds only when enough inventory is still available.\n\nThis prevents **overselling under concurrent booking requests**.",
-          "diagramPlaceholder": "<Figure Concurrent Ticket Reservation Flow>"
+          "content": "Ticket inventory is limited, so multiple customers may attempt to reserve the same remaining tickets at the same time.\n\nThe Event Service performs inventory changes at the database level using atomic update operations and locking where necessary instead of relying on an unsafe read-then-update flow.\n\nA reservation succeeds only when sufficient inventory is still available, preventing **overselling under concurrent booking requests**.",
+          "diagram": {
+            "title": "Concurrent Ticket Reservation Flow",
+            "src": "projects/event-booking/archi&design/concurrent-ticket-reservation-flow.png",
+            "alt": "Concurrent booking requests use an atomic inventory update in Event Service, accepting reservations only when sufficient tickets remain."
+          }
         },
         {
           "title": "Idempotent Booking",
-          "content": "A client may retry a booking request after a timeout without knowing whether the original request already succeeded.\n\nThe Booking Service requires an **Idempotency-Key** and stores an `IdempotencyRecord` with the request fingerprint.\n\n- Same key + same request → return the existing booking\n- Same key + different request → reject as a conflict\n\nThis prevents retries from creating duplicate bookings or reserving inventory twice.",
-          "diagramPlaceholder": "<Figure Idempotent Booking Flow>"
+          "content": "A client may retry a booking request after a timeout without knowing whether the original request already succeeded.\n\nThe Booking Service requires an **Idempotency-Key** and stores an `IdempotencyRecord` containing the key and a fingerprint of the request.\n\n- Same key + same request → return the existing booking.\n- Same key + different request → reject the request as a conflict.\n\nThis makes client retries safe and prevents duplicate bookings or repeated inventory reservation.",
+          "diagram": {
+            "title": "Idempotent Booking Flow",
+            "src": "projects/event-booking/archi&design/idempotent-booking-flow.png",
+            "alt": "Booking Service checks the idempotency key and request fingerprint to return an existing booking, reject a conflict, or process a new booking."
+          }
         },
         {
           "title": "Compensation & Reservation Recovery",
-          "content": "Inventory may be reserved successfully before a later booking step, such as payment, fails.\n\nBecause Booking Service and Event Service use separate local transactions, one database rollback cannot undo both operations.\n\nWhen payment fails, Booking Service requests Event Service to release the reserved inventory. The release uses a stable `releaseId`, allowing repeated compensation requests to be handled safely.\n\nIf immediate compensation fails, the booking stores a reservation expiry time so a scheduled recovery process can retry the inventory release later.\n\nThis allows the system to recover from **partial distributed failures without using two-phase commit**.",
-          "diagramPlaceholder": "<Figure Booking Compensation & Reservation Recovery Flow>"
+          "content": "Booking Service and Event Service use separate local transactions, so inventory may already be reserved when a later booking step, such as payment, fails.\n\nWhen this happens, Booking Service requests Event Service to release the reserved inventory. A stable `releaseId` makes the compensation operation idempotent, so repeated release requests do not restore the same inventory multiple times.\n\nIf immediate compensation fails, the booking retains reservation-expiry information and a recovery process retries the release later.\n\nThis allows the platform to recover from **partial distributed failures without using a distributed two-phase commit**.",
+          "diagram": {
+            "title": "Compensation & Reservation Recovery Flow",
+            "src": "projects/event-booking/archi&design/booking-vompensation&reservation-recovery-flow.png",
+            "alt": "Failed payment triggers idempotent inventory release using a releaseId; unsuccessful releases are retried by reservation recovery."
+          }
         },
         {
           "title": "Transactional Outbox",
-          "content": "Saving a booking and publishing a RabbitMQ message are two separate operations.\n\nWithout additional handling, the booking could commit successfully while message publication fails, causing notification work to be lost.\n\nThe Booking Service stores an `OutboxEvent` together with booking-related state. A separate worker later claims pending outbox records and publishes them to RabbitMQ.\n\nThe design also handles stale `PROCESSING` records so work abandoned by a failed worker can be recovered.\n\nThis reduces the risk of losing asynchronous work after the main database transaction succeeds.",
+          "content": "Saving a booking and publishing a RabbitMQ message are two separate operations. If the booking commits successfully but message publication fails, the notification event could otherwise be lost.\n\nThe Booking Service therefore stores the booking state and an `OutboxEvent` in the database transaction. A separate outbox worker later claims pending events and publishes them to RabbitMQ.\n\nOutbox records move through processing states, and stale `PROCESSING` records can be recovered when a worker fails before completing publication.\n\nThis ensures asynchronous work remains recoverable after the main booking transaction has committed.",
           "diagram": {
             "title": "Transactional Outbox & Failure Recovery Flow",
-            "src": "projects/event-booking/archi&design/outbox_failure_recovery.svg",
-            "alt": "Failure recovery flow showing outbox state recovery, optimistic version protection, RabbitMQ publication, retries, dead-letter handling and event deduplication."
+            "src": "projects/event-booking/archi&design/outbox_failure_recovery.png",
+            "alt": "Booking and OutboxEvent are committed together; an asynchronous worker publishes pending events to RabbitMQ and recovery retries stale processing records."
           }
         },
         {
           "title": "At-Least-Once Messaging, Retry & Deduplication",
-          "content": "RabbitMQ messages may be delivered more than once, and notification processing may fail temporarily.\n\nThe notification workflow therefore uses retry handling and dead-letter processing for failed messages.\n\nStable event IDs are used to detect previously processed events so message redelivery does not repeatedly execute the same application-level operation.\n\nThe design follows **at-least-once delivery**, rather than claiming exactly-once messaging.",
-          "diagramPlaceholder": "<Figure Notification Retry & Deduplication Flow>"
+          "content": "RabbitMQ messages may be delivered more than once, and notification processing can fail temporarily.\n\nThe notification workflow uses retry handling and dead-letter processing for failed messages. Stable event IDs are used to detect events that have already been processed, allowing duplicate deliveries to be safely ignored.\n\nThe system therefore follows an **at-least-once delivery model** rather than claiming exactly-once messaging.",
+          "diagram": {
+            "title": "Notification Retry & Deduplication Flow",
+            "src": "projects/event-booking/archi&design/notification-retry&deduplication-flow.png",
+            "alt": "Notification processing flow showing retry handling, event deduplication, and dead-letter processing."
+          }
         },
         {
           "title": "Role & Resource Ownership Authorization",
-          "content": "Authentication alone is not enough for this system because users with the same role may still own different resources.\n\nKeycloak provides authenticated identities and roles such as:\n\n- CUSTOMER\n- HOST\n- ADMIN\n\nBackend services then apply resource ownership checks. For example, a HOST can manage only events owned by that HOST, while ADMIN users have platform-wide access.\n\nThe host onboarding workflow also follows:\n\n`CUSTOMER → Host Application → ADMIN Review → HOST Role`\n\nThis ensures authorization is enforced by backend services rather than depending only on frontend visibility.",
-          "diagram": {
-            "title": "Host Onboarding & Ownership Authorization Flow",
-            "src": "projects/event-booking/archi&design/host_onboarding_authorization.svg",
-            "alt": "Host application approval flow and backend authorization boundaries for Admin, Host and Customer roles."
-          }
+          "content": "Authentication alone is not sufficient because users with the same role may still own different resources.\n\nKeycloak provides authenticated identities and roles such as **CUSTOMER, HOST, and ADMIN**. Backend services then apply resource-level ownership checks in addition to role checks.\n\nFor example, a HOST can manage only the events and related resources owned by that HOST, while an ADMIN has platform-level management access.\n\nThe host onboarding workflow follows:\n\n`Registered User → Submit Host Application → ADMIN Review → HOST Role`\n\nIf the application is approved, the existing user account receives the HOST role. If it is rejected, the user remains a normal registered user.\n\nAuthorization is enforced by backend services rather than relying only on frontend visibility."
         }
       ],
       oopDesignPatterns: [
@@ -584,14 +594,22 @@ export const projects: Project[] = [
           "where": "`JwtAuthConverter` in the Auth and Event services.",
           "howImplemented": "`JwtAuthConverter` implements Spring's:\n\n```\nConverter<Jwt, AbstractAuthenticationToken>\n```\n\nIt takes the JWT issued through Keycloak, extracts realm roles, converts them into Spring Security `GrantedAuthority` objects, and returns a `JwtAuthenticationToken`.\n\nSo conceptually:\n\n```\nKeycloak JWT\n      ↓\nJwtAuthConverter\n      ↓\nSpring Security AuthenticationToken\n```",
           "why": "Keycloak's JWT representation and Spring Security's authorization model are different. The converter adapts one representation into the form expected by Spring Security without spreading JWT parsing logic throughout controllers and services.",
-          "diagramPlaceholder": "<Figure JWT Authentication Adapter>"
+          "diagram": {
+            "title": "JWT Authentication Adapter",
+            "src": "projects/event-booking/archi&design/oop-dp/jwt-authentication-adapter.png",
+            "alt": "JWT authentication adapter diagram showing conversion from Keycloak JWT to Spring Security authentication."
+          }
         },
         {
           "pattern": "Facade Pattern",
           "where": "`FileService` / `FileServiceImpl` in the Event Service.",
           "howImplemented": "Application code does not directly deal with all AWS S3 operations.\n\nInstead, it calls simple methods such as:\n\n```\ncreateResource(...)\ndeleteResource(...)\n```\n\n`FileServiceImpl` internally handles:\n\n- filename generation\n- S3 metadata\n- object upload\n- S3 resource URL generation\n- deletion\n- error handling",
           "why": "It hides AWS S3-specific complexity behind a small application-level interface, allowing event-management code to work with a simpler abstraction.",
-          "diagramPlaceholder": "<Figure File Storage Facade>"
+          "diagram": {
+            "title": "File Storage Facade",
+            "src": "projects/event-booking/archi&design/oop-dp/file-storage-facade.png",
+            "alt": "File storage facade diagram showing FileService simplifying access to AWS S3 storage operations."
+          }
         }
       ],
       showSupportingRequirements: false,
