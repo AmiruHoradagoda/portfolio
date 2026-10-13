@@ -98,6 +98,7 @@ export type ChallengeSolution = {
 
 export type ProjectDetails = {
   background: string;
+  architectureHeadings?: { dataModel: string; systemDesigns: string; oopDesignPatterns: string };
   overviewDiagrams?: ProjectDiagram[];
   dataModelDiagrams?: ProjectDiagram[];
   dataModelDescription?: string;
@@ -1099,162 +1100,238 @@ export const projects: Project[] = [
   {
     slug: "leckeep",
     stackGroups: [
-      { title: "Backend", items: ["Spring Boot"] },
-      { title: "Frontend", items: ["React", "Tailwind CSS"] },
-      { title: "Data", items: ["MongoDB"] },
-      { title: "Infrastructure", items: ["Docker", "AWS"] },
-      { title: "CI/CD", items: ["Jenkins"] },
+      {
+        title: "Backend",
+        items: [
+          "Java 17",
+          "Spring Boot 3.3",
+          "Spring Web",
+          "Spring Security",
+          "Spring Data MongoDB",
+          "Maven"
+        ]
+      },
+      {
+        title: "Frontend",
+        items: [
+          "React 19",
+          "Vite",
+          "Tailwind CSS"
+        ]
+      },
+      {
+        title: "Data & Storage",
+        items: [
+          "MongoDB",
+          "MinIO Object Storage"
+        ]
+      },
+      {
+        title: "Security",
+        items: [
+          "JWT Authentication",
+          "BCrypt Password Hashing",
+          "Permission-Aware Folder and Document Access"
+        ]
+      },
+      {
+        title: "API & Documentation",
+        items: [
+          "REST APIs",
+          "OpenAPI / Swagger"
+        ]
+      },
+      {
+        title: "DevOps",
+        items: [
+          "Docker",
+          "Docker Compose",
+          "Jenkins",
+          "Ansible",
+          "Terraform",
+          "AWS EC2"
+        ]
+      }
     ],
-    title: "LecKeep",
-    year: "2024",
-    type: "Personal Project",
-    status: "v1.0.0",
+    title: "LecKeep — Academic Document Management & Collaboration Platform",
+    year: "2024–2026",
+    type: "Full-Stack / Document Management Platform",
+    status: "Ongoing",
     role: "Full Stack Developer",
-    summary:
-      "A lecture note application for storing PDFs and short notes with CI/CD pipelines for Docker, Jenkins, and AWS deployment practice.",
-    description:
-      "LecKeep is a CRUD-based study tool built to manage lecture material while also practicing production delivery patterns. The application connects a React frontend with a Spring Boot backend and MongoDB storage, then uses DevOps workflows to package and deploy the project.",
-    stack: ["React", "Tailwind CSS", "Spring Boot", "MongoDB", "Docker", "Jenkins", "AWS"],
+    summary: "A full-stack academic workspace designed to help students organize, securely access, search, preview, and share lecture materials across subjects, folders, and study groups. LecKeep combines permission-aware document management, object-storage abstraction, secure sharing, and containerized deployment workflows.",
+    description: "Students often accumulate lecture PDFs, slides, images, and shared learning materials across different folders and communication channels, making them difficult to organize, retrieve, and share safely.\n\nLecKeep addresses this by providing one authenticated academic workspace where students can organize materials by subject and folder, upload and preview documents, create study groups, share folders with controlled access, and search only the resources they are authorized to view.\n\nThe application uses a React frontend and Spring Boot REST API, with MongoDB for application metadata and MinIO-compatible object storage for uploaded documents. Security is handled through JWT-based authentication and centralized folder/document permission checks.",
+    stack: [
+      "Java 17",
+      "Spring Boot 3.3",
+      "React 19",
+      "Vite",
+      "Tailwind CSS",
+      "MongoDB",
+      "MinIO Object Storage",
+      "Docker",
+      "Docker Compose",
+      "Jenkins",
+      "Ansible",
+      "Terraform",
+      "AWS EC2"
+    ],
     features: [
-      "Create, read, update, and delete lecture notes",
-      "Store PDF-oriented learning material",
-      "Containerized deployment workflow",
-      "CI/CD practice with Jenkins and AWS",
+      "Subject and folder organization",
+      "Permission-aware document access and academic search",
+      "Document upload, preview, and download through object storage",
+      "Study groups and controlled folder sharing",
+      "Containerized local environment and CI/deployment automation configuration"
     ],
-    challenges: [
-      "Designing a clean flow for note data and file-oriented resources.",
-      "Connecting local development with repeatable deployment automation.",
-    ],
+    challenges: [],
     links: [
       {
         label: "GitHub",
-        href: "https://github.com/AmiruHoradagoda/Note-taking-app",
-      },
+        href: "https://github.com/AmiruHoradagoda/LecKeep"
+      }
     ],
     accent: "violet",
     media: [
       {
         type: "image",
         src: "projects/leckeep/card-image.png",
-        alt: "LecKeep lecture note app screenshot",
-      },
+        alt: "LecKeep academic workspace screenshot"
+      }
     ],
     details: {
+      background: "Students often accumulate lecture PDFs, slides, images, and shared learning materials across different folders and communication channels, making them difficult to organize, retrieve, and share safely.\n\nLecKeep addresses this by providing one authenticated academic workspace where students can organize materials by subject and folder, upload and preview documents, create study groups, share folders with controlled access, and search only the resources they are authorized to view.\n\nThe application uses a React frontend and Spring Boot REST API, with MongoDB for application metadata and MinIO-compatible object storage for uploaded documents. Security is handled through JWT-based authentication and centralized folder/document permission checks.",
+      architectureHeadings: {
+        dataModel: "Data Model / Document Model",
+        systemDesigns: "Main System Designs",
+        oopDesignPatterns: "OOP Design Patterns"
+      },
       functionalRequirements: [
         {
           id: "LK-FR-01",
-          area: "User Authentication & Management",
-          requirement:
-            "Users must be able to register and log in using JWT-based authentication, passwords must be hashed with BCrypt before storage, all non-auth endpoints must require a valid bearer token, and the system must support CRUD operations on user accounts.",
-          priority: "High",
+          area: "Authentication & Account Management",
+          requirement: "Users must be able to register and log in securely. Passwords are stored using BCrypt hashing, while authenticated API requests use JWT bearer tokens.",
+          priority: "High"
         },
         {
           id: "LK-FR-02",
-          area: "Subject Organization",
-          requirement:
-            "Users must be able to create, list, update, and delete subjects as top-level academic categories.",
-          priority: "High",
+          area: "Subject & Folder Organization",
+          requirement: "Students must be able to organize academic resources using subjects and folders, including creating, viewing, updating, and deleting their own organizational structures.\n\nFolders can represent different access contexts such as private, global, group-based, or explicitly shared resources.",
+          priority: "High"
         },
         {
           id: "LK-FR-03",
-          area: "Folder Management",
-          requirement:
-            "Users must be able to create, list, update, and delete note folders, folders must support private, global, group, and shared scopes, and folder listing must support pagination.",
-          priority: "High",
+          area: "Document Management",
+          requirement: "Students must be able to upload academic documents into folders, list uploaded resources, preview supported documents through short-lived URLs, download files, and delete documents in folders they own.\n\nUploads are validated before object storage, including filename handling and a maximum file-size limit.",
+          priority: "High"
         },
         {
           id: "LK-FR-04",
-          area: "Document Management",
-          requirement:
-            "Users must be able to upload documents into folders using multipart file upload, validate files with a 25 MB maximum size and filename sanitization, list folder documents with pagination, download documents, generate short-lived 15-minute preview URLs, delete documents, and route file handling by type such as image, PDF, or office document.",
-          priority: "High",
+          area: "Permission-Aware Resource Access",
+          requirement: "The platform must prevent users from accessing academic resources they are not authorized to view.\n\nFolder access is determined using ownership, visibility, study-group membership, and explicit share records. Document access inherits the permissions of its parent folder.",
+          priority: "High"
         },
         {
           id: "LK-FR-05",
-          area: "Study Groups",
-          requirement:
-            "Users must be able to create, list, view, update, and delete study groups, and add or remove group members.",
-          priority: "High",
+          area: "Academic Resource Search",
+          requirement: "Students must be able to search their academic workspace for subjects, folders, and document metadata using case-insensitive partial matching.\n\nSearch results must respect the same access-control rules as direct resource access so private or unauthorized materials are not leaked through search.",
+          priority: "High"
         },
         {
           id: "LK-FR-06",
-          area: "Sharing",
-          requirement: "Users must be able to share a folder with others and revoke a folder share.",
-          priority: "High",
+          area: "Study Group Management",
+          requirement: "Students must be able to create study groups, manage group membership, and use group membership as part of controlled academic-resource access.",
+          priority: "High"
         },
         {
           id: "LK-FR-07",
-          area: "Search",
-          requirement:
-            "Users must be able to search across their content through a placeholder endpoint that is not yet implemented.",
-          priority: "Planned",
-        },
+          area: "Secure Folder Sharing",
+          requirement: "Folder owners must be able to share resources with specific users, study groups, or authenticated users through controlled share permissions and revoke access when it is no longer required.",
+          priority: "High"
+        }
       ],
-      designPatterns: [
-        {
-          pattern: "Strategy Pattern",
-          where:
-            "FileTypeHandler interface with PdfFileTypeHandler, ImageFileTypeHandler, and OfficeFileTypeHandler implementations.",
-          why:
-            "Each file type owns its own support, validation, document-type, and preview-mode behavior, so new file types can be added without changing upload workflow logic.",
-        },
-        {
-          pattern: "Adapter Pattern",
-          where:
-            "ObjectStorageService interface with MinioObjectStorageAdapter and S3ObjectStorageAdapter implementations.",
-          why:
-            "Storage-provider-specific APIs are hidden behind a common upload, download, delete, and preview-url contract.",
-        },
-        {
-          pattern: "Factory / Resolver Pattern",
-          where:
-            "FileTypeHandlerResolver receives all FileTypeHandler implementations and selects the handler that supports the uploaded content type and extension.",
-          why:
-            "Centralizes object selection logic and keeps document services from knowing every concrete file handler.",
-        },
-        {
-          pattern: "Template Method Pattern",
-          where:
-            "JwtFilter extends OncePerRequestFilter and overrides doFilterInternal.",
-          why:
-            "Spring defines the request filtering lifecycle while the project customizes only the JWT extraction and validation step.",
-        },
-        {
-          pattern: "Builder Pattern",
-          where:
-            "StoredObject, DownloadedObject, pagination responses, and authentication/response DTO creation use Lombok or library builder APIs.",
-          why:
-            "Keeps construction of objects with multiple fields readable and less error-prone.",
-        },
-      ],
-      diagrams: [
+      overviewDiagrams: [
         {
           title: "C4 Context Diagram",
           src: "projects/leckeep/c4/Context_diagram_c1.png",
           alt: "LecKeep C4 context diagram",
+          caption: "Logical system context. HTTPS is a deployment target; the current Compose and Ansible configurations provide HTTP access."
         },
         {
           title: "C4 Container Diagram",
           src: "projects/leckeep/c4/Container_diagram_c2.png",
           alt: "LecKeep C4 container diagram",
-        },
-        {
-          title: "C4 Component Diagram",
-          src: "projects/leckeep/c4/Components_diagram_c3.png",
-          alt: "LecKeep C4 component diagram",
-        },
-        {
-          title: "C4 Code Diagram",
-          src: "projects/leckeep/c4/Code Diagram_c4.png",
-          alt: "LecKeep C4 code diagram",
-        },
-        {
-          title: "Document Model",
-          src: "projects/leckeep/archi&design/document_model.png",
-          alt: "LecKeep document model diagram",
-        },
+          caption: "React frontend, Spring Boot API, MongoDB metadata, and MinIO file storage. The HTTPS label represents a deployment target; the current stack uses HTTP."
+        }
       ],
-    },
+      dataModelDescription: "LecKeep stores application metadata in MongoDB while keeping uploaded file contents in object storage.\n\nCore domain models include:\n\n- User (implemented as `Users`)\n- Subject\n- NoteFolder\n- DocumentFile\n- StudyGroup\n- GroupMember\n- FolderShare\n\nThe `DocumentFile` model stores document metadata and references the parent folder, while the actual uploaded binary content is stored through the object-storage layer.",
+      dataModelDiagrams: [
+        {
+          title: "LecKeep Document Model",
+          src: "projects/leckeep/archi&design/document_model.png",
+          alt: "LecKeep MongoDB document model showing users, subjects, folders, documents, study groups, memberships, and folder shares"
+        }
+      ],
+      systemDesigns: [
+        {
+          title: "Layered Full-Stack Architecture",
+          content: "**Problem / Why needed:** Browser interaction, HTTP processing, business rules, metadata persistence, and file storage need clear boundaries.\n\n**How implemented:** React calls Spring Boot REST controllers, which delegate to application services and MongoDB repositories or the object-storage abstraction. MongoDB stores metadata; MinIO stores uploaded files.\n\n**Result:** HTTP concerns, business rules, persistence logic, and file-storage implementation remain independent and easier to maintain."
+        },
+        {
+          title: "Centralized Permission-Aware Resource Access",
+          content: "**Problem / Why needed:** Folder viewing, document preview/download, and search must apply consistent authorization rules.\n\n**How implemented:** `FolderPermissionService` checks folder ownership, GLOBAL visibility, GROUP visibility with verified study-group membership, and explicit USER, GROUP, or GLOBAL shares. Documents inherit read access from their parent folder. Upload, delete, and share management remain restricted to the folder owner.\n\n**Result:** One read-access policy prevents different permission rules from drifting across resource endpoints and search.",
+          diagramPlaceholder: "<Figure Permission-Aware Resource Access Flow>"
+        },
+        {
+          title: "Permission-Aware Academic Search",
+          content: "**Problem / Why needed:** Students need to retrieve academic materials without exposing private resources through search.\n\n**How implemented:** `SearchService` uses case-insensitive partial matching on subject names, folder titles/descriptions, and document names, content types, and extensions. Subjects are filtered by ownership; folders and documents are filtered through `FolderPermissionService` before results are returned.\n\n**Result:** Search returns only resources the authenticated user is authorized to access.",
+          diagramPlaceholder: "<Figure Permission-Aware Search Flow>"
+        },
+        {
+          title: "Document Upload & Object Storage",
+          content: "**Problem / Why needed:** Large uploaded binaries should remain separate from application metadata, and file handling should support different document types.\n\n**How implemented:** The upload workflow validates file size and filename, resolves a file-type handler, verifies folder ownership, and uploads through `ObjectStorageService` to MinIO. `DocumentFile` metadata and the stored object key are saved in MongoDB. Supported previews use short-lived URLs.\n\n**Result:** Binary storage stays separate from metadata, while file-type and storage-provider details remain isolated behind interfaces.",
+          diagramPlaceholder: "<Figure Document Upload & Storage Flow>"
+        },
+        {
+          title: "Secure Sharing & Study-Group Access",
+          content: "**Problem / Why needed:** Students need controlled collaboration with specific users and study groups.\n\n**How implemented:** Folder owners create and revoke `FolderShare` records for USER, GROUP, or GLOBAL targets. Group sharing requires group-owner or admin access. `FolderPermissionService` checks valid shares and current membership when granting read access; group-based folder visibility uses the same membership check.\n\n**Result:** Revoking a share removes that access path unless another valid permission rule still grants access.",
+          diagramPlaceholder: "<Figure Folder Sharing & Group Access Flow>"
+        },
+        {
+          title: "Containerized Deployment Architecture",
+          content: "**Problem / Why needed:** The frontend, API, database, and object store need a repeatable environment and a defined deployment workflow.\n\n**How implemented:** Separate frontend and backend containers run alongside MongoDB and MinIO. Docker Compose defines service healthchecks and persistent MongoDB/MinIO volumes. The Jenkins CI pipeline defines backend tests, application builds, and frontend/backend image publishing. Ansible provides automation to deploy the four-service Compose stack to EC2. Terraform contains security-group configuration and a lookup of an existing EC2 instance.\n\n**Result:** The repository provides a repeatable local stack, CI pipeline configuration, and separate deployment automation. End-to-end production deployment is not verified: Jenkins does not invoke Ansible, MinIO image publishing is separate, and public HTTPS/reverse-proxy setup remains a later step.",
+          diagramPlaceholder: "<Figure LecKeep Deployment Architecture>"
+        }
+      ],
+      oopDesignPatterns: [
+        {
+          pattern: "Strategy Pattern — File Type Handling",
+          where: "`FileTypeHandler` with file-specific implementations such as PDF, image, and office-document handlers.",
+          howImplemented: "Each handler determines whether it supports a file type and encapsulates file-specific validation and preview behavior.",
+          why: "New document types can be introduced without adding large conditional blocks to the upload workflow.",
+          diagramPlaceholder: "<Figure File Type Strategy UML>"
+        },
+        {
+          pattern: "Factory / Resolver Pattern — File Handler Selection",
+          where: "`FileTypeHandlerResolver`",
+          howImplemented: "The resolver receives the available `FileTypeHandler` implementations and selects the correct strategy for the uploaded file.",
+          why: "The document service does not need to know about every concrete file-type implementation.",
+          diagramPlaceholder: "<Figure File Type Resolver UML>"
+        },
+        {
+          pattern: "Adapter Pattern — Object Storage",
+          where: "`ObjectStorageService` with the implemented `MinioObjectStorageAdapter`. MinIO provides S3-compatible object storage; the separate `S3ObjectStorageAdapter` remains an unimplemented extension point.",
+          howImplemented: "Application services depend on the storage abstraction rather than directly calling a provider-specific SDK.",
+          why: "Storage-provider-specific details remain isolated and the underlying provider can be replaced without redesigning document business logic.",
+          diagramPlaceholder: "<Figure Object Storage Adapter UML>"
+        },
+        {
+          pattern: "Template Method Pattern — JWT Request Filtering",
+          where: "JWT filter implementation based on Spring Security's `OncePerRequestFilter`.",
+          howImplemented: "Spring controls the request-filter lifecycle while LecKeep provides the JWT extraction, validation, and authentication-context logic.",
+          why: "The project customizes authentication behavior while reusing Spring Security's standard filtering lifecycle.",
+          diagramPlaceholder: "<Figure JWT Filter UML>"
+        }
+      ]
+    }
   },
   {
     slug: "simple-pos-system",

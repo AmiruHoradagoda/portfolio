@@ -99,7 +99,7 @@ const tabs = [
         <h3 class="text-2xl font-bold text-white">Architecture & Design</h3>
         {(details.dataModelDiagrams.length > 0 || !!details.dataModelPlaceholders?.length || !!details.dataModelDescription) && (
           <section class="mt-8" data-data-models>
-            <h4 class="text-xl font-bold text-blue-200">Data Model / ER Design</h4>
+            <h4 class="text-xl font-bold text-blue-200">{details.architectureHeadings?.dataModel ?? "Data Model / ER Design"}</h4>
             {details.dataModelDescription && <div class="mt-4"><CaseStudyText text={details.dataModelDescription} /></div>}
             <CaseStudyDiagrams diagrams={details.dataModelDiagrams} idPrefix={`${project.slug}-data-models`} variant="data-model" />
             {details.dataModelPlaceholders?.map(placeholder => (
@@ -109,7 +109,7 @@ const tabs = [
         )}
         {details.systemDesigns.length > 0 && (
           <section class="mt-8" data-system-designs>
-            <h4 class="text-xl font-bold text-blue-200">Main System Designs</h4>
+            <h4 class="text-xl font-bold text-blue-200">{details.architectureHeadings?.systemDesigns ?? "Main System Designs"}</h4>
             <div class="mt-4 divide-y divide-white/10 rounded-2xl border border-white/10 bg-[#0a0e27]/45">
               {details.systemDesigns.map((item, index) => (
                 <details class="group" open={index === 0}>
@@ -130,7 +130,7 @@ const tabs = [
         )}
         {details.oopDesignPatterns.length > 0 && (
           <section class="mt-8" data-oop-patterns>
-            <h4 class="text-xl font-bold text-blue-200">OOP Design Patterns</h4>
+            <h4 class="text-xl font-bold text-blue-200">{details.architectureHeadings?.oopDesignPatterns ?? "OOP Design Patterns"}</h4>
             <div class="mt-4 divide-y divide-white/10 rounded-2xl border border-white/10 bg-[#0a0e27]/45">
               {details.oopDesignPatterns.map((item, index) => (
                 item.where || item.howImplemented || item.why || item.diagram || item.diagramPlaceholder ? <details class="group" open={index === 0}>
