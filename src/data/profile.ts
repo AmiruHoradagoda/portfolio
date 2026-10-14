@@ -68,7 +68,6 @@ export type ProjectDiagram = {
   src: string;
   alt: string;
   section?: "overview" | "challenges" | "architecture" | "decisions";
-  caption?: string;
 };
 
 export type SystemDesign = {
@@ -98,10 +97,26 @@ export type ChallengeSolution = {
 
 export type ProjectDetails = {
   background: string;
-  architectureHeadings?: { dataModel: string; systemDesigns: string; oopDesignPatterns: string };
+  architectureHeadings?: {
+    dataModel: string;
+    systemDesigns: string;
+    oopDesignPatterns: string;
+  };
   overviewDiagrams?: ProjectDiagram[];
-  overviewSections?: { id: string; heading: string; diagrams: ProjectDiagram[]; placeholder?: string }[];
-  evidence?: { title: string; introduction: string; diagrams: ProjectDiagram[]; result: string }[];
+  overviewSections?: {
+    id: string;
+    heading: string;
+    content?: string;
+    diagrams: ProjectDiagram[];
+    placeholder?: string;
+  }[];
+  sourceReferences?: { label: string; href: string; description: string }[];
+  evidence?: {
+    title: string;
+    introduction: string;
+    diagrams: ProjectDiagram[];
+    result: string;
+  }[];
   limitations?: string;
   dataModelDiagrams?: ProjectDiagram[];
   dataModelDescription?: string;
@@ -202,7 +217,8 @@ export const certifications = [
     year: "2023",
     category: "Competition & Award Certifications",
     credentialHref: "",
-    description: "Participated in timed problem-solving and cybersecurity-focused challenges.",
+    description:
+      "Participated in timed problem-solving and cybersecurity-focused challenges.",
   },
   {
     title: "RED CYPHER 1.0",
@@ -210,227 +226,248 @@ export const certifications = [
     year: "2023",
     category: "Competition & Award Certifications",
     credentialHref: "",
-    description: "Participated in cybersecurity and technical problem-solving tasks.",
+    description:
+      "Participated in cybersecurity and technical problem-solving tasks.",
   },
 ];
 
 export const skillTabs = [
   {
-    "id": "frontend",
-    "label": "Frontend",
-    "description": "Building responsive and interactive user interfaces.",
-    "items": [
+    id: "frontend",
+    label: "Frontend",
+    description: "Building responsive and interactive user interfaces.",
+    items: [
       {
-        "name": "React",
-        "confidence": "Proficient"
+        name: "React",
+        confidence: "Proficient",
       },
       {
-        "name": "HTML & CSS",
-        "confidence": "Proficient"
+        name: "HTML & CSS",
+        confidence: "Proficient",
       },
       {
-        "name": "Angular",
-        "confidence": "Intermediate"
+        name: "Angular",
+        confidence: "Intermediate",
       },
       {
-        "name": "TypeScript",
-        "confidence": "Intermediate"
+        name: "TypeScript",
+        confidence: "Intermediate",
       },
       {
-        "name": "Three.js",
-        "confidence": "Intermediate"
+        name: "Three.js",
+        confidence: "Intermediate",
       },
       {
-        "name": "Flutter",
-        "confidence": "Familiar"
-      }
-    ]
+        name: "Flutter",
+        confidence: "Familiar",
+      },
+    ],
   },
   {
-    "id": "backend",
-    "label": "Backend",
-    "description": "Designing APIs, services, and application logic.",
-    "items": [
+    id: "backend",
+    label: "Backend",
+    description: "Designing APIs, services, and application logic.",
+    items: [
       {
-        "name": "Java",
-        "confidence": "Proficient"
+        name: "Java",
+        confidence: "Proficient",
       },
       {
-        "name": "Spring Boot",
-        "confidence": "Proficient"
+        name: "Spring Boot",
+        confidence: "Proficient",
       },
       {
-        "name": "Python",
-        "confidence": "Proficient"
+        name: "Python",
+        confidence: "Proficient",
       },
       {
-        "name": "REST APIs",
-        "confidence": "Proficient"
+        name: "REST APIs",
+        confidence: "Proficient",
       },
       {
-        "name": "FastAPI",
-        "confidence": "Intermediate"
+        name: "FastAPI",
+        confidence: "Intermediate",
       },
       {
-        "name": "Node.js / Express.js",
-        "confidence": "Intermediate"
+        name: "Node.js / Express.js",
+        confidence: "Intermediate",
       },
       {
-        "name": "Microservices",
-        "confidence": "Intermediate"
+        name: "Microservices",
+        confidence: "Intermediate",
       },
       {
-        "name": "NestJS",
-        "confidence": "Familiar"
+        name: "NestJS",
+        confidence: "Familiar",
       },
       {
-        "name": "GraphQL",
-        "confidence": "Familiar"
-      }
-    ]
+        name: "GraphQL",
+        confidence: "Familiar",
+      },
+    ],
   },
   {
-    "id": "database",
-    "label": "Database",
-    "description": "Working with relational and NoSQL data stores.",
-    "items": [
+    id: "database",
+    label: "Database",
+    description: "Working with relational and NoSQL data stores.",
+    items: [
       {
-        "name": "MySQL",
-        "confidence": "Proficient"
+        name: "MySQL",
+        confidence: "Proficient",
       },
       {
-        "name": "MongoDB",
-        "confidence": "Proficient"
+        name: "MongoDB",
+        confidence: "Proficient",
       },
       {
-        "name": "PostgreSQL",
-        "confidence": "Intermediate"
+        name: "PostgreSQL",
+        confidence: "Intermediate",
       },
       {
-        "name": "Redis",
-        "confidence": "Familiar"
-      }
-    ]
+        name: "Redis",
+        confidence: "Familiar",
+      },
+    ],
   },
   {
-    "id": "ai",
-    "label": "AI / ML",
-    "description": "Building and integrating machine learning solutions.",
-    "items": [
+    id: "ai",
+    label: "AI / ML",
+    description: "Building and integrating machine learning solutions.",
+    items: [
       {
-        "name": "PyTorch",
-        "confidence": "Intermediate"
+        name: "PyTorch",
+        confidence: "Intermediate",
       },
       {
-        "name": "Scikit-learn",
-        "confidence": "Intermediate"
+        name: "Scikit-learn",
+        confidence: "Intermediate",
       },
       {
-        "name": "Hugging Face Transformers",
-        "confidence": "Intermediate"
+        name: "Hugging Face Transformers",
+        confidence: "Intermediate",
       },
       {
-        "name": "LLM / RAG",
-        "confidence": "Familiar"
-      }
-    ]
+        name: "LLM / RAG",
+        confidence: "Familiar",
+      },
+    ],
   },
   {
-    "id": "data",
-    "label": "Data Engineering",
-    "description": "Building pipelines and working with streaming and analytical data.",
-    "items": [
+    id: "data",
+    label: "Data Engineering",
+    description:
+      "Building pipelines and working with streaming and analytical data.",
+    items: [
       {
-        "name": "Apache Kafka",
-        "confidence": "Proficient"
+        name: "Apache Kafka",
+        confidence: "Proficient",
       },
       {
-        "name": "Apache Avro",
-        "confidence": "Intermediate"
+        name: "Apache Avro",
+        confidence: "Intermediate",
       },
       {
-        "name": "ETL / ELT",
-        "confidence": "Intermediate"
+        name: "ETL / ELT",
+        confidence: "Intermediate",
       },
       {
-        "name": "Data Warehousing",
-        "confidence": "Intermediate"
+        name: "Data Warehousing",
+        confidence: "Intermediate",
       },
       {
-        "name": "Apache Spark",
-        "confidence": "Familiar"
+        name: "Apache Spark",
+        confidence: "Familiar",
       },
       {
-        "name": "Apache Airflow",
-        "confidence": "Familiar"
-      }
-    ]
-  }
+        name: "Apache Airflow",
+        confidence: "Familiar",
+      },
+    ],
+  },
 ];
 
 export const experience = [
   {
-    "company": "Sri Lanka Ports Authority",
-    "department": "Information Systems Division",
-    "role": "Software Engineering Intern",
-    "period": "Jun 2025 - Dec 2025",
-    "duration": "6-month internship",
-    "project": "EDDS / Document & Workflow Management",
-    "summary": "Contributed to EDDS, a digital document and workflow management system supporting employee records and disciplinary inquiries. Worked across backend and frontend development to translate operational requirements into working software features.",
-    "highlights": [
+    company: "Sri Lanka Ports Authority",
+    department: "Information Systems Division",
+    role: "Software Engineering Intern",
+    period: "Jun 2025 - Dec 2025",
+    duration: "6-month internship",
+    project: "EDDS / Document & Workflow Management",
+    summary:
+      "Contributed to EDDS, a digital document and workflow management system supporting employee records and disciplinary inquiries. Worked across backend and frontend development to translate operational requirements into working software features.",
+    highlights: [
       "Backend Engineering: Developed REST APIs with Java 17 and Spring Boot for inquiry creation, editing, status management, activity history, teams, file handling, and role-based permissions.",
       "Frontend Development: Built Angular components for inquiry workflows, activity history, uploads, file views, and management screens. Connected them to backend services and resolved API integration issues.",
       "Data & System Design: Worked with ER diagrams, entity relationships, DTO mappings, and layered architecture. Applied validation, exception handling, and audit logging to improve maintainability and reliability.",
       "Performance & Data Access: Implemented pagination, search, filtering, and sorting to make larger datasets easier to retrieve and navigate.",
       "Document Management: Contributed to bulk file uploads, dynamic metadata and file forms, document categorization, and document-viewing workflows.",
-      "Testing & Debugging: Tested APIs and end-to-end workflows using Postman, logs, database verification, and frontend testing. Fixed validation, response-mapping, and UI consistency issues."
+      "Testing & Debugging: Tested APIs and end-to-end workflows using Postman, logs, database verification, and frontend testing. Fixed validation, response-mapping, and UI consistency issues.",
     ],
-    "contributions": [
+    contributions: [
       {
-        "title": "Backend Engineering",
-        "description": "Developed REST APIs with Java 17 and Spring Boot for inquiry creation, editing, status management, activity history, teams, file handling, and role-based permissions."
+        title: "Backend Engineering",
+        description:
+          "Developed REST APIs with Java 17 and Spring Boot for inquiry creation, editing, status management, activity history, teams, file handling, and role-based permissions.",
       },
       {
-        "title": "Frontend Development",
-        "description": "Built Angular components for inquiry workflows, activity history, uploads, file views, and management screens. Connected them to backend services and resolved API integration issues."
+        title: "Frontend Development",
+        description:
+          "Built Angular components for inquiry workflows, activity history, uploads, file views, and management screens. Connected them to backend services and resolved API integration issues.",
       },
       {
-        "title": "Data & System Design",
-        "description": "Worked with ER diagrams, entity relationships, DTO mappings, and layered architecture. Applied validation, exception handling, and audit logging to improve maintainability and reliability."
+        title: "Data & System Design",
+        description:
+          "Worked with ER diagrams, entity relationships, DTO mappings, and layered architecture. Applied validation, exception handling, and audit logging to improve maintainability and reliability.",
       },
       {
-        "title": "Performance & Data Access",
-        "description": "Implemented pagination, search, filtering, and sorting to make larger datasets easier to retrieve and navigate."
+        title: "Performance & Data Access",
+        description:
+          "Implemented pagination, search, filtering, and sorting to make larger datasets easier to retrieve and navigate.",
       },
       {
-        "title": "Document Management",
-        "description": "Contributed to bulk file uploads, dynamic metadata and file forms, document categorization, and document-viewing workflows."
+        title: "Document Management",
+        description:
+          "Contributed to bulk file uploads, dynamic metadata and file forms, document categorization, and document-viewing workflows.",
       },
       {
-        "title": "Testing & Debugging",
-        "description": "Tested APIs and end-to-end workflows using Postman, logs, database verification, and frontend testing. Fixed validation, response-mapping, and UI consistency issues."
-      }
+        title: "Testing & Debugging",
+        description:
+          "Tested APIs and end-to-end workflows using Postman, logs, database verification, and frontend testing. Fixed validation, response-mapping, and UI consistency issues.",
+      },
     ],
-    "stack": [
+    stack: [
       "Java 17",
       "Spring Boot",
       "Angular",
       "TypeScript",
       "MySQL",
-      "Postman"
-    ]
-  }
+      "Postman",
+    ],
+  },
 ];
 
 export const projects: Project[] = [
   {
     slug: "event-ticket-booking-platform",
     stackGroups: [
-      { title: "Backend", items: ["Java 17", "Spring Boot", "Spring Cloud Gateway"] },
+      {
+        title: "Backend",
+        items: ["Java 17", "Spring Boot", "Spring Cloud Gateway"],
+      },
       { title: "Frontend", items: ["Next.js", "Angular", "TypeScript"] },
       { title: "Data & Messaging", items: ["MySQL", "MongoDB", "RabbitMQ"] },
       { title: "Security", items: ["Keycloak"] },
-      { title: "Infrastructure", items: ["Docker", "Kubernetes", "Kustomize", "Google Cloud / GKE", "AWS S3"] },
+      {
+        title: "Infrastructure",
+        items: [
+          "Docker",
+          "Kubernetes",
+          "Kustomize",
+          "Google Cloud / GKE",
+          "AWS S3",
+        ],
+      },
       { title: "CI/CD", items: ["GitHub Actions"] },
       { title: "Testing", items: ["Testcontainers", "k6"] },
     ],
@@ -493,7 +530,8 @@ export const projects: Project[] = [
       id: "WyCTZabMX3A",
       title: "Original Product Demo — UI & Core Booking Flow",
     },
-    demoNote: "Recorded before the later reliability and system-design improvements.",
+    demoNote:
+      "Recorded before the later reliability and system-design improvements.",
     accent: "emerald",
     media: [
       {
@@ -528,94 +566,107 @@ export const projects: Project[] = [
       ],
       systemDesigns: [
         {
-          "title": "Microservice Architecture & Database per Service",
-          "content": "The platform is divided into independent **Auth, Event, Booking, and Notification services**, with an API Gateway providing the main entry point for client applications.\n\nEach service owns its persistence and exposes functionality through APIs or asynchronous messaging rather than directly accessing another service's database. This keeps domain boundaries clear and reduces coupling between services.\n\nThe overall service structure is shown in the C4 Container Diagram in the Overview section."
+          title: "Microservice Architecture & Database per Service",
+          content:
+            "The platform is divided into independent **Auth, Event, Booking, and Notification services**, with an API Gateway providing the main entry point for client applications.\n\nEach service owns its persistence and exposes functionality through APIs or asynchronous messaging rather than directly accessing another service's database. This keeps domain boundaries clear and reduces coupling between services.\n\nThe overall service structure is shown in the C4 Container Diagram in the Overview section.",
         },
         {
-          "title": "Concurrency-Safe Ticket Inventory",
-          "content": "Ticket inventory is limited, so multiple customers may attempt to reserve the same remaining tickets at the same time.\n\nThe Event Service performs inventory changes at the database level using atomic update operations and locking where necessary instead of relying on an unsafe read-then-update flow.\n\nA reservation succeeds only when sufficient inventory is still available, preventing **overselling under concurrent booking requests**.",
-          "diagram": {
-            "title": "Concurrent Ticket Reservation Flow",
-            "src": "projects/event-booking/archi&design/concurrent-ticket-reservation-flow.png",
-            "alt": "Concurrent booking requests use an atomic inventory update in Event Service, accepting reservations only when sufficient tickets remain."
-          }
+          title: "Concurrency-Safe Ticket Inventory",
+          content:
+            "Ticket inventory is limited, so multiple customers may attempt to reserve the same remaining tickets at the same time.\n\nThe Event Service performs inventory changes at the database level using atomic update operations and locking where necessary instead of relying on an unsafe read-then-update flow.\n\nA reservation succeeds only when sufficient inventory is still available, preventing **overselling under concurrent booking requests**.",
+          diagram: {
+            title: "Concurrent Ticket Reservation Flow",
+            src: "projects/event-booking/archi&design/concurrent-ticket-reservation-flow.png",
+            alt: "Concurrent booking requests use an atomic inventory update in Event Service, accepting reservations only when sufficient tickets remain.",
+          },
         },
         {
-          "title": "Idempotent Booking",
-          "content": "A client may retry a booking request after a timeout without knowing whether the original request already succeeded.\n\nThe Booking Service requires an **Idempotency-Key** and stores an `IdempotencyRecord` containing the key and a fingerprint of the request.\n\n- Same key + same request → return the existing booking.\n- Same key + different request → reject the request as a conflict.\n\nThis makes client retries safe and prevents duplicate bookings or repeated inventory reservation.",
-          "diagram": {
-            "title": "Idempotent Booking Flow",
-            "src": "projects/event-booking/archi&design/idempotent-booking-flow.png",
-            "alt": "Booking Service checks the idempotency key and request fingerprint to return an existing booking, reject a conflict, or process a new booking."
-          }
+          title: "Idempotent Booking",
+          content:
+            "A client may retry a booking request after a timeout without knowing whether the original request already succeeded.\n\nThe Booking Service requires an **Idempotency-Key** and stores an `IdempotencyRecord` containing the key and a fingerprint of the request.\n\n- Same key + same request → return the existing booking.\n- Same key + different request → reject the request as a conflict.\n\nThis makes client retries safe and prevents duplicate bookings or repeated inventory reservation.",
+          diagram: {
+            title: "Idempotent Booking Flow",
+            src: "projects/event-booking/archi&design/idempotent-booking-flow.png",
+            alt: "Booking Service checks the idempotency key and request fingerprint to return an existing booking, reject a conflict, or process a new booking.",
+          },
         },
         {
-          "title": "Compensation & Reservation Recovery",
-          "content": "Booking Service and Event Service use separate local transactions, so inventory may already be reserved when a later booking step, such as payment, fails.\n\nWhen this happens, Booking Service requests Event Service to release the reserved inventory. A stable `releaseId` makes the compensation operation idempotent, so repeated release requests do not restore the same inventory multiple times.\n\nIf immediate compensation fails, the booking retains reservation-expiry information and a recovery process retries the release later.\n\nThis allows the platform to recover from **partial distributed failures without using a distributed two-phase commit**.",
-          "diagram": {
-            "title": "Compensation & Reservation Recovery Flow",
-            "src": "projects/event-booking/archi&design/booking-vompensation&reservation-recovery-flow.png",
-            "alt": "Failed payment triggers idempotent inventory release using a releaseId; unsuccessful releases are retried by reservation recovery."
-          }
+          title: "Compensation & Reservation Recovery",
+          content:
+            "Booking Service and Event Service use separate local transactions, so inventory may already be reserved when a later booking step, such as payment, fails.\n\nWhen this happens, Booking Service requests Event Service to release the reserved inventory. A stable `releaseId` makes the compensation operation idempotent, so repeated release requests do not restore the same inventory multiple times.\n\nIf immediate compensation fails, the booking retains reservation-expiry information and a recovery process retries the release later.\n\nThis allows the platform to recover from **partial distributed failures without using a distributed two-phase commit**.",
+          diagram: {
+            title: "Compensation & Reservation Recovery Flow",
+            src: "projects/event-booking/archi&design/booking-vompensation&reservation-recovery-flow.png",
+            alt: "Failed payment triggers idempotent inventory release using a releaseId; unsuccessful releases are retried by reservation recovery.",
+          },
         },
         {
-          "title": "Transactional Outbox",
-          "content": "Saving a booking and publishing a RabbitMQ message are two separate operations. If the booking commits successfully but message publication fails, the notification event could otherwise be lost.\n\nThe Booking Service therefore stores the booking state and an `OutboxEvent` in the database transaction. A separate outbox worker later claims pending events and publishes them to RabbitMQ.\n\nOutbox records move through processing states, and stale `PROCESSING` records can be recovered when a worker fails before completing publication.\n\nThis ensures asynchronous work remains recoverable after the main booking transaction has committed.",
-          "diagram": {
-            "title": "Transactional Outbox & Failure Recovery Flow",
-            "src": "projects/event-booking/archi&design/outbox_failure_recovery.png",
-            "alt": "Booking and OutboxEvent are committed together; an asynchronous worker publishes pending events to RabbitMQ and recovery retries stale processing records."
-          }
+          title: "Transactional Outbox",
+          content:
+            "Saving a booking and publishing a RabbitMQ message are two separate operations. If the booking commits successfully but message publication fails, the notification event could otherwise be lost.\n\nThe Booking Service therefore stores the booking state and an `OutboxEvent` in the database transaction. A separate outbox worker later claims pending events and publishes them to RabbitMQ.\n\nOutbox records move through processing states, and stale `PROCESSING` records can be recovered when a worker fails before completing publication.\n\nThis ensures asynchronous work remains recoverable after the main booking transaction has committed.",
+          diagram: {
+            title: "Transactional Outbox & Failure Recovery Flow",
+            src: "projects/event-booking/archi&design/outbox_failure_recovery.png",
+            alt: "Booking and OutboxEvent are committed together; an asynchronous worker publishes pending events to RabbitMQ and recovery retries stale processing records.",
+          },
         },
         {
-          "title": "At-Least-Once Messaging, Retry & Deduplication",
-          "content": "RabbitMQ messages may be delivered more than once, and notification processing can fail temporarily.\n\nThe notification workflow uses retry handling and dead-letter processing for failed messages. Stable event IDs are used to detect events that have already been processed, allowing duplicate deliveries to be safely ignored.\n\nThe system therefore follows an **at-least-once delivery model** rather than claiming exactly-once messaging.",
-          "diagram": {
-            "title": "Notification Retry & Deduplication Flow",
-            "src": "projects/event-booking/archi&design/notification-retry&deduplication-flow.png",
-            "alt": "Notification processing flow showing retry handling, event deduplication, and dead-letter processing."
-          }
+          title: "At-Least-Once Messaging, Retry & Deduplication",
+          content:
+            "RabbitMQ messages may be delivered more than once, and notification processing can fail temporarily.\n\nThe notification workflow uses retry handling and dead-letter processing for failed messages. Stable event IDs are used to detect events that have already been processed, allowing duplicate deliveries to be safely ignored.\n\nThe system therefore follows an **at-least-once delivery model** rather than claiming exactly-once messaging.",
+          diagram: {
+            title: "Notification Retry & Deduplication Flow",
+            src: "projects/event-booking/archi&design/notification-retry&deduplication-flow.png",
+            alt: "Notification processing flow showing retry handling, event deduplication, and dead-letter processing.",
+          },
         },
         {
-          "title": "Role & Resource Ownership Authorization",
-          "content": "Authentication alone is not sufficient because users with the same role may still own different resources.\n\nKeycloak provides authenticated identities and roles such as **CUSTOMER, HOST, and ADMIN**. Backend services then apply resource-level ownership checks in addition to role checks.\n\nFor example, a HOST can manage only the events and related resources owned by that HOST, while an ADMIN has platform-level management access.\n\nThe host onboarding workflow follows:\n\n`Registered User → Submit Host Application → ADMIN Review → HOST Role`\n\nIf the application is approved, the existing user account receives the HOST role. If it is rejected, the user remains a normal registered user.\n\nAuthorization is enforced by backend services rather than relying only on frontend visibility."
-        }
+          title: "Role & Resource Ownership Authorization",
+          content:
+            "Authentication alone is not sufficient because users with the same role may still own different resources.\n\nKeycloak provides authenticated identities and roles such as **CUSTOMER, HOST, and ADMIN**. Backend services then apply resource-level ownership checks in addition to role checks.\n\nFor example, a HOST can manage only the events and related resources owned by that HOST, while an ADMIN has platform-level management access.\n\nThe host onboarding workflow follows:\n\n`Registered User → Submit Host Application → ADMIN Review → HOST Role`\n\nIf the application is approved, the existing user account receives the HOST role. If it is rejected, the user remains a normal registered user.\n\nAuthorization is enforced by backend services rather than relying only on frontend visibility.",
+        },
       ],
       oopDesignPatterns: [
         {
-          "pattern": "Repository Pattern",
-          "where": "Across the Spring Boot services using repositories such as:\n\n- `BookingRepository`\n- `PaymentRepository`\n- `IdempotencyRecordRepository`\n- `OutboxEventRepository`\n- `EventRepository`\n- `TicketTypeRepository`\n- `HostApplicationRepo`",
-          "howImplemented": "Repository interfaces extend Spring Data JPA repositories and expose database operations required by the service layer. More specialized queries are used where locking or domain-specific persistence behavior is required.",
-          "why": "It separates persistence logic from business logic and keeps services focused on application workflows rather than direct database access."
+          pattern: "Repository Pattern",
+          where:
+            "Across the Spring Boot services using repositories such as:\n\n- `BookingRepository`\n- `PaymentRepository`\n- `IdempotencyRecordRepository`\n- `OutboxEventRepository`\n- `EventRepository`\n- `TicketTypeRepository`\n- `HostApplicationRepo`",
+          howImplemented:
+            "Repository interfaces extend Spring Data JPA repositories and expose database operations required by the service layer. More specialized queries are used where locking or domain-specific persistence behavior is required.",
+          why: "It separates persistence logic from business logic and keeps services focused on application workflows rather than direct database access.",
         },
         {
-          "pattern": "Builder Pattern",
-          "where": "Used extensively in entities and DTOs such as:\n\n- `Booking`\n- `BookingItem`\n- `Payment`\n- `IdempotencyRecord`\n- `OutboxEvent`\n- request and response DTOs",
-          "howImplemented": "Lombok `@Builder` provides builder-style object construction instead of relying on large constructors with many parameters.\n\nExample conceptually:\n\n```\nBooking.builder()\n    .userId(...)\n    .eventId(...)\n    .status(...)\n    .totalAmount(...)\n    .build();\n```",
-          "why": "It improves readability when constructing objects with many fields and reduces errors caused by long constructor argument lists."
+          pattern: "Builder Pattern",
+          where:
+            "Used extensively in entities and DTOs such as:\n\n- `Booking`\n- `BookingItem`\n- `Payment`\n- `IdempotencyRecord`\n- `OutboxEvent`\n- request and response DTOs",
+          howImplemented:
+            "Lombok `@Builder` provides builder-style object construction instead of relying on large constructors with many parameters.\n\nExample conceptually:\n\n```\nBooking.builder()\n    .userId(...)\n    .eventId(...)\n    .status(...)\n    .totalAmount(...)\n    .build();\n```",
+          why: "It improves readability when constructing objects with many fields and reduces errors caused by long constructor argument lists.",
         },
         {
-          "pattern": "Adapter Pattern",
-          "where": "`JwtAuthConverter` in the Auth and Event services.",
-          "howImplemented": "`JwtAuthConverter` implements Spring's:\n\n```\nConverter<Jwt, AbstractAuthenticationToken>\n```\n\nIt takes the JWT issued through Keycloak, extracts realm roles, converts them into Spring Security `GrantedAuthority` objects, and returns a `JwtAuthenticationToken`.\n\nSo conceptually:\n\n```\nKeycloak JWT\n      ↓\nJwtAuthConverter\n      ↓\nSpring Security AuthenticationToken\n```",
-          "why": "Keycloak's JWT representation and Spring Security's authorization model are different. The converter adapts one representation into the form expected by Spring Security without spreading JWT parsing logic throughout controllers and services.",
-          "diagram": {
-            "title": "JWT Authentication Adapter",
-            "src": "projects/event-booking/archi&design/oop-dp/jwt-authentication-adapter.png",
-            "alt": "JWT authentication adapter diagram showing conversion from Keycloak JWT to Spring Security authentication."
-          }
+          pattern: "Adapter Pattern",
+          where: "`JwtAuthConverter` in the Auth and Event services.",
+          howImplemented:
+            "`JwtAuthConverter` implements Spring's:\n\n```\nConverter<Jwt, AbstractAuthenticationToken>\n```\n\nIt takes the JWT issued through Keycloak, extracts realm roles, converts them into Spring Security `GrantedAuthority` objects, and returns a `JwtAuthenticationToken`.\n\nSo conceptually:\n\n```\nKeycloak JWT\n      ↓\nJwtAuthConverter\n      ↓\nSpring Security AuthenticationToken\n```",
+          why: "Keycloak's JWT representation and Spring Security's authorization model are different. The converter adapts one representation into the form expected by Spring Security without spreading JWT parsing logic throughout controllers and services.",
+          diagram: {
+            title: "JWT Authentication Adapter",
+            src: "projects/event-booking/archi&design/oop-dp/jwt-authentication-adapter.png",
+            alt: "JWT authentication adapter diagram showing conversion from Keycloak JWT to Spring Security authentication.",
+          },
         },
         {
-          "pattern": "Facade Pattern",
-          "where": "`FileService` / `FileServiceImpl` in the Event Service.",
-          "howImplemented": "Application code does not directly deal with all AWS S3 operations.\n\nInstead, it calls simple methods such as:\n\n```\ncreateResource(...)\ndeleteResource(...)\n```\n\n`FileServiceImpl` internally handles:\n\n- filename generation\n- S3 metadata\n- object upload\n- S3 resource URL generation\n- deletion\n- error handling",
-          "why": "It hides AWS S3-specific complexity behind a small application-level interface, allowing event-management code to work with a simpler abstraction.",
-          "diagram": {
-            "title": "File Storage Facade",
-            "src": "projects/event-booking/archi&design/oop-dp/file-storage-facade.png",
-            "alt": "File storage facade diagram showing FileService simplifying access to AWS S3 storage operations."
-          }
-        }
+          pattern: "Facade Pattern",
+          where: "`FileService` / `FileServiceImpl` in the Event Service.",
+          howImplemented:
+            "Application code does not directly deal with all AWS S3 operations.\n\nInstead, it calls simple methods such as:\n\n```\ncreateResource(...)\ndeleteResource(...)\n```\n\n`FileServiceImpl` internally handles:\n\n- filename generation\n- S3 metadata\n- object upload\n- S3 resource URL generation\n- deletion\n- error handling",
+          why: "It hides AWS S3-specific complexity behind a small application-level interface, allowing event-management code to work with a simpler abstraction.",
+          diagram: {
+            title: "File Storage Facade",
+            src: "projects/event-booking/archi&design/oop-dp/file-storage-facade.png",
+            alt: "File storage facade diagram showing FileService simplifying access to AWS S3 storage operations.",
+          },
+        },
       ],
       showSupportingRequirements: false,
       background:
@@ -681,23 +732,30 @@ export const projects: Project[] = [
       qualityAttributes: [
         {
           attribute: "Consistency",
-          scenario: "Two customers try to reserve the last available ticket at the same time.",
-          response: "Inventory reservation is performed atomically so successful concurrent requests cannot reduce available stock below zero.",
+          scenario:
+            "Two customers try to reserve the last available ticket at the same time.",
+          response:
+            "Inventory reservation is performed atomically so successful concurrent requests cannot reduce available stock below zero.",
         },
         {
           attribute: "Idempotency",
           scenario: "A client times out and retries the same booking request.",
-          response: "Each booking uses an Idempotency-Key and request fingerprint. The same request returns the existing booking, while a changed request using the same key is rejected.",
+          response:
+            "Each booking uses an Idempotency-Key and request fingerprint. The same request returns the existing booking, while a changed request using the same key is rejected.",
         },
         {
           attribute: "Recoverability",
-          scenario: "Payment can fail after inventory has already been reserved, and recovery work can also fail or be interrupted.",
-          response: "Failed payment triggers inventory compensation. If immediate release fails, reservation-expiry recovery retries the release using persisted booking state.",
+          scenario:
+            "Payment can fail after inventory has already been reserved, and recovery work can also fail or be interrupted.",
+          response:
+            "Failed payment triggers inventory compensation. If immediate release fails, reservation-expiry recovery retries the release using persisted booking state.",
         },
         {
           attribute: "Security & Ownership",
-          scenario: "A HOST must not be able to manage another HOST's events or booking information.",
-          response: "Authorization is enforced in the backend using JWT roles and resource ownership checks rather than relying only on frontend visibility.",
+          scenario:
+            "A HOST must not be able to manage another HOST's events or booking information.",
+          response:
+            "Authorization is enforced in the backend using JWT roles and resource ownership checks rather than relying only on frontend visibility.",
         },
       ],
       diagrams: [
@@ -741,27 +799,32 @@ export const projects: Project[] = [
       designPatterns: [
         {
           pattern: "Idempotency Key",
-          where: "Booking requests are identified by a user-scoped idempotency key and request fingerprint.",
+          where:
+            "Booking requests are identified by a user-scoped idempotency key and request fingerprint.",
           why: "Makes retries safe and prevents duplicate bookings or repeated inventory deduction.",
         },
         {
           pattern: "Transactional Outbox",
-          where: "Booking state and an outgoing event are stored before asynchronous RabbitMQ publication.",
+          where:
+            "Booking state and an outgoing event are stored before asynchronous RabbitMQ publication.",
           why: "The database and message broker cannot participate in one normal local transaction, so the outbox preserves publication work after the booking commit.",
         },
         {
           pattern: "Compensating Transaction",
-          where: "When payment fails after inventory reservation, the Booking Service releases the reserved inventory.",
+          where:
+            "When payment fails after inventory reservation, the Booking Service releases the reserved inventory.",
           why: "Event and Booking services own separate transactions, so compensation is used instead of a distributed two-phase commit.",
         },
         {
           pattern: "Retry + Consumer Idempotency",
-          where: "Notification processing retries transient failures and uses stable event IDs to identify previously processed events.",
+          where:
+            "Notification processing retries transient failures and uses stable event IDs to identify previously processed events.",
           why: "The messaging model is at-least-once, so redelivery must be handled safely rather than assuming every event arrives once.",
         },
         {
           pattern: "Database per Service",
-          where: "Auth, Event, Booking, and Notification services own their own persistence.",
+          where:
+            "Auth, Event, Booking, and Notification services own their own persistence.",
           why: "This keeps service boundaries explicit and avoids cross-service database coupling.",
         },
       ],
@@ -773,69 +836,56 @@ export const projects: Project[] = [
     stackGroups: [
       {
         title: "Backend",
-        items: [
-          "Python"
-        ]
+        items: ["Python"],
       },
       {
         title: "Networking & Security",
-        items: [
-          "DNS",
-          "AES-GCM",
-          "RSA"
-        ]
+        items: ["DNS", "AES-GCM", "RSA"],
       },
       {
         title: "Infrastructure",
-        items: [
-          "Docker",
-          "Ubuntu"
-        ]
-      }
+        items: ["Docker", "Ubuntu"],
+      },
     ],
     title: "SecureDNS — Demonstrating DNS Attacks and Defenses",
     year: "2026",
     type: "Network Security / Applied Cryptography",
     status: "Completed (local educational demo)",
     role: "Network Security Developer",
-    summary: "A real-browser DNS security demonstration that compares vulnerable plaintext lookups with encrypted and authenticated communication under sniffing, DNS-response tampering, and flooding attacks.",
-    description: "A local DNS security lab connecting a real DNS client and browser flow to a gateway, attacker proxy, and resolving server. Insecure and protected modes make sniffing, response tampering, and optional request limiting observable.",
-    stack: [
-      "Python",
-      "DNS",
-      "AES-GCM",
-      "RSA",
-      "Docker",
-      "Ubuntu"
-    ],
+    summary:
+      "A real-browser DNS security demonstration that compares vulnerable plaintext lookups with encrypted and authenticated communication under sniffing, DNS-response tampering, and flooding attacks.",
+    description:
+      "A local DNS security lab connecting a real DNS client and browser flow to a gateway, attacker proxy, and resolving server. Insecure and protected modes make sniffing, response tampering, and optional request limiting observable.",
+    stack: ["Python", "DNS", "AES-GCM", "RSA", "Docker", "Ubuntu"],
     features: [
       "Real DNS A-record lookups and a browser-visible bank.test demo",
       "Plaintext and protected gateway-to-server communication",
       "AES-GCM payload encryption, RSA key wrapping, and signed responses",
       "Nonce and timestamp validation for freshness checks",
-      "Optional request rate limiting and dashboard-driven experiments"
+      "Optional request rate limiting and dashboard-driven experiments",
     ],
     challenges: [
       "Preserving real DNS client behavior while demonstrating a controlled on-path attacker",
       "Verifying protected responses before returning a DNS answer",
-      "Reproducing attacks and restoring the Ubuntu resolver after experiments"
+      "Reproducing attacks and restoring the Ubuntu resolver after experiments",
     ],
     links: [
       {
         label: "GitHub",
-        href: "https://github.com/AmiruHoradagoda/SecureDNS"
-      }
+        href: "https://github.com/AmiruHoradagoda/SecureDNS",
+      },
     ],
     accent: "cyan",
     media: [
       {
         type: "image",
         src: "projects/securedns/card-image.png",
-        alt: "SecureDNS demo comparing insecure DNS attacks with encrypted and signed DNS communication"
-      }
+        alt: "SecureDNS demo comparing insecure DNS attacks with encrypted and signed DNS communication",
+      },
     ],
     details: {
-      background: "Ordinary DNS messages do not inherently hide the requested domain or authenticate the answer. An on-path attacker can observe a lookup or substitute an IP address, directing a browser to an attacker-controlled destination.\n\nSecureDNS makes this problem observable in a local lab. A real lookup for bank.test travels through a DNS gateway (Alice), attacker-controlled proxy (Trudy), and resolving server (Bob). Real and fake bank sites make the consequences visible in a browser; a dashboard runs the comparisons and resolver-restoration workflow.\n\nProtected mode combines AES-GCM payload encryption, RSA-wrapped session keys, signed server responses, freshness checks, and optional rate limiting. The protected boundary is the gateway-to-server exchange through Trudy. This is a controlled educational demonstration, not a production replacement for DNSSEC, DoT, or DoH.",
+      background:
+        "Ordinary DNS messages do not inherently hide the requested domain or authenticate the answer. An on-path attacker can observe a lookup or substitute an IP address, directing a browser to an attacker-controlled destination.\n\nSecureDNS makes this problem observable in a local lab. A real lookup for bank.test travels through a DNS gateway (Alice), attacker-controlled proxy (Trudy), and resolving server (Bob). Real and fake bank sites make the consequences visible in a browser; a dashboard runs the comparisons and resolver-restoration workflow.\n\nProtected mode combines AES-GCM payload encryption, RSA-wrapped session keys, signed server responses, freshness checks, and optional rate limiting. The protected boundary is the gateway-to-server exchange through Trudy. This is a controlled educational demonstration, not a production replacement for DNSSEC, DoT, or DoH.",
       overviewSections: [
         {
           id: "dns-request",
@@ -845,9 +895,8 @@ export const projects: Project[] = [
               title: "DNS Request Flow",
               src: "projects/securedns/archi&design/dns-request-flow.png",
               alt: "A DNS lookup travels from the browser or operating system through the gateway and attacker proxy to the SecureDNS server.",
-              caption: "The client uses ordinary DNS to reach Alice. Alice exchanges JSON messages over TCP with Bob through Trudy; protected mode encrypts these payloads. The gateway supports UDP and TCP DNS; the diagram illustrates UDP."
-            }
-          ]
+            },
+          ],
         },
         {
           id: "trust-boundary",
@@ -857,128 +906,140 @@ export const projects: Project[] = [
               title: "Alice, Bob & Trudy Communication",
               src: "projects/securedns/archi&design/full-communication.png",
               alt: "Alice wraps an AES session key for Bob and exchanges encrypted requests and signed, encrypted responses through Trudy.",
-              caption: "Alice is the gateway, Bob is the resolving server, and Trudy is the on-path proxy. Bob signs responses; both directions use authenticated encryption. The gateway trusts a locally supplied copy of Bob's public key."
-            }
-          ]
-        }
+            },
+          ],
+        },
       ],
       functionalRequirements: [
         {
           id: "DNS-FR-01",
           area: "DNS Resolution",
-          requirement: "Resolve bank.test through the gateway, attacker proxy, and server using actual DNS A-record lookups and the local browser flow.",
-          priority: "Implemented"
+          requirement:
+            "Resolve bank.test through the gateway, attacker proxy, and server using actual DNS A-record lookups and the local browser flow.",
+          priority: "Implemented",
         },
         {
           id: "DNS-FR-02",
           area: "Insecure Comparison",
-          requirement: "Provide a plaintext mode in which the proxy can log queried domains and substitute the IP address in a response.",
-          priority: "Implemented"
+          requirement:
+            "Provide a plaintext mode in which the proxy can log queried domains and substitute the IP address in a response.",
+          priority: "Implemented",
         },
         {
           id: "DNS-FR-03",
           area: "Confidentiality",
-          requirement: "Encrypt gateway-to-server request and response payloads with AES-GCM, using a fresh AES key per query wrapped with the server's RSA public key.",
-          priority: "Implemented"
+          requirement:
+            "Encrypt gateway-to-server request and response payloads with AES-GCM, using a fresh AES key per query wrapped with the server's RSA public key.",
+          priority: "Implemented",
         },
         {
           id: "DNS-FR-04",
           area: "Integrity & Authenticity",
-          requirement: "Authenticate the encrypted response and verify the server signature before returning its answer. Return SERVFAIL when security verification fails.",
-          priority: "Implemented"
+          requirement:
+            "Authenticate the encrypted response and verify the server signature before returning its answer. Return SERVFAIL when security verification fails.",
+          priority: "Implemented",
         },
         {
           id: "DNS-FR-05",
           area: "Replay & Freshness Checks",
-          requirement: "Reject stale timestamps and previously seen request nonces at the server; check the response nonce against the current query and validate its timestamp at the gateway.",
-          priority: "Implemented"
+          requirement:
+            "Reject stale timestamps and previously seen request nonces at the server; check the response nonce against the current query and validate its timestamp at the gateway.",
+          priority: "Implemented",
         },
         {
           id: "DNS-FR-06",
           area: "Flood Mitigation",
-          requirement: "When enabled in secure mode, limit repeated queries by domain and query type within a configured time window; return SERVFAIL for excess requests.",
-          priority: "Implemented"
+          requirement:
+            "When enabled in secure mode, limit repeated queries by domain and query type within a configured time window; return SERVFAIL for excess requests.",
+          priority: "Implemented",
         },
         {
           id: "DNS-FR-07",
           area: "Demo Operations",
-          requirement: "Provide dashboard actions for insecure/secure sniffing and tampering, a flood-limiting scenario, log inspection, and an explicit Ubuntu DNS restoration action.",
-          priority: "Implemented"
-        }
+          requirement:
+            "Provide dashboard actions for insecure/secure sniffing and tampering, a flood-limiting scenario, log inspection, and an explicit Ubuntu DNS restoration action.",
+          priority: "Implemented",
+        },
       ],
       systemDesigns: [
         {
           title: "Components & Trust Boundaries",
-          content: "**Design:** Alice accepts normal DNS queries, translates supported A-record lookups into JSON messages, and returns a DNS answer. Trudy forwards those messages and can observe traffic, replace plaintext answers, or flip protected ciphertext bytes. Bob resolves local demo records and can forward other A-record lookups to upstream resolvers.\n\n**Why:** Keeping the attacker on the same path in both modes makes the security comparison reproducible. The five Compose services include Alice, Trudy, Bob, and the real/fake bank sites; the dashboard runs separately on the host.\n\n**Trade-off:** This is a deliberately controlled intermediary. The local client-to-gateway leg and Bob's ordinary upstream lookups are outside the encrypted boundary."
+          content:
+            "**Design:** Alice accepts normal DNS queries, translates supported A-record lookups into JSON messages, and returns a DNS answer. Trudy forwards those messages and can observe traffic, replace plaintext answers, or flip protected ciphertext bytes. Bob resolves local demo records and can forward other A-record lookups to upstream resolvers.\n\n**Why:** Keeping the attacker on the same path in both modes makes the security comparison reproducible. The five Compose services include Alice, Trudy, Bob, and the real/fake bank sites; the dashboard runs separately on the host.\n\n**Trade-off:** This is a deliberately controlled intermediary. The local client-to-gateway leg and Bob's ordinary upstream lookups are outside the encrypted boundary.",
         },
         {
           title: "Hybrid Encryption & Server Authentication",
-          content: "**Design:** Alice generates a random 256-bit AES key for each query and uses AES-GCM with a random 96-bit IV. RSA-OAEP with SHA-256 wraps the session key for Bob. Bob signs the response payload with RSA-PSS/SHA-256, then encrypts the signed body using AES-GCM.\n\n**Why:** Symmetric encryption protects the payload; RSA key wrapping lets Alice send the session key to Bob. The response signature binds the answer to the server key that Alice trusts.\n\n**Trade-off:** Per-query RSA operations add overhead, without a published performance benchmark. Keys are distributed locally rather than through a managed certificate or rotation system; the custom protocol is not a standard encrypted DNS transport."
+          content:
+            "**Design:** Alice generates a random 256-bit AES key for each query and uses AES-GCM with a random 96-bit IV. RSA-OAEP with SHA-256 wraps the session key for Bob. Bob signs the response payload with RSA-PSS/SHA-256, then encrypts the signed body using AES-GCM.\n\n**Why:** Symmetric encryption protects the payload; RSA key wrapping lets Alice send the session key to Bob. The response signature binds the answer to the server key that Alice trusts.\n\n**Trade-off:** Per-query RSA operations add overhead, without a published performance benchmark. Keys are distributed locally rather than through a managed certificate or rotation system; the custom protocol is not a standard encrypted DNS transport.",
         },
         {
           title: "Verify Before Answering & Check Freshness",
-          content: "**Design:** Alice decrypts and authenticates the response, matches its nonce to the current query, checks timestamp freshness, and verifies Bob's signature before using the answer. Verification errors produce SERVFAIL. Bob checks request freshness and tracks previously used request nonces. The timestamp tolerance in the source is 60 seconds.\n\n**Why:** Checks happen at the message boundary, before an untrusted answer becomes a browser-visible IP address. A security failure prevents redirection while making the failed lookup observable.\n\n**Trade-off:** The browser receives a DNS failure rather than an automatically repaired answer. Freshness depends on clocks; the server's nonce set is in memory, has no expiry cleanup, and resets on restart. These checks do not establish comprehensive replay resistance."
+          content:
+            "**Design:** Alice decrypts and authenticates the response, matches its nonce to the current query, checks timestamp freshness, and verifies Bob's signature before using the answer. Verification errors produce SERVFAIL. Bob checks request freshness and tracks previously used request nonces. The timestamp tolerance in the source is 60 seconds.\n\n**Why:** Checks happen at the message boundary, before an untrusted answer becomes a browser-visible IP address. A security failure prevents redirection while making the failed lookup observable.\n\n**Trade-off:** The browser receives a DNS failure rather than an automatically repaired answer. Freshness depends on clocks; the server's nonce set is in memory, has no expiry cleanup, and resets on restart. These checks do not establish comprehensive replay resistance.",
         },
         {
           title: "Repeatable Experiments & Local DNS Restoration",
-          content: "**Design:** Dashboard actions run predefined scripts that select the communication and attack modes, start Docker services, issue dig lookups, and expose script/container logs. The availability script enables a gateway sliding-window limiter keyed by domain and query type. An explicit restore action stops containers and restores Ubuntu's systemd-resolved configuration.\n\n**Why:** A real DNS/browser path demonstrates the effect of a forged answer, while fixed scripts make insecure-versus-secure outcomes easier to compare. The restoration workflow addresses the operational challenge of changing host DNS settings.\n\n**Trade-off:** Rate limiting is off by default and protects repeated keys only, not all traffic or distributed floods. Restoration is an explicit Ubuntu-oriented action, not a guarantee of restoring every custom resolver configuration."
-        }
+          content:
+            "**Design:** Dashboard actions run predefined scripts that select the communication and attack modes, start Docker services, issue dig lookups, and expose script/container logs. The availability script enables a gateway sliding-window limiter keyed by domain and query type. An explicit restore action stops containers and restores Ubuntu's systemd-resolved configuration.\n\n**Why:** A real DNS/browser path demonstrates the effect of a forged answer, while fixed scripts make insecure-versus-secure outcomes easier to compare. The restoration workflow addresses the operational challenge of changing host DNS settings.\n\n**Trade-off:** Rate limiting is off by default and protects repeated keys only, not all traffic or distributed floods. Restoration is an explicit Ubuntu-oriented action, not a guarantee of restoring every custom resolver configuration.",
+        },
       ],
       evidence: [
         {
           title: "Confidentiality: DNS Sniffing",
-          introduction: "**Threat:** Trudy captures the messages between Alice and Bob and tries to read the requested domain. Both runs perform a bank.test lookup; only the message protection changes.",
+          introduction:
+            "**Threat:** Trudy captures the messages between Alice and Bob and tries to read the requested domain. Both runs perform a bank.test lookup; only the message protection changes.",
           diagrams: [
             {
               title: "Insecure Mode: Domain Visible",
               src: "projects/securedns/archi&design/sniffing-insecure.png",
               alt: "Insecure sniffing logs show bank.test in plaintext and a successful lookup of the real-bank address.",
-              caption: "The proxy log exposes bank.test and its answer, 172.28.0.40. The accompanying ping confirms that the name resolved to the real-bank destination."
             },
             {
               title: "Secure Mode: Encrypted Payload",
               src: "projects/securedns/archi&design/sniffing-secure.png",
               alt: "Secure sniffing logs show encrypted fields while the gateway verifies the real-bank response.",
-              caption: "Trudy sees the wrapped key, IV, and ciphertext. Alice logs a verified bank.test answer, and the lookup still reaches 172.28.0.40."
-            }
+            },
           ],
-          result: "**Observed result:** The captured proxy messages expose the domain in plaintext mode and encrypted fields in protected mode. This demonstrates payload confidentiality at the simulated attack position; endpoints still see the domain and traffic metadata remains visible."
+          result:
+            "**Observed result:** The captured proxy messages expose the domain in plaintext mode and encrypted fields in protected mode. This demonstrates payload confidentiality at the simulated attack position; endpoints still see the domain and traffic metadata remains visible.",
         },
         {
           title: "Integrity: DNS Response Tampering",
-          introduction: "**Threat:** Trudy substitutes the fake-bank address in plaintext mode, then attempts ciphertext modification in protected mode. The configured real-bank address is 172.28.0.40; the fake-bank destination is 172.28.0.50.",
+          introduction:
+            "**Threat:** Trudy substitutes the fake-bank address in plaintext mode, then attempts ciphertext modification in protected mode. The configured real-bank address is 172.28.0.40; the fake-bank destination is 172.28.0.50.",
           diagrams: [
             {
               title: "Insecure Mode: Answer Replaced",
               src: "projects/securedns/archi&design/tampering-insecure.png",
               alt: "Attacker logs show the original bank.test answer and substitution of the fake-bank IP address.",
-              caption: "The screenshot records Trudy changing responses to 172.28.0.50. The repository walkthrough demonstrates the resulting fake-bank browser flow; the visible panel here is the attack log."
             },
             {
               title: "Secure Mode: Tampering Rejected",
               src: "projects/securedns/archi&design/tampering-secure.png",
               alt: "Secure-mode logs show ciphertext modification followed by gateway verification failure and SERVFAIL.",
-              caption: "Trudy flips ciphertext bytes; Alice reports security verification failure and returns SERVFAIL. The modified answer is not returned as a usable IP address."
-            }
+            },
           ],
-          result: "**Observed result:** Plaintext response substitution is accepted in the lab flow; protected ciphertext modification results in DNS failure. This experiment exercises AES-GCM authentication rejection. Signature verification is also implemented, but this screenshot does not isolate a separate signature-failure test."
+          result:
+            "**Observed result:** Plaintext response substitution is accepted in the lab flow; protected ciphertext modification results in DNS failure. This experiment exercises AES-GCM authentication rejection. Signature verification is also implemented, but this screenshot does not isolate a separate signature-failure test.",
         },
         {
           title: "Availability: Controlled Flood Limiting",
-          introduction: "**Threat:** Rapid repeated A-record lookups create avoidable processing load. The demo explicitly enables a limit of five requests per two-second window for the same domain/query-type key.",
+          introduction:
+            "**Threat:** Rapid repeated A-record lookups create avoidable processing load. The demo explicitly enables a limit of five requests per two-second window for the same domain/query-type key.",
           diagrams: [
             {
               title: "Secure Mode: Excess Requests Limited",
               src: "projects/securedns/archi&design/flood-protection.png",
               alt: "Flood demonstration output shows allowed queries followed by requests rejected with SERVFAIL.",
-              caption: "This captured run reports four allowed queries and sixteen limited queries from the twenty-query burst. These are observations from one run, not throughput or capacity measurements."
-            }
+            },
           ],
-          result: "**Observed result:** The recorded burst contains SERVFAIL responses after the repeated-query limit is reached. The source checks this limit before opening the protected exchange. This demonstrates a local mitigation, not Internet-scale denial-of-service resistance."
-        }
+          result:
+            "**Observed result:** The recorded burst contains SERVFAIL responses after the repeated-query limit is reached. The source checks this limit before opening the protected exchange. This demonstrates a local mitigation, not Internet-scale denial-of-service resistance.",
+        },
       ],
-      limitations: "**Outcome:** The evidence shows visible plaintext queries, observable answer substitution, rejection of altered ciphertext, and optional limiting of repeated queries. Replay and signature checks are supported by source inspection; no dedicated replay or isolated signature-failure evidence is presented here.\n\n**Scope:** This is a local educational prototype with A-record support. It does not implement DNSSEC, DoT, or DoH, authenticate upstream DNS answers, or encrypt the client-to-gateway leg. It provides no published latency/throughput benchmark or production availability guarantee.\n\n**Operational limits:** The lab relies on a trusted local server public key, ephemeral replay state, configured clocks, and explicit DNS restoration. Rate-limit buckets are keyed by domain/query type rather than requester identity. The attacker can still drop traffic, and rejecting tampering deliberately sacrifices that lookup's availability."
-    }
+      limitations:
+        "**Outcome:** The evidence shows visible plaintext queries, observable answer substitution, rejection of altered ciphertext, and optional limiting of repeated queries. Replay and signature checks are supported by source inspection; no dedicated replay or isolated signature-failure evidence is presented here.\n\n**Scope:** This is a local educational prototype with A-record support. It does not implement DNSSEC, DoT, or DoH, authenticate upstream DNS answers, or encrypt the client-to-gateway leg. It provides no published latency/throughput benchmark or production availability guarantee.\n\n**Operational limits:** The lab relies on a trusted local server public key, ephemeral replay state, configured clocks, and explicit DNS restoration. Rate-limit buckets are keyed by domain/query type rather than requester identity. The attacker can still drop traffic, and rejecting tampering deliberately sacrifices that lookup's availability.",
+    },
   },
   {
     slug: "spare-part-sales-service-platform",
@@ -987,8 +1048,10 @@ export const projects: Project[] = [
     type: "Full-Stack E-commerce / Service Management",
     status: "Ongoing",
     role: "Full Stack Engineer",
-    summary: "A full-stack motorcycle parts commerce and service-booking platform combining product discovery, checkout, appointment scheduling, role-based administration, and third-party payment and storage integrations.",
-    description: "BikePartsHub is a full-stack web application for a motorcycle spare-parts business. It combines two main business workflows in one platform: spare-parts sales and motorcycle service appointment booking.\n\nCustomers can browse and filter products, manage a cart, place orders, pay using PayPal or Cash on Delivery, and book service appointments using available time slots. Administrators manage products, customers, orders, services, appointments, product images, and loyal-customer discounts.\n\nThe system is implemented as an Angular frontend, a Spring Boot REST API, and a MySQL database, with PayPal used for online payments and AWS S3 used for product-image storage.",
+    summary:
+      "A full-stack motorcycle parts commerce and service-booking platform combining product discovery, checkout, appointment scheduling, role-based administration, and third-party payment and storage integrations.",
+    description:
+      "BikePartsHub is a full-stack web application for a motorcycle spare-parts business. It combines two main business workflows in one platform: spare-parts sales and motorcycle service appointment booking.\n\nCustomers can browse and filter products, manage a cart, place orders, pay using PayPal or Cash on Delivery, and book service appointments using available time slots. Administrators manage products, customers, orders, services, appointments, product images, and loyal-customer discounts.\n\nThe system is implemented as an Angular frontend, a Spring Boot REST API, and a MySQL database, with PayPal used for online payments and AWS S3 used for product-image storage.",
     stack: [
       "Java 17",
       "Spring Boot 3.3",
@@ -1009,7 +1072,7 @@ export const projects: Project[] = [
       "REST APIs",
       "OpenAPI / Swagger",
       "JUnit / Spring Boot Test",
-      "Jasmine / Karma"
+      "Jasmine / Karma",
     ],
     stackGroups: [
       {
@@ -1019,54 +1082,37 @@ export const projects: Project[] = [
           "Spring Boot 3.3",
           "Spring Security",
           "Spring Data JPA",
-          "Hibernate"
-        ]
+          "Hibernate",
+        ],
       },
       {
         title: "Frontend",
-        items: [
-          "Angular 17",
-          "TypeScript",
-          "RxJS",
-          "Tailwind CSS",
-          "PrimeNG"
-        ]
+        items: ["Angular 17", "TypeScript", "RxJS", "Tailwind CSS", "PrimeNG"],
       },
       {
         title: "Data",
-        items: [
-          "MySQL"
-        ]
+        items: ["MySQL"],
       },
       {
         title: "Security",
         items: [
           "JWT Access Tokens",
           "JWT Refresh Tokens",
-          "BCrypt Password Hashing"
-        ]
+          "BCrypt Password Hashing",
+        ],
       },
       {
         title: "Integrations",
-        items: [
-          "PayPal REST SDK",
-          "AWS S3"
-        ]
+        items: ["PayPal REST SDK", "AWS S3"],
       },
       {
         title: "API & Documentation",
-        items: [
-          "REST APIs",
-          "OpenAPI / Swagger"
-        ]
+        items: ["REST APIs", "OpenAPI / Swagger"],
       },
       {
         title: "Testing",
-        items: [
-          "JUnit / Spring Boot Test",
-          "Jasmine / Karma"
-        ]
-      }
+        items: ["JUnit / Spring Boot Test", "Jasmine / Karma"],
+      },
     ],
     features: [
       "Users can register, log in, refresh authentication tokens, log out, and manage their account information.",
@@ -1075,225 +1121,228 @@ export const projects: Project[] = [
       "Customers can view their order history and order information.",
       "Customers can browse available motorcycle services.",
       "Administrators can create, update, and remove products.",
-      "The platform supports a LOYAL_CUSTOMER role in addition to regular customers."
+      "The platform supports a LOYAL_CUSTOMER role in addition to regular customers.",
     ],
     challenges: [],
     links: [
       {
         label: "GitHub",
-        href: "https://github.com/AmiruHoradagoda/BikePartsHubApplication/tree/main"
-      }
+        href: "https://github.com/AmiruHoradagoda/BikePartsHubApplication/tree/main",
+      },
     ],
     demoVideo: {
       type: "youtube",
       id: "PWVdUJgildE",
-      title: "Spare Part Sales and Service Platform Demo"
+      title: "Spare Part Sales and Service Platform Demo",
     },
     accent: "cyan",
     media: [
       {
         type: "image",
         src: "projects/bike-parts-hub/card-image.png",
-        alt: "BikePartsHub spare parts platform screenshot"
-      }
+        alt: "BikePartsHub spare parts platform screenshot",
+      },
     ],
     details: {
-      background: "BikePartsHub is a full-stack web application for a motorcycle spare-parts business. It combines two main business workflows in one platform: **spare-parts sales** and **motorcycle service appointment booking**.\n\nCustomers can browse and filter products, manage a cart, place orders, pay using PayPal or Cash on Delivery, and book service appointments using available time slots. Administrators manage products, customers, orders, services, appointments, product images, and loyal-customer discounts.\n\nThe system is implemented as an **Angular frontend**, a **Spring Boot REST API**, and a **MySQL database**, with PayPal used for online payments and AWS S3 used for product-image storage.",
+      background:
+        "BikePartsHub is a full-stack web application for a motorcycle spare-parts business. It combines two main business workflows in one platform: **spare-parts sales** and **motorcycle service appointment booking**.\n\nCustomers can browse and filter products, manage a cart, place orders, pay using PayPal or Cash on Delivery, and book service appointments using available time slots. Administrators manage products, customers, orders, services, appointments, product images, and loyal-customer discounts.\n\nThe system is implemented as an **Angular frontend**, a **Spring Boot REST API**, and a **MySQL database**, with PayPal used for online payments and AWS S3 used for product-image storage.",
       overviewDiagrams: [
         {
           title: "C4 Context Diagram",
           src: "projects/bike-parts-hub/c4/context_diagram_c1.svg",
-          alt: "BikePartsHub C4 system context diagram"
+          alt: "BikePartsHub C4 system context diagram",
         },
         {
           title: "C4 Container Diagram",
           src: "projects/bike-parts-hub/c4/container-diagram_c2.svg",
-          alt: "BikePartsHub C4 container diagram"
-        }
+          alt: "BikePartsHub C4 container diagram",
+        },
       ],
       functionalRequirements: [
         {
           id: "BPH-FR-01",
           area: "Authentication & Account Management",
-          requirement: "- Users can register, log in, refresh authentication tokens, log out, and manage their account information.\n- The backend uses JWT access and refresh tokens.\n- The system supports roles such as **CUSTOMER**, **LOYAL_CUSTOMER**, and **ADMIN**.\n- Backend endpoints use Spring Security and method-level authorization for protected operations.",
-          priority: "High"
+          requirement:
+            "- Users can register, log in, refresh authentication tokens, log out, and manage their account information.\n- The backend uses JWT access and refresh tokens.\n- The system supports roles such as **CUSTOMER**, **LOYAL_CUSTOMER**, and **ADMIN**.\n- Backend endpoints use Spring Security and method-level authorization for protected operations.",
+          priority: "High",
         },
         {
           id: "BPH-FR-02",
           area: "Product Discovery & Compatibility Filtering",
-          requirement: "- Customers can browse the motorcycle spare-parts catalog.\n- Products can be filtered using attributes such as category, product type, manufacturer, color, bike type, bike model, and bike manufacturer.\n- Product results support pagination.\n- Customers can open product details before adding products to the cart.",
-          priority: "High"
+          requirement:
+            "- Customers can browse the motorcycle spare-parts catalog.\n- Products can be filtered using attributes such as category, product type, manufacturer, color, bike type, bike model, and bike manufacturer.\n- Product results support pagination.\n- Customers can open product details before adding products to the cart.",
+          priority: "High",
         },
         {
           id: "BPH-FR-03",
           area: "Cart, Checkout & Payment",
-          requirement: "- Logged-in customers can add products to a shopping cart and adjust quantities.\n- Customers provide shipping information during checkout.\n- The platform supports **PayPal** and **Cash on Delivery** payment methods.\n- Successful checkout creates the order, order items, shipping information, and payment record.",
-          priority: "High"
+          requirement:
+            "- Logged-in customers can add products to a shopping cart and adjust quantities.\n- Customers provide shipping information during checkout.\n- The platform supports **PayPal** and **Cash on Delivery** payment methods.\n- Successful checkout creates the order, order items, shipping information, and payment record.",
+          priority: "High",
         },
         {
           id: "BPH-FR-04",
           area: "Order Management",
-          requirement: "- Customers can view their order history and order information.\n- Administrators can view and manage customer orders.\n- Orders use explicit statuses to represent their lifecycle.\n- Order-related information is stored together with shipping and payment data.",
-          priority: "High"
+          requirement:
+            "- Customers can view their order history and order information.\n- Administrators can view and manage customer orders.\n- Orders use explicit statuses to represent their lifecycle.\n- Order-related information is stored together with shipping and payment data.",
+          priority: "High",
         },
         {
           id: "BPH-FR-05",
           area: "Service Appointment Scheduling",
-          requirement: "- Customers can browse available motorcycle services.\n- Customers can choose a service, date, and available time slot.\n- Slot availability is calculated using the selected service duration, business hours, and existing appointments.\n- Customers can view their appointment history.\n- Administrators can manage appointments and appointment statuses.",
-          priority: "High"
+          requirement:
+            "- Customers can browse available motorcycle services.\n- Customers can choose a service, date, and available time slot.\n- Slot availability is calculated using the selected service duration, business hours, and existing appointments.\n- Customers can view their appointment history.\n- Administrators can manage appointments and appointment statuses.",
+          priority: "High",
         },
         {
           id: "BPH-FR-06",
           area: "Administration",
-          requirement: "- Administrators can create, update, and remove products.\n- Product images can be uploaded to AWS S3.\n- Administrators can manage services, customers, orders, and appointments.\n- Administrative operations are exposed through dedicated backend endpoints.",
-          priority: "High"
+          requirement:
+            "- Administrators can create, update, and remove products.\n- Product images can be uploaded to AWS S3.\n- Administrators can manage services, customers, orders, and appointments.\n- Administrative operations are exposed through dedicated backend endpoints.",
+          priority: "High",
         },
         {
           id: "BPH-FR-07",
           area: "Loyal Customer Management",
-          requirement: "- The platform supports a **LOYAL_CUSTOMER** role in addition to regular customers.\n- Administrators can identify and manage loyal customers.\n- Product discounts can be applied for loyal customers.\n- The frontend displays discounted prices when the logged-in user has the loyal-customer role.",
-          priority: "High"
-        }
+          requirement:
+            "- The platform supports a **LOYAL_CUSTOMER** role in addition to regular customers.\n- Administrators can identify and manage loyal customers.\n- Product discounts can be applied for loyal customers.\n- The frontend displays discounted prices when the logged-in user has the loyal-customer role.",
+          priority: "High",
+        },
       ],
-      dataModelDescription: "BikePartsHub uses a relational MySQL data model for both sales and service-booking workflows.\n\nThe main domain entities include:\n\n- `User`\n- `Token`\n- `Product`\n- `ProductAttribute`\n- `Bike`\n- `Order`\n- `OrderDetails`\n- `ShippingAddress`\n- `Payment`\n- `ServiceType`\n- `Appointment`\n\nThe model connects customers with their orders and appointments while keeping product, payment, shipping, bike-compatibility, and service information represented as separate domain entities.",
+      dataModelDescription:
+        "BikePartsHub uses a relational MySQL data model for both sales and service-booking workflows.\n\nThe main domain entities include:\n\n- `User`\n- `Token`\n- `Product`\n- `ProductAttribute`\n- `Bike`\n- `Order`\n- `OrderDetails`\n- `ShippingAddress`\n- `Payment`\n- `ServiceType`\n- `Appointment`\n\nThe model connects customers with their orders and appointments while keeping product, payment, shipping, bike-compatibility, and service information represented as separate domain entities.",
       dataModelDiagrams: [
         {
           title: "BikePartsHub ER Diagram",
           src: "projects/bike-parts-hub/archi&design/er_diagram.png",
-          alt: "Bike Parts Hub ER diagram showing users, products, orders, services, appointments, and related entities"
-        }
+          alt: "Bike Parts Hub ER diagram showing users, products, orders, services, appointments, and related entities",
+        },
       ],
       systemDesigns: [
         {
           title: "Layered Full-Stack Architecture",
-          content: "The application separates frontend, API, business logic, and persistence responsibilities.\n\nThe Angular application handles customer and administrator interfaces. Spring REST controllers expose backend endpoints, service classes contain business logic, repositories handle database access, and JPA/Hibernate maps domain entities to MySQL.\n\nConceptually:\n\n```text\nAngular Web Application\n        ↓\nREST Controllers\n        ↓\nService Layer\n        ↓\nRepositories\n        ↓\nMySQL\n```\n\nThis separation keeps UI logic, business rules, and persistence concerns from being mixed together."
+          content:
+            "The application separates frontend, API, business logic, and persistence responsibilities.\n\nThe Angular application handles customer and administrator interfaces. Spring REST controllers expose backend endpoints, service classes contain business logic, repositories handle database access, and JPA/Hibernate maps domain entities to MySQL.\n\nConceptually:\n\n```text\nAngular Web Application\n        ↓\nREST Controllers\n        ↓\nService Layer\n        ↓\nRepositories\n        ↓\nMySQL\n```\n\nThis separation keeps UI logic, business rules, and persistence concerns from being mixed together.",
         },
         {
           title: "JWT Authentication & Token Lifecycle",
-          content: "The authentication workflow uses JWT access and refresh tokens.\n\nAfter successful authentication, the backend generates an access token and refresh token. Access tokens are stored with token state so previously issued tokens can be marked revoked or expired.\n\nFor authenticated requests, `JwtAuthenticationFilter` extracts the bearer token, validates the JWT, checks its stored token state, loads the user, and places the resulting authentication into Spring Security's `SecurityContext`.\n\nThe refresh-token flow can issue a new access token when a valid refresh token is supplied.",
+          content:
+            "The authentication workflow uses JWT access and refresh tokens.\n\nAfter successful authentication, the backend generates an access token and refresh token. Access tokens are stored with token state so previously issued tokens can be marked revoked or expired.\n\nFor authenticated requests, `JwtAuthenticationFilter` extracts the bearer token, validates the JWT, checks its stored token state, loads the user, and places the resulting authentication into Spring Security's `SecurityContext`.\n\nThe refresh-token flow can issue a new access token when a valid refresh token is supplied.",
           diagram: {
             title: "JWT Authentication & Token Lifecycle",
             src: "projects/bike-parts-hub/archi&design/JWT Authentication & Token Lifecycle.png",
-            alt: "BikePartsHub JWT authentication and token lifecycle diagram"
-          }
+            alt: "BikePartsHub JWT authentication and token lifecycle diagram",
+          },
         },
         {
           title: "Dynamic Product Filtering",
-          content: "The product catalog supports multiple filters without creating a separate repository method for every filter combination.\n\n`ProductSpecification` builds Spring Data JPA `Specification<Product>` objects dynamically using filters such as:\n\n- category\n- product type\n- product manufacturer\n- color\n- bike type\n- bike model\n- bike manufacturer\n\n`ProductRepo` implements `JpaSpecificationExecutor<Product>`, allowing these specifications to be combined and executed with pagination.\n\nThis keeps filtering logic composable and easier to extend when additional product attributes are introduced."
+          content:
+            "The product catalog supports multiple filters without creating a separate repository method for every filter combination.\n\n`ProductSpecification` builds Spring Data JPA `Specification<Product>` objects dynamically using filters such as:\n\n- category\n- product type\n- product manufacturer\n- color\n- bike type\n- bike model\n- bike manufacturer\n\n`ProductRepo` implements `JpaSpecificationExecutor<Product>`, allowing these specifications to be combined and executed with pagination.\n\nThis keeps filtering logic composable and easier to extend when additional product attributes are introduced.",
         },
         {
           title: "Checkout & Payment Processing",
-          content: "Checkout coordinates several related persistence operations through `CheckoutFacade`.\n\nThe checkout workflow:\n\n```text\nFind Customer\n      ↓\nSave Shipping Address\n      ↓\nCreate Order\n      ↓\nCreate Order Details\n      ↓\nSelect Payment Strategy\n      ↓\nSave Payment\n```\n\n`CheckoutFacadeImpl.placeOrder(...)` is transactional, so the database-side checkout operations are handled as one local transaction.\n\nPayment behavior is selected through `PaymentStrategyFactory`, which chooses the appropriate implementation based on the requested `PaymentMethod`.",
+          content:
+            "Checkout coordinates several related persistence operations through `CheckoutFacade`.\n\nThe checkout workflow:\n\n```text\nFind Customer\n      ↓\nSave Shipping Address\n      ↓\nCreate Order\n      ↓\nCreate Order Details\n      ↓\nSelect Payment Strategy\n      ↓\nSave Payment\n```\n\n`CheckoutFacadeImpl.placeOrder(...)` is transactional, so the database-side checkout operations are handled as one local transaction.\n\nPayment behavior is selected through `PaymentStrategyFactory`, which chooses the appropriate implementation based on the requested `PaymentMethod`.",
         },
         {
           title: "Appointment Scheduling",
-          content: "Appointment scheduling checks whether the requested service can fit within the available schedule before creating an appointment.\n\nThe backend considers:\n\n- selected date\n- requested start time\n- service duration\n- business hours\n- existing appointments\n- configured concurrent appointment capacity\n\nAvailable time slots are generated in 30-minute increments between business opening and closing times.\n\nThis keeps appointment availability logic in the backend instead of depending only on frontend validation.",
-        }
+          content:
+            "Appointment scheduling checks whether the requested service can fit within the available schedule before creating an appointment.\n\nThe backend considers:\n\n- selected date\n- requested start time\n- service duration\n- business hours\n- existing appointments\n- configured concurrent appointment capacity\n\nAvailable time slots are generated in 30-minute increments between business opening and closing times.\n\nThis keeps appointment availability logic in the backend instead of depending only on frontend validation.",
+        },
       ],
       oopDesignPatterns: [
         {
           pattern: "Strategy Pattern",
-          where: "Payment processing through:\n\n- `PaymentStrategy`\n- `PaypalPaymentStrategy`\n- `CashOnDeliveryPaymentStrategy`",
-          howImplemented: "`PaymentStrategy` defines the common payment-record creation contract.\n\nEach implementation handles the behavior required for a specific payment method. PayPal payments are stored as paid when a transaction reference is available, while Cash on Delivery payments begin in a pending state.",
+          where:
+            "Payment processing through:\n\n- `PaymentStrategy`\n- `PaypalPaymentStrategy`\n- `CashOnDeliveryPaymentStrategy`",
+          howImplemented:
+            "`PaymentStrategy` defines the common payment-record creation contract.\n\nEach implementation handles the behavior required for a specific payment method. PayPal payments are stored as paid when a transaction reference is available, while Cash on Delivery payments begin in a pending state.",
           why: "It keeps payment-specific behavior out of the checkout workflow and allows additional payment methods to be added without rewriting `CheckoutFacadeImpl`.",
           diagram: {
             title: "Payment Strategy & Factory UML",
             src: "projects/bike-parts-hub/archi&design/oop-dp/Payment Strategy & Factory UML.png",
-            alt: "BikePartsHub payment strategy and factory UML diagram"
-          }
+            alt: "BikePartsHub payment strategy and factory UML diagram",
+          },
         },
         {
           pattern: "Factory / Registry Pattern",
           where: "`PaymentStrategyFactory`",
-          howImplemented: "Spring injects the available `PaymentStrategy` implementations into the factory.\n\nThe factory stores them in a map indexed by `PaymentMethod` and returns the correct strategy at runtime.\n\nConceptually:\n\n```text\nPaymentMethod\n     ↓\nPaymentStrategyFactory\n     ↓\nPayPalPaymentStrategy\n        or\nCashOnDeliveryPaymentStrategy\n```",
-          why: "It centralizes strategy selection and prevents checkout code from containing repeated `if` / `switch` logic for payment-method selection."
+          howImplemented:
+            "Spring injects the available `PaymentStrategy` implementations into the factory.\n\nThe factory stores them in a map indexed by `PaymentMethod` and returns the correct strategy at runtime.\n\nConceptually:\n\n```text\nPaymentMethod\n     ↓\nPaymentStrategyFactory\n     ↓\nPayPalPaymentStrategy\n        or\nCashOnDeliveryPaymentStrategy\n```",
+          why: "It centralizes strategy selection and prevents checkout code from containing repeated `if` / `switch` logic for payment-method selection.",
         },
         {
           pattern: "Facade Pattern",
           where: "`CheckoutFacade` / `CheckoutFacadeImpl`",
-          howImplemented: "The order controller calls a single operation:\n\n```text\nplaceOrder(...)\n```\n\n`CheckoutFacadeImpl` internally coordinates:\n\n- customer lookup\n- shipping-address persistence\n- order creation\n- order-item creation\n- payment-strategy selection\n- payment persistence",
+          howImplemented:
+            "The order controller calls a single operation:\n\n```text\nplaceOrder(...)\n```\n\n`CheckoutFacadeImpl` internally coordinates:\n\n- customer lookup\n- shipping-address persistence\n- order creation\n- order-item creation\n- payment-strategy selection\n- payment persistence",
           why: "It hides the multi-step checkout process behind one application-level operation and keeps controllers from coordinating repositories and payment behavior directly.",
           diagram: {
             title: "Checkout Facade UML",
             src: "projects/bike-parts-hub/archi&design/oop-dp/Checkout Facade UML.png",
-            alt: "BikePartsHub checkout facade UML diagram"
-          }
+            alt: "BikePartsHub checkout facade UML diagram",
+          },
         },
         {
           pattern: "Adapter Pattern — PayPal",
           where: "- `PaymentGateway`\n- `PaypalPaymentGatewayAdapter`",
-          howImplemented: "Application code depends on the `PaymentGateway` interface.\n\n`PaypalPaymentGatewayAdapter` translates the application's payment requests into PayPal SDK objects, creates or executes PayPal payments, and converts PayPal responses back into application DTOs.",
+          howImplemented:
+            "Application code depends on the `PaymentGateway` interface.\n\n`PaypalPaymentGatewayAdapter` translates the application's payment requests into PayPal SDK objects, creates or executes PayPal payments, and converts PayPal responses back into application DTOs.",
           why: "It keeps PayPal SDK-specific classes and behavior behind an application-owned interface, reducing coupling between the rest of the application and the external payment provider.",
           diagram: {
             title: "PayPal Payment Gateway Adapter UML",
             src: "projects/bike-parts-hub/archi&design/oop-dp/PayPal Adapter UML.png",
-            alt: "BikePartsHub PayPal payment gateway adapter UML diagram"
-          }
+            alt: "BikePartsHub PayPal payment gateway adapter UML diagram",
+          },
         },
         {
           pattern: "Adapter Pattern — AWS S3",
           where: "- `FileStorageService`\n- `S3FileStorageAdapter`",
-          howImplemented: "The application depends on the `FileStorageService` interface for product-image uploads.\n\n`S3FileStorageAdapter` handles:\n\n- image validation\n- file-name sanitization\n- unique object-key generation\n- S3 metadata creation\n- object upload\n- S3 URL generation",
+          howImplemented:
+            "The application depends on the `FileStorageService` interface for product-image uploads.\n\n`S3FileStorageAdapter` handles:\n\n- image validation\n- file-name sanitization\n- unique object-key generation\n- S3 metadata creation\n- object upload\n- S3 URL generation",
           why: "It isolates AWS S3-specific behavior behind an application-level storage interface, making product-management code independent of direct AWS SDK operations.",
           diagram: {
             title: "S3 File Storage Adapter UML",
             src: "projects/bike-parts-hub/archi&design/oop-dp/S3 Adapter UML.png",
-            alt: "BikePartsHub AWS S3 file storage adapter UML diagram"
-          }
-        }
-      ]
-    }
+            alt: "BikePartsHub AWS S3 file storage adapter UML diagram",
+          },
+        },
+      ],
+    },
   },
   {
     slug: "leckeep",
     stackGroups: [
       {
         title: "Backend",
-        items: [
-          "Java 17",
-          "Spring Boot 3.3"
-        ]
+        items: ["Java 17", "Spring Boot 3.3"],
       },
       {
         title: "Frontend",
-        items: [
-          "React 19",
-          "Vite",
-          "Tailwind CSS"
-        ]
+        items: ["React 19", "Vite", "Tailwind CSS"],
       },
       {
         title: "Data & Storage",
-        items: [
-          "MongoDB",
-          "MinIO Object Storage"
-        ]
+        items: ["MongoDB", "MinIO Object Storage"],
       },
       {
         title: "Security",
-        items: [
-          "Spring Security",
-          "JWT Authentication"
-        ]
+        items: ["Spring Security", "JWT Authentication"],
       },
       {
         title: "DevOps",
-        items: [
-          "Docker Compose",
-          "Jenkins",
-          "Ansible",
-          "Terraform",
-          "AWS EC2"
-        ]
-      }
+        items: ["Docker Compose", "Jenkins", "Ansible", "Terraform", "AWS EC2"],
+      },
     ],
     title: "LecKeep — Academic Document Management & Collaboration Platform",
     year: "2024–2026",
     type: "Full-Stack / Document Management Platform",
     status: "Ongoing",
     role: "Full Stack Developer",
-    summary: "A full-stack academic workspace designed to help students organize, securely access, search, preview, and share lecture materials across subjects, folders, and study groups. LecKeep combines permission-aware document management, object-storage abstraction, secure sharing, and containerized deployment workflows.",
-    description: "Students often accumulate lecture PDFs, slides, images, and shared learning materials across different folders and communication channels, making them difficult to organize, retrieve, and share safely.\n\nLecKeep addresses this by providing one authenticated academic workspace where students can organize materials by subject and folder, upload and preview documents, create study groups, share folders with controlled access, and search only the resources they are authorized to view.\n\nThe application uses a React frontend and Spring Boot REST API, with MongoDB for application metadata and MinIO-compatible object storage for uploaded documents. Security is handled through JWT-based authentication and centralized folder/document permission checks.",
+    summary:
+      "A full-stack academic workspace designed to help students organize, securely access, search, preview, and share lecture materials across subjects, folders, and study groups. LecKeep combines permission-aware document management, object-storage abstraction, secure sharing, and containerized deployment workflows.",
+    description:
+      "Students often accumulate lecture PDFs, slides, images, and shared learning materials across different folders and communication channels, making them difficult to organize, retrieve, and share safely.\n\nLecKeep addresses this by providing one authenticated academic workspace where students can organize materials by subject and folder, upload and preview documents, create study groups, share folders with controlled access, and search only the resources they are authorized to view.\n\nThe application uses a React frontend and Spring Boot REST API, with MongoDB for application metadata and MinIO-compatible object storage for uploaded documents. Security is handled through JWT-based authentication and centralized folder/document permission checks.",
     stack: [
       "Java 17",
       "Spring Boot 3.3",
@@ -1307,208 +1356,221 @@ export const projects: Project[] = [
       "Jenkins",
       "Ansible",
       "Terraform",
-      "AWS EC2"
+      "AWS EC2",
     ],
     features: [
       "Subject and folder organization",
       "Permission-aware document access and academic search",
       "Document upload, preview, and download through object storage",
       "Study groups and controlled folder sharing",
-      "Containerized local environment and CI/deployment automation configuration"
+      "Containerized local environment and CI/deployment automation configuration",
     ],
     challenges: [],
     links: [
       {
         label: "GitHub",
-        href: "https://github.com/AmiruHoradagoda/LecKeep"
-      }
+        href: "https://github.com/AmiruHoradagoda/LecKeep",
+      },
     ],
     accent: "violet",
     media: [
       {
         type: "image",
         src: "projects/leckeep/card-image.png",
-        alt: "LecKeep academic workspace screenshot"
-      }
+        alt: "LecKeep academic workspace screenshot",
+      },
     ],
     details: {
-      background: "Students often accumulate lecture PDFs, slides, images, and shared learning materials across different folders and communication channels, making them difficult to organize, retrieve, and share safely.\n\nLecKeep addresses this by providing one authenticated academic workspace where students can organize materials by subject and folder, upload and preview documents, create study groups, share folders with controlled access, and search only the resources they are authorized to view.\n\nThe application uses a React frontend and Spring Boot REST API, with MongoDB for application metadata and MinIO-compatible object storage for uploaded documents. Security is handled through JWT-based authentication and centralized folder/document permission checks.",
+      background:
+        "Students often accumulate lecture PDFs, slides, images, and shared learning materials across different folders and communication channels, making them difficult to organize, retrieve, and share safely.\n\nLecKeep addresses this by providing one authenticated academic workspace where students can organize materials by subject and folder, upload and preview documents, create study groups, share folders with controlled access, and search only the resources they are authorized to view.\n\nThe application uses a React frontend and Spring Boot REST API, with MongoDB for application metadata and MinIO-compatible object storage for uploaded documents. Security is handled through JWT-based authentication and centralized folder/document permission checks.",
       architectureHeadings: {
         dataModel: "Data Model / Document Model",
         systemDesigns: "Main System Designs",
-        oopDesignPatterns: "OOP Design Patterns"
+        oopDesignPatterns: "OOP Design Patterns",
       },
       functionalRequirements: [
         {
           id: "LK-FR-01",
           area: "Authentication & Account Management",
-          requirement: "Users must be able to register and log in securely. Passwords are stored using BCrypt hashing, while authenticated API requests use JWT bearer tokens.",
-          priority: "High"
+          requirement:
+            "Users must be able to register and log in securely. Passwords are stored using BCrypt hashing, while authenticated API requests use JWT bearer tokens.",
+          priority: "High",
         },
         {
           id: "LK-FR-02",
           area: "Subject & Folder Organization",
-          requirement: "Students must be able to organize academic resources using subjects and folders, including creating, viewing, updating, and deleting their own organizational structures.\n\nFolders can represent different access contexts such as private, global, group-based, or explicitly shared resources.",
-          priority: "High"
+          requirement:
+            "Students must be able to organize academic resources using subjects and folders, including creating, viewing, updating, and deleting their own organizational structures.\n\nFolders can represent different access contexts such as private, global, group-based, or explicitly shared resources.",
+          priority: "High",
         },
         {
           id: "LK-FR-03",
           area: "Document Management",
-          requirement: "Students must be able to upload academic documents into folders, list uploaded resources, preview supported documents through short-lived URLs, download files, and delete documents in folders they own.\n\nUploads are validated before object storage, including filename handling and a maximum file-size limit.",
-          priority: "High"
+          requirement:
+            "Students must be able to upload academic documents into folders, list uploaded resources, preview supported documents through short-lived URLs, download files, and delete documents in folders they own.\n\nUploads are validated before object storage, including filename handling and a maximum file-size limit.",
+          priority: "High",
         },
         {
           id: "LK-FR-04",
           area: "Permission-Aware Resource Access",
-          requirement: "The platform must prevent users from accessing academic resources they are not authorized to view.\n\nFolder access is determined using ownership, visibility, study-group membership, and explicit share records. Document access inherits the permissions of its parent folder.",
-          priority: "High"
+          requirement:
+            "The platform must prevent users from accessing academic resources they are not authorized to view.\n\nFolder access is determined using ownership, visibility, study-group membership, and explicit share records. Document access inherits the permissions of its parent folder.",
+          priority: "High",
         },
         {
           id: "LK-FR-05",
           area: "Academic Resource Search",
-          requirement: "Students must be able to search their academic workspace for subjects, folders, and document metadata using case-insensitive partial matching.\n\nSearch results must respect the same access-control rules as direct resource access so private or unauthorized materials are not leaked through search.",
-          priority: "High"
+          requirement:
+            "Students must be able to search their academic workspace for subjects, folders, and document metadata using case-insensitive partial matching.\n\nSearch results must respect the same access-control rules as direct resource access so private or unauthorized materials are not leaked through search.",
+          priority: "High",
         },
         {
           id: "LK-FR-06",
           area: "Study Group Management",
-          requirement: "Students must be able to create study groups, manage group membership, and use group membership as part of controlled academic-resource access.",
-          priority: "High"
+          requirement:
+            "Students must be able to create study groups, manage group membership, and use group membership as part of controlled academic-resource access.",
+          priority: "High",
         },
         {
           id: "LK-FR-07",
           area: "Secure Folder Sharing",
-          requirement: "Folder owners must be able to share resources with specific users, study groups, or authenticated users through controlled share permissions and revoke access when it is no longer required.",
-          priority: "High"
-        }
+          requirement:
+            "Folder owners must be able to share resources with specific users, study groups, or authenticated users through controlled share permissions and revoke access when it is no longer required.",
+          priority: "High",
+        },
       ],
       overviewDiagrams: [
         {
           title: "C4 Context Diagram",
           src: "projects/leckeep/c4/context_diagram_c1.png",
           alt: "LecKeep C4 context diagram",
-          caption: "Logical system context. HTTPS is a deployment target; the current Compose and Ansible configurations provide HTTP access."
         },
         {
           title: "C4 Container Diagram",
           src: "projects/leckeep/c4/container_diagram_c2.png",
           alt: "LecKeep C4 container diagram",
-          caption: "React frontend, Spring Boot API, MongoDB metadata, and MinIO file storage. The HTTPS label represents a deployment target; the current stack uses HTTP."
-        }
+        },
       ],
-      dataModelDescription: "LecKeep stores application metadata in MongoDB while keeping uploaded file contents in object storage.\n\nCore domain models include:\n\n- User (implemented as `Users`)\n- Subject\n- NoteFolder\n- DocumentFile\n- StudyGroup\n- GroupMember\n- FolderShare\n\nThe `DocumentFile` model stores document metadata and references the parent folder, while the actual uploaded binary content is stored through the object-storage layer.",
+      dataModelDescription:
+        "LecKeep stores application metadata in MongoDB while keeping uploaded file contents in object storage.\n\nCore domain models include:\n\n- User (implemented as `Users`)\n- Subject\n- NoteFolder\n- DocumentFile\n- StudyGroup\n- GroupMember\n- FolderShare\n\nThe `DocumentFile` model stores document metadata and references the parent folder, while the actual uploaded binary content is stored through the object-storage layer.",
       dataModelDiagrams: [
         {
           title: "LecKeep Document Model",
           src: "projects/leckeep/archi&design/document_model.png",
-          alt: "LecKeep MongoDB document model showing users, subjects, folders, documents, study groups, memberships, and folder shares"
-        }
+          alt: "LecKeep MongoDB document model showing users, subjects, folders, documents, study groups, memberships, and folder shares",
+        },
       ],
       systemDesigns: [
         {
           title: "Layered Full-Stack Architecture",
-          content: "**Problem / Why needed:** Browser interaction, HTTP processing, business rules, metadata persistence, and file storage need clear boundaries.\n\n**How implemented:** React calls Spring Boot REST controllers, which delegate to application services and MongoDB repositories or the object-storage abstraction. MongoDB stores metadata; MinIO stores uploaded files.\n\n**Result:** HTTP concerns, business rules, persistence logic, and file-storage implementation remain independent and easier to maintain."
+          content:
+            "**Problem / Why needed:** Browser interaction, HTTP processing, business rules, metadata persistence, and file storage need clear boundaries.\n\n**How implemented:** React calls Spring Boot REST controllers, which delegate to application services and MongoDB repositories or the object-storage abstraction. MongoDB stores metadata; MinIO stores uploaded files.\n\n**Result:** HTTP concerns, business rules, persistence logic, and file-storage implementation remain independent and easier to maintain.",
         },
         {
           title: "Centralized Permission-Aware Resource Access",
-          content: "**Problem / Why needed:** Folder viewing, document preview/download, and search must apply consistent authorization rules.\n\n**How implemented:** `FolderPermissionService` checks folder ownership, GLOBAL visibility, GROUP visibility with verified study-group membership, and explicit USER, GROUP, or GLOBAL shares. Documents inherit read access from their parent folder. Upload, delete, and share management remain restricted to the folder owner.\n\n**Result:** One read-access policy prevents different permission rules from drifting across resource endpoints and search.",
+          content:
+            "**Problem / Why needed:** Folder viewing, document preview/download, and search must apply consistent authorization rules.\n\n**How implemented:** `FolderPermissionService` checks folder ownership, GLOBAL visibility, GROUP visibility with verified study-group membership, and explicit USER, GROUP, or GLOBAL shares. Documents inherit read access from their parent folder. Upload, delete, and share management remain restricted to the folder owner.\n\n**Result:** One read-access policy prevents different permission rules from drifting across resource endpoints and search.",
           diagram: {
             title: "Permission-Aware Resource Access Flow",
             src: "projects/leckeep/archi&design/permission-aware-resource-access-flow.png",
             alt: "FolderPermissionService checks ownership, visibility, group membership, and explicit shares before granting resource access.",
-            caption: "Read-access overview. Explicit GLOBAL shares are also supported, alongside the USER and GROUP shares shown."
-          }
+          },
         },
         {
           title: "Permission-Aware Academic Search",
-          content: "**Problem / Why needed:** Students need to retrieve academic materials without exposing private resources through search.\n\n**How implemented:** `SearchService` uses case-insensitive partial matching on subject names, folder titles/descriptions, and document names, content types, and extensions. Subjects are filtered by ownership; folders and documents are filtered through `FolderPermissionService` before results are returned.\n\n**Result:** Search returns only resources the authenticated user is authorized to access.",
+          content:
+            "**Problem / Why needed:** Students need to retrieve academic materials without exposing private resources through search.\n\n**How implemented:** `SearchService` uses case-insensitive partial matching on subject names, folder titles/descriptions, and document names, content types, and extensions. Subjects are filtered by ownership; folders and documents are filtered through `FolderPermissionService` before results are returned.\n\n**Result:** Search returns only resources the authenticated user is authorized to access.",
           diagram: {
             title: "Permission-Aware Search Flow",
             src: "projects/leckeep/archi&design/permission-aware-search-flow.png",
-            alt: "SearchService searches subjects, folders, and document metadata and returns authorized results."
-          }
+            alt: "SearchService searches subjects, folders, and document metadata and returns authorized results.",
+          },
         },
         {
           title: "Document Upload & Object Storage",
-          content: "**Problem / Why needed:** Large uploaded binaries should remain separate from application metadata, and file handling should support different document types.\n\n**How implemented:** The upload workflow validates file size and filename, resolves a file-type handler, verifies folder ownership, and uploads through `ObjectStorageService` to MinIO. `DocumentFile` metadata and the stored object key are saved in MongoDB. Supported previews use short-lived URLs.\n\n**Result:** Binary storage stays separate from metadata, while file-type and storage-provider details remain isolated behind interfaces.",
+          content:
+            "**Problem / Why needed:** Large uploaded binaries should remain separate from application metadata, and file handling should support different document types.\n\n**How implemented:** The upload workflow validates file size and filename, resolves a file-type handler, verifies folder ownership, and uploads through `ObjectStorageService` to MinIO. `DocumentFile` metadata and the stored object key are saved in MongoDB. Supported previews use short-lived URLs.\n\n**Result:** Binary storage stays separate from metadata, while file-type and storage-provider details remain isolated behind interfaces.",
           diagram: {
             title: "Document Upload & Storage Flow",
             src: "projects/leckeep/archi&design/document-upload&object-storage-flow.png",
             alt: "Document upload validates the file and folder ownership, stores the binary in MinIO, and saves metadata in MongoDB.",
-            caption: "The implemented handlers support PDF, images, and office documents. The video example shown is outside the current handler set."
-          }
+          },
         },
         {
           title: "Secure Sharing & Study-Group Access",
-          content: "**Problem / Why needed:** Students need controlled collaboration with specific users and study groups.\n\n**How implemented:** Folder owners create and revoke `FolderShare` records for USER, GROUP, or GLOBAL targets. Group sharing requires group-owner or admin access. `FolderPermissionService` checks valid shares and current membership when granting read access; group-based folder visibility uses the same membership check.\n\n**Result:** Revoking a share removes that access path unless another valid permission rule still grants access.",
+          content:
+            "**Problem / Why needed:** Students need controlled collaboration with specific users and study groups.\n\n**How implemented:** Folder owners create and revoke `FolderShare` records for USER, GROUP, or GLOBAL targets. Group sharing requires group-owner or admin access. `FolderPermissionService` checks valid shares and current membership when granting read access; group-based folder visibility uses the same membership check.\n\n**Result:** Revoking a share removes that access path unless another valid permission rule still grants access.",
           diagram: {
             title: "Folder Sharing & Group Access Flow",
             src: "projects/leckeep/archi&design/folder-sharing&group-access-flow.png",
-            alt: "Folder access is granted through ownership, visibility, current group membership, or valid explicit shares."
-          }
+            alt: "Folder access is granted through ownership, visibility, current group membership, or valid explicit shares.",
+          },
         },
         {
           title: "Containerized Deployment Architecture",
-          content: "**Problem / Why needed:** The frontend, API, database, and object store need a repeatable environment and a defined deployment workflow.\n\n**How implemented:** Separate frontend and backend containers run alongside MongoDB and MinIO. Docker Compose defines service healthchecks and persistent MongoDB/MinIO volumes. The Jenkins CI pipeline defines backend tests, application builds, and frontend/backend image publishing. Ansible provides automation to deploy the four-service Compose stack to EC2. Terraform contains security-group configuration and a lookup of an existing EC2 instance.\n\n**Result:** The repository provides a repeatable local stack, CI pipeline configuration, and separate deployment automation. End-to-end production deployment is not verified: Jenkins does not invoke Ansible, MinIO image publishing is separate, and public HTTPS/reverse-proxy setup remains a later step.",
+          content:
+            "**Problem / Why needed:** The frontend, API, database, and object store need a repeatable environment and a defined deployment workflow.\n\n**How implemented:** Separate frontend and backend containers run alongside MongoDB and MinIO. Docker Compose defines service healthchecks and persistent MongoDB/MinIO volumes. The Jenkins CI pipeline defines backend tests, application builds, and frontend/backend image publishing. Ansible provides automation to deploy the four-service Compose stack to EC2. Terraform contains security-group configuration and a lookup of an existing EC2 instance.\n\n**Result:** The repository provides a repeatable local stack, CI pipeline configuration, and separate deployment automation. End-to-end production deployment is not verified: Jenkins does not invoke Ansible, MinIO image publishing is separate, and public HTTPS/reverse-proxy setup remains a later step.",
           diagram: {
             title: "LecKeep Deployment Architecture",
             src: "projects/leckeep/archi&design/deployment-architecture.png",
             alt: "Jenkins CI, separate Ansible deployment automation, Terraform configuration, and the four-service Compose runtime.",
-            caption: "Deployment overview: the Jenkins-to-Ansible trigger is a target integration, not an implemented pipeline stage. Terraform configures a security group for an existing EC2 instance. Frontend container port is 80 (host port 3000); MongoDB data is mounted at /data/db. Production deployment remains unverified."
-          }
-        }
+          },
+        },
       ],
       oopDesignPatterns: [
         {
           pattern: "Strategy Pattern — File Type Handling",
-          where: "`FileTypeHandler` with file-specific implementations such as PDF, image, and office-document handlers.",
-          howImplemented: "Each handler determines whether it supports a file type and encapsulates file-specific validation and preview behavior.",
+          where:
+            "`FileTypeHandler` with file-specific implementations such as PDF, image, and office-document handlers.",
+          howImplemented:
+            "Each handler determines whether it supports a file type and encapsulates file-specific validation and preview behavior.",
           why: "New document types can be introduced without adding large conditional blocks to the upload workflow.",
           diagram: {
             title: "File Type Strategy UML",
             src: "projects/leckeep/archi&design/oop-dp/file-type-strategy-uml.png",
             alt: "FileTypeHandler strategy interface and PDF, image, and office-document handlers.",
-            caption: "Conceptual UML; method names are illustrative. The implementation uses supports(contentType, extension), validate(file, extension), getDocumentType, and getPreviewMode, with FileTypeHandlerResolver selecting the strategy."
-          }
+          },
         },
         {
           pattern: "Factory / Resolver Pattern — File Handler Selection",
           where: "`FileTypeHandlerResolver`",
-          howImplemented: "The resolver receives the available `FileTypeHandler` implementations and selects the correct strategy for the uploaded file.",
+          howImplemented:
+            "The resolver receives the available `FileTypeHandler` implementations and selects the correct strategy for the uploaded file.",
           why: "The document service does not need to know about every concrete file-type implementation.",
           diagram: {
             title: "File Type Resolver UML",
             src: "projects/leckeep/archi&design/oop-dp/file-type-resolver-uml.png",
             alt: "FileTypeHandlerResolver selects a file handler from the injected handler implementations.",
-            caption: "Conceptual UML. The implemented resolver exposes resolve(contentType, extension); preview URLs are generated through ObjectStorageService."
-          }
+          },
         },
         {
           pattern: "Adapter Pattern — Object Storage",
-          where: "`ObjectStorageService` with the implemented `MinioObjectStorageAdapter`. MinIO provides S3-compatible object storage; the separate `S3ObjectStorageAdapter` remains an unimplemented extension point.",
-          howImplemented: "Application services depend on the storage abstraction rather than directly calling a provider-specific SDK.",
+          where:
+            "`ObjectStorageService` with the implemented `MinioObjectStorageAdapter`. MinIO provides S3-compatible object storage; the separate `S3ObjectStorageAdapter` remains an unimplemented extension point.",
+          howImplemented:
+            "Application services depend on the storage abstraction rather than directly calling a provider-specific SDK.",
           why: "Storage-provider-specific details remain isolated and the underlying provider can be replaced without redesigning document business logic.",
           diagram: {
             title: "Object Storage Adapter UML",
             src: "projects/leckeep/archi&design/oop-dp/object-storage-adapter-uml.png",
             alt: "ObjectStorageService isolates document services from MinIO, with an unimplemented S3 adapter extension point.",
-            caption: "Conceptual UML; the implemented storage contract is upload, download, delete, and generatePreviewUrl. MinIO is implemented; the S3 adapter remains a stub."
-          }
+          },
         },
         {
           pattern: "Template Method Pattern — JWT Request Filtering",
-          where: "JWT filter implementation based on Spring Security's `OncePerRequestFilter`.",
-          howImplemented: "Spring controls the request-filter lifecycle while LecKeep provides the JWT extraction, validation, and authentication-context logic.",
+          where:
+            "JWT filter implementation based on Spring Security's `OncePerRequestFilter`.",
+          howImplemented:
+            "Spring controls the request-filter lifecycle while LecKeep provides the JWT extraction, validation, and authentication-context logic.",
           why: "The project customizes authentication behavior while reusing Spring Security's standard filtering lifecycle.",
           diagram: {
             title: "JWT Filter UML",
             src: "projects/leckeep/archi&design/oop-dp/jwt-filter-uml.png",
             alt: "A JWT request filter customizes the OncePerRequestFilter lifecycle and continues the filter chain.",
-            caption: "Conceptual UML. The implementation names are JwtFilter and JWTService; Spring provides the filtering lifecycle."
-          }
-        }
-      ]
-    }
+          },
+        },
+      ],
+    },
   },
   {
     slug: "simple-pos-system",
@@ -1587,57 +1649,78 @@ export const projects: Project[] = [
           pattern: "Factory Method Pattern",
           where:
             "BoFactory creates UserBoImpl, CustomerBoImpl, and ProductBoImpl from BoType; DaoFactory creates UserDaoImpl, CustomerDaoImpl, and ProductDaoImpl from DaoType.",
-          why:
-            "Object creation is centralized, so controllers can request a business object or DAO by type without directly constructing concrete classes.",
+          why: "Object creation is centralized, so controllers can request a business object or DAO by type without directly constructing concrete classes.",
         },
         {
           pattern: "Singleton Pattern",
-          where: "BoFactory.getInstance() and DaoFactory.getInstance() maintain a single factory instance.",
-          why:
-            "Factory objects are shared across the application instead of being recreated in each controller or business object.",
+          where:
+            "BoFactory.getInstance() and DaoFactory.getInstance() maintain a single factory instance.",
+          why: "Factory objects are shared across the application instead of being recreated in each controller or business object.",
         },
         {
           pattern: "DAO Pattern",
           where:
             "CrudDao, SupperDao, CustomerDao, ProductDao, UserDao, and their implementation classes isolate database operations.",
-          why:
-            "Persistence code is separated from business logic and UI controllers, making the JavaFX application easier to maintain.",
+          why: "Persistence code is separated from business logic and UI controllers, making the JavaFX application easier to maintain.",
         },
         {
           pattern: "Facade Pattern",
           where:
             "Business object interfaces such as CustomerBo, ProductBo, and UserBo expose higher-level operations to controllers.",
-          why:
-            "Controllers interact with a simpler business API instead of coordinating DAO calls and persistence details directly.",
+          why: "Controllers interact with a simpler business API instead of coordinating DAO calls and persistence details directly.",
         },
       ],
     },
   },
   {
     slug: "service-finder-mobile",
-    stackGroups: [
-      { title: "Mobile", items: ["Flutter"] },
-      { title: "Backend & Data", items: ["Firebase"] },
-    ],
     title: "Service Finder Mobile",
+    subtitle:
+      "A local services marketplace connecting customers with service providers, making it easier to discover nearby services, share service requests, explore provider listings, and communicate directly.",
     year: "2024",
-    type: "Team Project",
+    type: "Team Project · Mobile Application",
     status: "Completed",
     role: "Mobile Developer",
     summary:
-      "A Flutter mobile platform connecting local service providers with clients through provider and customer interfaces.",
+      "A Flutter mobile application that connects local service providers with people requesting services through searchable listings, user profiles, and real-time direct messaging.",
     description:
-      "Service Finder Mobile is designed to help clients discover and book local services while giving providers a way to present their offerings. Firebase supports backend storage and app infrastructure for the mobile experience.",
-    stack: ["Flutter", "Firebase"],
+      "Service Finder brings service discovery and communication into a single mobile experience. Providers can publish service listings with contact information and images, while customers can browse and filter listings or post requests for services. Firebase Authentication manages user sessions, Cloud Firestore stores profiles, posts, and chat messages, and Firebase Storage handles uploaded images.",
+    stack: [
+      "Flutter",
+      "Dart",
+      "Firebase Authentication",
+      "Cloud Firestore",
+      "Firebase Storage",
+    ],
+    stackGroups: [
+      {
+        title: "Mobile",
+        items: ["Flutter", "Dart"],
+      },
+      {
+        title: "Identity",
+        items: ["Firebase Authentication"],
+      },
+      {
+        title: "Database",
+        items: ["Cloud Firestore"],
+      },
+      {
+        title: "Media",
+        items: ["Firebase Storage"],
+      },
+    ],
     features: [
-      "Client and service-provider user flows",
-      "Service discovery and booking-oriented screens",
-      "Firebase-backed application data",
-      "Mobile-first UI structure",
+      "Customer and provider registration with email/password authentication",
+      "Separate service-offer and customer-request feeds",
+      "Text search and location filtering of loaded posts",
+      "Profiles, service-post image uploads, and post management",
+      "Direct messaging with chronological Firestore streams",
     ],
     challenges: [
-      "Building separate experiences for customers and providers.",
-      "Coordinating team development across a shared mobile codebase.",
+      "Keeping session navigation consistent while registration waits for profile persistence",
+      "Sharing one post model across service offers and customer requests",
+      "Coordinating image uploads and Firestore writes without a cross-service transaction",
     ],
     links: [
       {
@@ -1650,79 +1733,207 @@ export const projects: Project[] = [
       {
         type: "image",
         src: "projects/service-finder/card-image.png",
-        alt: "Service Finder mobile app screen",
+        alt: "Service Finder Mobile application preview; project visual rather than test evidence",
       },
     ],
     details: {
-      designPatterns: [
+      background:
+        "Local service discovery is often fragmented across informal contacts and individual posts. Providers need a way to present their services, while customers need to describe requests, find relevant offers, and communicate directly.\n\nService Finder Mobile is a Flutter application developed as a team project. Providers publish service listings with descriptions, contact details, and images; customers browse offers or publish service requests. Editable profiles and direct messaging bring discovery and communication into one mobile experience.\n\nThe engineering focus is keeping identity, profiles, posts, media, and conversations consistent across both workflows. Feature-oriented screens use dedicated application services, while Firestore streams deliver remote data changes to the UI.",
+      architectureHeadings: {
+        dataModel: "Data Model / Firestore Documents",
+        systemDesigns: "Main System Designs",
+        oopDesignPatterns: "Design Patterns & Flutter Idioms",
+      },
+      overviewSections: [
         {
-          pattern: "Observer Pattern",
-          where:
-            "AuthPage uses FirebaseAuth.instance.authStateChanges() with StreamBuilder, and FirestoreDatabase.getPostsStream() returns Firestore snapshots.",
-          why:
-            "The UI reacts automatically when authentication state, posts, or chat messages change in Firebase.",
+          id: "context",
+          heading: "System Context",
+          diagrams: [
+            {
+              title: "C4 System Context Diagram",
+              src: "projects/service-finder/c4/context_diagram_c1.png",
+              alt: "Customers and providers use Service Finder, which connects to Firebase Authentication, Cloud Firestore, and Firebase Storage",
+            },
+          ],
         },
+        ,
         {
-          pattern: "Provider / Observable Pattern",
-          where: "ChatService extends ChangeNotifier and exposes chat operations and message streams.",
-          why:
-            "Chat-related state and behavior can notify listening widgets when data changes.",
-        },
-        {
-          pattern: "Facade Pattern",
-          where:
-            "FirestoreDatabase wraps Firestore collections and exposes methods such as addPost, getPostById, and getPostsStream.",
-          why:
-            "Screens use a simple application-specific API instead of repeating raw Firestore collection and document logic.",
-        },
-        {
-          pattern: "Singleton Pattern",
-          where:
-            "FirebaseAuth.instance, FirebaseFirestore.instance, and DefaultFirebaseOptions.currentPlatform provide shared service instances/configuration.",
-          why:
-            "Firebase clients and platform configuration are reused across the app instead of being recreated per screen.",
+          id: "container",
+          heading: "Container / Service View",
+          diagrams: [
+            {
+              title: "C4 Container Diagram",
+              src: "projects/service-finder/c4/container_diagram_c2.png",
+              alt: "Service Finder Flutter app connects through Firebase SDK services to authentication, Firestore documents, and image storage",
+            },
+          ],
         },
       ],
-      diagrams: [
+      functionalRequirements: [
         {
-          title: "Context Diagram",
-          src: "projects/service-finder/c4/Context_diagram_c1.png",
-          alt: "Service Finder context diagram",
+          id: "SFM-FR-01",
+          area: "Authentication",
+          requirement:
+            "Register a customer or service-provider account using email/password, sign in, sign out, and react to authentication-state changes.",
+          priority: "Implemented in reviewed code",
         },
         {
-          title: "Document Model",
+          id: "SFM-FR-02",
+          area: "Profile Management",
+          requirement:
+            "Create and retrieve application profiles, edit profile information, and upload a profile picture.",
+          priority: "Implemented in reviewed code",
+        },
+        {
+          id: "SFM-FR-03",
+          area: "Service Listings & Requests",
+          requirement:
+            "Authenticated users create service-offer or service-request posts with descriptions, text locations, contact details, optional links, and images.",
+          priority: "Implemented in reviewed code",
+        },
+        {
+          id: "SFM-FR-04",
+          area: "Discovery & Filtering",
+          requirement:
+            "Show offers and requests in separate feeds. Filter loaded posts by a case-insensitive search of the post message or username and an exact selected text location.",
+          priority: "Implemented in reviewed code",
+        },
+        {
+          id: "SFM-FR-05",
+          area: "Post Management",
+          requirement:
+            "Open post details, retrieve the current account's posts, and delete posts through PostService. Server-enforced ownership is not established by these client methods.",
+          priority: "Implemented in reviewed code",
+        },
+        {
+          id: "SFM-FR-06",
+          area: "Direct Messaging",
+          requirement:
+            "Send messages to another user and subscribe to chronological message updates from their shared Firestore conversation path.",
+          priority: "Implemented in reviewed code",
+        },
+        {
+          id: "SFM-FR-07",
+          area: "Media Uploads",
+          requirement:
+            "Upload post and profile images to Firebase Storage and save their download URLs in the corresponding Firestore documents.",
+          priority: "Implemented in reviewed code",
+        },
+      ],
+      dataModelDescription:
+        "**User profiles:** `Users/{email}` stores `user_ID` (the authentication UID), username, email, the provider flag, and optional profile-image and profile fields. Profiles are separate from Firebase Authentication identities.\n\n**Service posts:** `Posts/{postId}` contains owner identifiers, `PostMessage`, `Description`, contact fields, text `Location`, `ImageUrls`, and `TimeStamp`. The stored `ask` flag maps to `ServicePost.isAsk`: true for requests and false for offers. Missing legacy flags are excluded from both feeds.\n\n**Conversations:** `chat_rooms/{sortedUidA_sortedUidB}/messages` stores sender/receiver IDs, sender email, message text, and a timestamp. Sorting participant IDs gives both users the same conversation path; reads order messages by ascending timestamp.",
+      dataModelDiagrams: [
+        {
+          title: "Firestore Document Model",
           src: "projects/service-finder/archi&design/document_model.png",
-          alt: "Service Finder document model diagram",
+          alt: "Service Finder document model showing user profiles, service posts, deterministic chat-room IDs, and message subcollections",
+        },
+      ],
+      systemDesigns: [
+        {
+          title: "Firebase Services & Application Boundaries",
+          content:
+            "**Decision:** Use Firebase Authentication for identity, Cloud Firestore for structured documents and live reads, and Firebase Storage for media. Screens call feature-focused services instead of implementing a custom REST backend.\n\n**Engineering challenge:** Registration creates an authentication account before writing its application profile. `AuthService.register` waits for that write; `AuthNavigation` coordinates session changes and clears the navigation stack on sign-out.\n\n**Trade-off:** Managed services reduce custom infrastructure but introduce dependence on Firebase rules, indexes, cost, and connectivity behavior. Account creation and the profile write are not atomic; a failed profile write can leave an authenticated account without a complete profile.",
+        },
+        {
+          title: "One Post Model, Two Discovery Workflows",
+          content:
+            "**Decision:** `ServicePost` represents both an offer and a request. `HomeService` composes `PostService` reads and selects each feed using `isAsk` and `PostFilter`.\n\n**Why:** Providers and customers share post details, contact fields, and image handling while retaining distinct feed views. Search matches the message or username without case sensitivity; location filtering compares a selected text value.\n\n**Trade-off:** The live query loads posts ordered by `TimeStamp`, and filtering happens in application code. Pagination, indexed search, and geographic distance ranking would require further design; the current location value is not GPS matching.",
+        },
+        {
+          title: "Deterministic Direct Conversations",
+          content:
+            "**Decision:** `ChatService` sorts the two participant UIDs and joins them with an underscore for both message writes and reads. Messages are appended to the room's `messages` subcollection; `getMessages` subscribes in ascending timestamp order.\n\n**Why:** Either participant derives the same path without creating duplicate conversations or operating a custom chat server. `MessageList` renders the stream with loading, empty, and error states.\n\n**Trade-off:** This supports one-to-one conversations. Group membership, richer conversation metadata, read receipts, and server-authoritative message ordering would need additional work; the current timestamp comes from `Timestamp.now()` on the client.",
+        },
+        {
+          title: "Separate Media Storage & Document Writes",
+          content:
+            "**Decision:** Upload post images under `post_images/` and profile images under `profile_images/{uid}` in Firebase Storage, obtain download URLs, then save URLs with the application data.\n\n**Why:** Firestore records stay focused on structured data instead of containing image bytes. `PostService` accepts native image files and byte uploads, then propagates document-write failures to the form.\n\n**Trade-off:** Uploading media and writing a document can partially succeed. The reviewed delete method removes only the post document; orphan-image cleanup and compensating actions remain improvements. Profile edits update the existing email-keyed document; changing its email field does not change the Firebase Authentication email or migrate the document key.",
+        },
+      ],
+      oopDesignPatterns: [
+        {
+          pattern: "Observer / Reactive Streams",
+          where:
+            "`AuthService.sessionChanges`, `PostService.getPostsStream`, `ProfileService.getProfilesStream`, and `ChatService.getMessages`.",
+          howImplemented:
+            "Firebase authentication events and Firestore snapshots are exposed as Dart streams. Feed widgets and MessageList consume these with StreamBuilder; AuthNavigation listens to session changes.",
+          why: "Remote changes update visible state without repeated manual polling. Loading/error handling and subscription lifecycle still need explicit care.",
+        },
+        {
+          pattern: "Facade-like Service Layer",
+          where:
+            "`AuthService`, `PostService`, `ProfileService`, `HomeService`, and `ChatService`.",
+          howImplemented:
+            "App-focused methods group Firebase operations and map documents into typed models. Optional constructor dependencies support test doubles; default SDK clients use FirebaseAuth.instance, FirebaseFirestore.instance, and FirebaseStorage.instance.",
+          why: "Screens depend on application operations rather than duplicating collection access. Shared SDK instances are reused without presenting Firebase options as an app-defined Singleton pattern.",
+        },
+        {
+          pattern: "ChangeNotifier for Session Navigation",
+          where:
+            "`AuthNavigation` with ChangeNotifierProvider and Consumer in `RootApp`.",
+          howImplemented:
+            "AuthNavigation subscribes to session events, updates loading/session state, calls notifyListeners, and cancels its subscription on disposal. RootApp rebuilds its navigation configuration from this observable state.",
+          why: "Session changes can reset protected navigation and coordinate in-flight authentication. ChatService also extends ChangeNotifier, but does not call notifyListeners; its live messages arrive through streams.",
         },
       ],
     },
   },
   {
     slug: "pharmacy-sales-inventory-system",
-    stackGroups: [
-      { title: "Backend", items: ["Spring Boot"] },
-      { title: "Frontend", items: ["React", "Tailwind CSS"] },
-      { title: "Data", items: ["MySQL"] },
-    ],
     title: "Pharmacy Sales and Inventory Management System",
     year: "2024",
-    type: "Full-Stack Project",
-    status: "Completed",
+    type: "Full-Stack Web Application",
+    status: "Implemented prototype",
     role: "Developer",
     summary:
-      "A full-stack pharmacy management application for online medicine purchases, inventory, authentication, and role-based access.",
+      "A web platform that helps customers browse and order pharmacy products while giving administrators tools to manage product inventory, customer orders, and sales activity.",
     description:
-      "This system supports pharmacy sales and inventory workflows with separate admin and customer access. It brings together frontend views, backend APIs, authentication, and MySQL persistence for a complete full-stack application.",
-    stack: ["React", "Tailwind CSS", "Spring Boot", "MySQL"],
+      "A React storefront and administration interface connected to a layered Spring Boot REST API and MySQL. The prototype supports product discovery, cart-based order submission, order-status administration, stock visibility, and operational reporting.",
+    stack: [
+      "Java",
+      "Spring Boot",
+      "Spring Security",
+      "React",
+      "Vite",
+      "Tailwind CSS",
+      "MySQL",
+      "JWT Authentication",
+      "Firebase Storage",
+    ],
+    stackGroups: [
+      {
+        title: "Frontend",
+        items: ["React", "Vite", "Tailwind CSS"],
+      },
+      {
+        title: "Backend",
+        items: ["Java", "Spring Boot", "Spring Security"],
+      },
+      {
+        title: "Database",
+        items: ["MySQL"],
+      },
+      {
+        title: "Authentication",
+        items: ["JWT Authentication"],
+      },
+      {
+        title: "Product Images",
+        items: ["Firebase Storage"],
+      },
+    ],
     features: [
-      "Online medicine purchase flow",
-      "Inventory management",
-      "Authentication and role-based access",
-      "Admin and customer workflows",
+      "Paginated product catalog and shopping cart",
+      "Shipping details and persistent order submission",
+      "Product, order-status, and customer administration",
+      "Stored-stock monitoring and sales summaries",
+      "Frontend product-image upload and cleanup integration",
     ],
     challenges: [
-      "Designing secure role-based behavior for different user types.",
-      "Keeping inventory and purchase workflows consistent through backend APIs.",
+      "Preserving related order, line-item, and shipping records in one transaction",
+      "Keeping browser authentication state and API access rules consistent",
+      "Separating inventory visibility from unimplemented stock reservation and deduction",
     ],
     links: [
       {
@@ -1739,107 +1950,163 @@ export const projects: Project[] = [
       {
         type: "image",
         src: "projects/pharmacy/card-image.png",
-        alt: "Pharmacy sales and inventory system screenshot",
+        alt: "Pharmacy storefront and administration project visual",
       },
     ],
     details: {
+      background:
+        "Pharmacy sales combine customer-facing product browsing and ordering with product maintenance, order tracking, and low-stock monitoring. Handling these separately makes it harder to keep a consistent operational view.\n\nThis prototype connects a React storefront and administration interface to a Spring Boot REST API. Customers browse products, build a cart, enter shipping details, and submit orders. Administrators manage product records and stored stock quantities, inspect orders, update statuses, and view operational summaries.\n\nThe engineering focus is connecting these workflows through layered services and relational persistence. Order placement saves records; integrated online payments and prescription fulfilment are not implemented. The project demonstrates application structure and workflows without establishing production readiness.",
+      architectureHeadings: {
+        dataModel: "Data Model / ER Design",
+        systemDesigns: "Main System Designs",
+        oopDesignPatterns: "Design Patterns & Framework Idioms",
+      },
+      overviewSections: [
+        {
+          id: "context",
+          heading: "System Context",
+          diagrams: [
+            {
+              title: "C4 System Context Diagram",
+              src: "projects/pharmacy/c4/Context_diagram_c1.png",
+              alt: "Conceptual pharmacy context showing customer and administrator workflows, Firebase image storage, and a PayPal integration outside the implemented scope",
+            },
+          ],
+        },
+        {
+          id: "container",
+          heading: "Container / Service View",
+          diagrams: [
+            {
+              title: "C4 Container Diagram",
+              src: "projects/pharmacy/c4/container-diagram_c2.png",
+              alt: "Conceptual React, Spring Boot, and MySQL architecture with image storage and an unimplemented payment integration",
+            },
+          ],
+        },
+      ],
       functionalRequirements: [
         {
           id: "PHR-FR-01",
-          area: "User Authentication",
+          area: "Account Access",
           requirement:
-            "Users must be able to register with name, email, and password; log in and receive a JWT for authenticated requests; receive the default Customer role on registration while a separate Admin role is auto-seeded on startup through initCustomerRoleAndCustomer() and initAdminRoleAndAdmin(); and the frontend must persist the JWT and user object in localStorage while redirecting unauthenticated checkout users to login.",
-          priority: "High",
+            "Register and sign in with JWT-backed requests and BCrypt password hashing. Provide customer/admin experiences, public catalog reads, and backend admin restrictions for product writes, user reads, dashboard routes, and order-status changes.",
+          priority: "Implemented in reviewed code",
         },
         {
           id: "PHR-FR-02",
-          area: "Product Catalog",
+          area: "Product Discovery",
           requirement:
-            "Customers must be able to browse a paginated and sortable product list, search or filter products client-side by name, description, or category, view product details in a dialog or modal, and use an initial product set auto-seeded on startup through initialItems().",
-          priority: "High",
+            "Browse a paginated, sortable product catalog, open product details, and search the currently loaded products by name.",
+          priority: "Implemented in reviewed code",
         },
         {
           id: "PHR-FR-03",
-          area: "Shopping Cart & Checkout",
+          area: "Shopping Cart",
           requirement:
-            "Users must be able to add products to a cart, view cart contents with computed totals, proceed to checkout with address, city, and postal code, submit an order with cart line items, shipping address, and computed total, and clear the cart with a homepage redirect after successful order placement.",
-          priority: "High",
+            "Add and remove products, adjust quantities, review calculated item/shipping totals, and proceed to checkout.",
+          priority: "Implemented in reviewed code",
         },
         {
           id: "PHR-FR-04",
-          area: "Order Management",
+          area: "Checkout",
           requirement:
-            "Users must be able to place orders that persist Order, OrderItems, and ShippingAddress records; admins must be able to view all orders with pagination and sorting, view full order details, and move order status through PENDING, PROCESSING, and COMPLETED.",
-          priority: "High",
+            "Collect shipping details and submit an order with line items and totals through the REST API. Clear the cart after a successful response; order submission does not process an online payment.",
+          priority: "Implemented in reviewed code",
         },
         {
           id: "PHR-FR-05",
-          area: "Product Management",
+          area: "Order Administration",
           requirement:
-            "Admins must be able to create, view, edit, and delete products, and the admin product listing must support pagination and sorting.",
-          priority: "High",
+            "List and inspect orders with pagination and sorting, and advance status from PENDING to PROCESSING to COMPLETED. Customer-specific order history is not established by the current dashboard UI.",
+          priority: "Implemented in reviewed code",
         },
         {
           id: "PHR-FR-06",
-          area: "User Management",
+          area: "Product & Inventory Administration",
           requirement:
-            "Admins must be able to view all registered users with pagination and sorting, and view a specific user's details.",
-          priority: "High",
+            "Create, edit, list, and delete products; maintain their active state, price, stored stock quantity, and image URL. Stock reservation or deduction during checkout is not implemented.",
+          priority: "Implemented in reviewed code",
         },
         {
           id: "PHR-FR-07",
-          area: "Admin Dashboard & Analytics",
+          area: "Customer Administration",
           requirement:
-            "The system must provide dashboard summary stats such as orders and revenue, show a configurable list of recent orders, show low-stock items against a configurable threshold, provide a sales overview over a configurable day range, and provide annual sales data for a selected year.",
-          priority: "High",
+            "Let administrators browse paginated and sortable user records and inspect an individual account.",
+          priority: "Implemented in reviewed code",
+        },
+        {
+          id: "PHR-FR-08",
+          area: "Operational Dashboard",
+          requirement:
+            "Show order-value summaries, recent orders, low-stock products, date-range sales aggregates, and annual monthly totals from stored records.",
+          priority: "Implemented in reviewed code",
         },
       ],
-      designPatterns: [
+      dataModelDescription:
+        "- **Accounts and roles:** `User` and `Role` have a many-to-many relationship through `user_roles`; email is unique and password values are BCrypt hashes.\n- **Catalog:** `Item` stores the product name, active state, stock quantity, price, and image URL.\n- **Orders:** Each `Order` references a customer and one `ShippingAddress`; its `OrderItems` reference both the order and catalog items.\n- **Line-item snapshots:** Each line stores item name, quantity, and amount alongside the item reference, allowing order-detail responses to include the submitted purchase data.",
+      dataModelDiagrams: [
         {
-          pattern: "Builder Pattern",
-          where:
-            "OrderServiceIMPL builds response DTOs such as UserGetResponseDto, OrderGetResponseDto, ShippingAddressGetDto, OrderItemGetDto, and pagination responses.",
-          why:
-            "Builder calls keep nested response construction readable when order, customer, item, and shipping data are combined.",
+          title: "Pharmacy ER Diagram",
+          src: "projects/pharmacy/archi&design/er_diagram.png",
+          alt: "Pharmacy relational model showing users, roles, their join table, items, orders, order items, and shipping addresses",
+        },
+      ],
+      systemDesigns: [
+        {
+          title: "Layered React, Spring Boot & MySQL Architecture",
+          content:
+            "**Decision:** Separate browser presentation from HTTP endpoints, business services, and persistence. `AuthController`, `ItemController`, `OrderController`, `UserController`, and `DashboardController` delegate to services; repositories extend Spring Data JPA.\n\n**Why:** Customer and admin screens share API contracts while database operations stay behind backend services. DTO mapping keeps response construction separate from the entity relationships.\n\n**Trade-off:** Two applications require consistent routes, error handling, CORS configuration, and deployment settings. The current frontend uses localhost API URLs; production configuration and end-to-end behavior require further validation.",
         },
         {
-          pattern: "Template Method Pattern",
-          where:
-            "JwtRequestFilter extends OncePerRequestFilter and overrides doFilterInternal; WebSecurityConfiguration extends WebSecurityConfigurerAdapter and overrides configure.",
-          why:
-            "Spring Security provides the authentication/filtering lifecycle while the project customizes JWT validation and route authorization behavior.",
+          title: "JWT Authentication & Explicit Access Rules",
+          content:
+            "**Decision:** `JwtRequestFilter` validates bearer tokens and populates Spring Security's authentication context. Public catalog reads are allowed; product writes, user reads, dashboard routes, and order-status updates require the Admin role. React Context shares login/logout state, while the browser stores the token and user object in localStorage.\n\n**Engineering challenge:** Client navigation checks and backend authorization must agree. Order GET routes currently fall through to authenticated access, and order creation selects the customer from the submitted email rather than binding it to the authenticated principal.\n\n**Trade-off / next step:** Add order ownership checks and principal-derived customer selection. Audit token storage and remove token-bearing debug logs. Context state starts in memory rather than automatically rehydrating from persisted storage.",
         },
         {
-          pattern: "Strategy Pattern",
-          where:
-            "WebSecurityConfiguration exposes PasswordEncoder as an interface and provides BCryptPasswordEncoder as the concrete implementation.",
-          why:
-            "The password-hashing algorithm can be swapped without rewriting login or registration logic.",
+          title: "Transactional Order, Shipping & Line-Item Persistence",
+          content:
+            "**Decision:** `OrderServiceIMPL.addOrder` runs within a transaction. It resolves the submitted customer, saves a shipping address and PENDING order, links each line to an existing item, and persists the lines. Status transitions allow PENDING to PROCESSING to COMPLETED, with same-status updates accepted.\n\n**Why:** Related records can be saved together instead of leaving an order as an unstructured cart payload. Administrative details combine customer, shipping, and line-item data.\n\n**Trade-off / next step:** The service trusts submitted totals, quantities, item names, and amounts. It does not reserve or deduct stock. Recalculate prices server-side, validate quantities, use decimal money types, and design stock concurrency controls before claiming inventory-safe checkout. Saving an order is not payment processing.",
         },
         {
-          pattern: "Interceptor Pattern",
+          title: "Paginated & Sortable Administration",
+          content:
+            "**Decision:** Product, user, and order services construct `PageRequest` and `Sort` values from API parameters, then return page data and total counts. React screens use these for pagination and sorting.\n\n**Why:** Administrators can navigate records without rendering every entry at once. The customer catalog uses the same paginated product API.\n\n**Trade-off:** Catalog search filters the loaded page in the browser; it is not a global indexed search. Page-size bounds and allowed sort fields need validation, and performance at large data volumes has not been measured.",
+        },
+        {
+          title: "Inventory Visibility & Order-Value Reporting",
+          content:
+            "**Decision:** Dashboard services query stored orders and item quantities for recent orders, low-stock alerts, aggregate order values, and annual totals grouped by month. The frontend renders these through dashboard components and API service functions.\n\n**Why:** Administrators gain operational visibility without querying MySQL directly. Low-stock reporting observes stored quantities rather than performing stock reservation.\n\n**Trade-off:** Revenue-labelled totals sum stored order amounts across statuses; they are not captured-payment revenue. The daily sales breakdown is currently empty, and some growth/change indicators are placeholders. Validate reporting semantics and data correctness before treating the dashboard as financial reporting.",
+        },
+        {
+          title: "Frontend Product-Image Uploads & Cleanup",
+          content:
+            "**Decision:** The active `admin/pages/Products.jsx` page calls Firebase Storage upload/deletion helpers. Images are uploaded first, their URLs are sent with product data, replaced images are deleted after successful edits, and deletion attempts follow product removal.\n\n**Why:** Binary files remain separate from relational catalog records. The helpers validate an image MIME type and a five-megabyte size limit in the browser.\n\n**Trade-off / next step:** Database writes and object-storage operations are not one transaction. Some failed-response branches attempt cleanup, but exception paths can still leave orphaned images. Storage rules, reliable cleanup, server-side validation, and actual upload-progress reporting need further work; the current progress display is simulated.",
+        },
+      ],
+      oopDesignPatterns: [
+        {
+          pattern: "Template Method / Spring Filter Lifecycle",
           where:
-            "The React frontend creates a shared Axios instance in apiConfig.js with request and response interceptors.",
-          why:
-            "JWT attachment, 401 cleanup, 403 handling, and common API behavior are applied consistently around every HTTP request.",
+            "`JwtRequestFilter` extends Spring's `OncePerRequestFilter` and overrides `doFilterInternal`.",
+          howImplemented:
+            "Spring owns the filtering lifecycle. The project supplies token extraction, validation, authenticated-context setup, and continuation through FilterChain.",
+          why: "JWT-specific behavior fits into the framework pipeline while route access decisions remain in WebSecurityConfiguration.",
+        },
+        {
+          pattern: "Interceptor Pattern / Shared Axios Client",
+          where: "Request and response interceptors in `src/api/apiConfig.js`.",
+          howImplemented:
+            "Requests through the shared client attach the stored bearer token. A 401 clears local credentials and redirects to login; a 403 displays an access-denied alert. Errors remain rejected promises.",
+          why: "Admin API services share authentication/error behavior. This is not universal: checkout uses fetch and the public catalog uses a separate Axios call.",
         },
         {
           pattern: "Context / Provider Pattern",
-          where: "AuthContext.jsx defines AuthProvider and useAuth around React createContext.",
-          why:
-            "Authentication state and login/logout actions are shared across components without prop drilling.",
-        },
-      ],
-      diagrams: [
-        {
-          title: "Context Diagram",
-          src: "projects/pharmacy/c4/Context_diagram_c1.png",
-          alt: "Pharmacy sales and inventory system context diagram",
-        },
-        {
-          title: "ER Diagram",
-          src: "projects/pharmacy/archi&design/er_diagram.png",
-          alt: "Pharmacy sales and inventory system ER diagram",
+          where:
+            "`AuthProvider` and `useAuth` in `AuthContext.jsx`, mounted around the React application.",
+          howImplemented:
+            "React Context exposes isLoggedIn plus login/logout actions. Route wrappers and cart navigation read that state; persisted token/user data are handled separately through localStorage.",
+          why: "Shared session presentation avoids passing login state through every component. Persistent-token restoration and synchronization remain follow-up work.",
         },
       ],
     },

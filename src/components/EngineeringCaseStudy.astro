@@ -51,9 +51,10 @@ const tabs = [
         {overviewViews.map((view) => (
           <section class="mt-8" aria-labelledby={`${project.slug}-${view.id}-heading`}>
             <h3 id={`${project.slug}-${view.id}-heading`} class="text-2xl font-bold text-white">{view.heading}</h3>
+            {"content" in view && view.content && <div class="mt-4"><CaseStudyText text={view.content} /></div>}
             {view.diagrams.length > 0 ? view.diagrams.map((diagram, index) => (
               <CaseStudyDiagrams diagrams={[diagram]} idPrefix={`${project.slug}-overview-${view.id}-${index}`} variant="overview" />
-            )) : (
+            )) : view.placeholder && (
               <p class="mt-4 rounded-xl border border-dashed border-white/15 bg-white/[0.025] px-5 py-6 text-sm text-slate-400">{view.placeholder}</p>
             )}
           </section>
@@ -145,6 +146,19 @@ const tabs = [
                 </details> : <div class="px-4 py-4 sm:px-5"><h5 class="text-base font-bold text-white">{item.pattern}</h5></div>
               ))}
             </div>
+          </section>
+        )}
+        {!!details.sourceReferences?.length && (
+          <section class="mt-8" aria-labelledby={`${project.slug}-source-heading`} data-source-references>
+            <h4 id={`${project.slug}-source-heading`} class="text-xl font-bold text-blue-200">Implementation Evidence</h4>
+            <ul class="mt-4 grid gap-3 sm:grid-cols-2">
+              {details.sourceReferences.map(reference => (
+                <li class="min-w-0 rounded-xl border border-white/10 bg-white/[0.025] p-4">
+                  <a class="font-semibold text-blue-300 underline decoration-blue-400/40 underline-offset-4 hover:text-white" href={reference.href} target="_blank" rel="noreferrer">{reference.label}</a>
+                  <p class="mt-2 text-sm leading-6 text-slate-300">{reference.description}</p>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
         {!!details.evidence?.length && (
