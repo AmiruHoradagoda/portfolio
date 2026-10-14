@@ -10,7 +10,7 @@ interface Props { project: Project }
 const { project } = Astro.props;
 const { details } = getProjectCaseStudy(project);
 const stackGroups = project.stackGroups ?? [{ title: "Technologies", items: project.stack }];
-const overviewViews = [
+const overviewViews = details.overviewSections ?? [
   { id: "context", heading: "System Context", placeholder: "<Figure C4 Context Diagram>", diagrams: details.overviewDiagrams.filter(diagram => /\bcontext\b/i.test(diagram.title)) },
   { id: "container", heading: "Container / Service View", placeholder: "<Figure C4 Container Diagram>", diagrams: details.overviewDiagrams.filter(diagram => !/\bcontext\b/i.test(diagram.title)) },
 ];
@@ -145,6 +145,33 @@ const tabs = [
                 </details> : <div class="px-4 py-4 sm:px-5"><h5 class="text-base font-bold text-white">{item.pattern}</h5></div>
               ))}
             </div>
+          </section>
+        )}
+        {!!details.evidence?.length && (
+          <section class="mt-8" data-case-evidence aria-labelledby={`${project.slug}-evidence-heading`}>
+            <h4 id={`${project.slug}-evidence-heading`} class="text-xl font-bold text-blue-200">Demonstrated Results</h4>
+            <div class="mt-5 space-y-8">
+              {details.evidence.map((experiment, index) => (
+                <section aria-labelledby={`${project.slug}-experiment-${index}`}>
+                  <h5 id={`${project.slug}-experiment-${index}`} class="text-lg font-semibold text-white">{experiment.title}</h5>
+                  <div class="mt-3"><CaseStudyText text={experiment.introduction} /></div>
+                  <div class:list={["grid min-w-0 gap-4", { "md:grid-cols-2": experiment.diagrams.length > 1 }]} data-evidence-comparison={experiment.diagrams.length > 1 || undefined}>
+                    {experiment.diagrams.map((diagram, diagramIndex) => (
+                      <div class="min-w-0">
+                        <CaseStudyDiagrams diagrams={[diagram]} idPrefix={`${project.slug}-evidence-${index}-${diagramIndex}`} />
+                      </div>
+                    ))}
+                  </div>
+                  <div class="mt-4 rounded-xl border border-blue-400/20 bg-blue-500/5 p-4"><CaseStudyText text={experiment.result} /></div>
+                </section>
+              ))}
+            </div>
+          </section>
+        )}
+        {details.limitations && (
+          <section class="mt-8" aria-labelledby={`${project.slug}-limitations-heading`}>
+            <h4 id={`${project.slug}-limitations-heading`} class="text-xl font-bold text-blue-200">Scope &amp; Limitations</h4>
+            <div class="mt-4"><CaseStudyText text={details.limitations} /></div>
           </section>
         )}
       </section>

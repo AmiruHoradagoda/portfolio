@@ -56,14 +56,17 @@ export const kafkaOrderPipeline: Project = {
       { attribute: "Offset Control", scenario: "The order consumer records progress after a processing decision.", response: "Synchronous commits follow successful aggregation or the return of DLQ produce/flush calls. DLQ delivery and source commits are not atomic, and delivery is not verified." },
       { attribute: "Observability", scenario: "Processing behavior is visible while the application runs.", response: "Console output shows order data, retry attempts, partition, offset, processed count, total price, running average, and commit messages." },
     ],
-    designPatterns: [
-      { pattern: "Event-Driven Architecture", where: "Order publication and failure inspection communicate through Kafka topics.", why: "Events decouple these stages from direct synchronous calls." },
-      { pattern: "Producer–Consumer Pattern", where: "producer.py publishes independently of consumer.py.", why: "Separate processes take responsibility for creating and processing orders." },
-      { pattern: "Retry Pattern", where: "process_with_retry handles explicitly raised temporary failures.", why: "A bounded attempt budget provides recovery before escalating to the DLQ." },
-      { pattern: "Dead Letter Queue Pattern", where: "orders.dlq.v1 separates failed orders from orders.received.v1.", why: "The DLQ monitor can inspect failures independently of primary processing." },
-      { pattern: "Schema-Based Messaging", where: "schemas/order.avsc defines the shared Order record.", why: "The same field contract governs encoding and decoding." },
-      { pattern: "Explicit Acknowledgement", where: "The main consumer disables automatic commits and deliberately commits source offsets.", why: "Processing outcomes determine when progress is recorded; the DLQ monitor uses default automatic commits." },
+    systemDesigns: [
+      { title: "Event-Driven Architecture", howImplemented: "Order publication and failure inspection communicate through Kafka topics.", whyUsed: "Events decouple these stages from direct synchronous calls.", diagram: {"title":"Order Processing Architecture","src":"projects/kafka-order-pipeline/archi&design/architecture.png","alt":"Kafka order processing flow showing Avro events, explicit offset commits, retries, running aggregation, and Dead Letter Queue inspection"} },
+      { title: "Producer–Consumer Pattern", howImplemented: "producer.py publishes independently of consumer.py.", whyUsed: "Separate processes take responsibility for creating and processing orders." },
+      { title: "Retry Pattern", howImplemented: "process_with_retry handles explicitly raised temporary failures.", whyUsed: "A bounded attempt budget provides recovery before escalating to the DLQ." },
+      { title: "Dead Letter Queue Pattern", howImplemented: "orders.dlq.v1 separates failed orders from orders.received.v1.", whyUsed: "The DLQ monitor can inspect failures independently of primary processing." },
+      { title: "Schema-Based Messaging", howImplemented: "schemas/order.avsc defines the shared Order record.", whyUsed: "The same field contract governs encoding and decoding." },
+      { title: "Explicit Acknowledgement", howImplemented: "The main consumer disables automatic commits and deliberately commits source offsets.", whyUsed: "Processing outcomes determine when progress is recorded; the DLQ monitor uses default automatic commits." },
     ],
-    diagrams: [{ title: "Order Processing Architecture", src: "projects/kafka-order-pipeline/archi&design/architecture.png", alt: "Resilient Kafka Order Processing Pipeline architecture diagram" }],
+    overviewDiagrams: [
+      { title: "C4 Context Diagram", src: "projects/kafka-order-pipeline/c4/context_diagram_c1.png", alt: "Kafka order pipeline context showing the system operator, DLQ inspector, and Apache Kafka" },
+      { title: "C4 Container Diagram", src: "projects/kafka-order-pipeline/c4/container_diagram_c2.png", alt: "Kafka order pipeline containers showing the Python producer, order consumer, in-memory aggregation, and DLQ consumer", caption: "Logical process view: events travel through Kafka topics, and aggregation runs in memory inside the order consumer." },
+    ],
   },
 };
