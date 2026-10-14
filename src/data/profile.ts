@@ -1104,11 +1104,7 @@ export const projects: Project[] = [
         title: "Backend",
         items: [
           "Java 17",
-          "Spring Boot 3.3",
-          "Spring Web",
-          "Spring Security",
-          "Spring Data MongoDB",
-          "Maven"
+          "Spring Boot 3.3"
         ]
       },
       {
@@ -1129,22 +1125,13 @@ export const projects: Project[] = [
       {
         title: "Security",
         items: [
-          "JWT Authentication",
-          "BCrypt Password Hashing",
-          "Permission-Aware Folder and Document Access"
-        ]
-      },
-      {
-        title: "API & Documentation",
-        items: [
-          "REST APIs",
-          "OpenAPI / Swagger"
+          "Spring Security",
+          "JWT Authentication"
         ]
       },
       {
         title: "DevOps",
         items: [
-          "Docker",
           "Docker Compose",
           "Jenkins",
           "Ansible",
@@ -1251,13 +1238,13 @@ export const projects: Project[] = [
       overviewDiagrams: [
         {
           title: "C4 Context Diagram",
-          src: "projects/leckeep/c4/Context_diagram_c1.png",
+          src: "projects/leckeep/c4/context_diagram_c1.png",
           alt: "LecKeep C4 context diagram",
           caption: "Logical system context. HTTPS is a deployment target; the current Compose and Ansible configurations provide HTTP access."
         },
         {
           title: "C4 Container Diagram",
-          src: "projects/leckeep/c4/Container_diagram_c2.png",
+          src: "projects/leckeep/c4/container_diagram_c2.png",
           alt: "LecKeep C4 container diagram",
           caption: "React frontend, Spring Boot API, MongoDB metadata, and MinIO file storage. The HTTPS label represents a deployment target; the current stack uses HTTP."
         }
@@ -1278,27 +1265,50 @@ export const projects: Project[] = [
         {
           title: "Centralized Permission-Aware Resource Access",
           content: "**Problem / Why needed:** Folder viewing, document preview/download, and search must apply consistent authorization rules.\n\n**How implemented:** `FolderPermissionService` checks folder ownership, GLOBAL visibility, GROUP visibility with verified study-group membership, and explicit USER, GROUP, or GLOBAL shares. Documents inherit read access from their parent folder. Upload, delete, and share management remain restricted to the folder owner.\n\n**Result:** One read-access policy prevents different permission rules from drifting across resource endpoints and search.",
-          diagramPlaceholder: "<Figure Permission-Aware Resource Access Flow>"
+          diagram: {
+            title: "Permission-Aware Resource Access Flow",
+            src: "projects/leckeep/archi&design/permission-aware-resource-access-flow.png",
+            alt: "FolderPermissionService checks ownership, visibility, group membership, and explicit shares before granting resource access.",
+            caption: "Read-access overview. Explicit GLOBAL shares are also supported, alongside the USER and GROUP shares shown."
+          }
         },
         {
           title: "Permission-Aware Academic Search",
           content: "**Problem / Why needed:** Students need to retrieve academic materials without exposing private resources through search.\n\n**How implemented:** `SearchService` uses case-insensitive partial matching on subject names, folder titles/descriptions, and document names, content types, and extensions. Subjects are filtered by ownership; folders and documents are filtered through `FolderPermissionService` before results are returned.\n\n**Result:** Search returns only resources the authenticated user is authorized to access.",
-          diagramPlaceholder: "<Figure Permission-Aware Search Flow>"
+          diagram: {
+            title: "Permission-Aware Search Flow",
+            src: "projects/leckeep/archi&design/permission-aware-search-flow.png",
+            alt: "SearchService searches subjects, folders, and document metadata and returns authorized results."
+          }
         },
         {
           title: "Document Upload & Object Storage",
           content: "**Problem / Why needed:** Large uploaded binaries should remain separate from application metadata, and file handling should support different document types.\n\n**How implemented:** The upload workflow validates file size and filename, resolves a file-type handler, verifies folder ownership, and uploads through `ObjectStorageService` to MinIO. `DocumentFile` metadata and the stored object key are saved in MongoDB. Supported previews use short-lived URLs.\n\n**Result:** Binary storage stays separate from metadata, while file-type and storage-provider details remain isolated behind interfaces.",
-          diagramPlaceholder: "<Figure Document Upload & Storage Flow>"
+          diagram: {
+            title: "Document Upload & Storage Flow",
+            src: "projects/leckeep/archi&design/document-upload&object-storage-flow.png",
+            alt: "Document upload validates the file and folder ownership, stores the binary in MinIO, and saves metadata in MongoDB.",
+            caption: "The implemented handlers support PDF, images, and office documents. The video example shown is outside the current handler set."
+          }
         },
         {
           title: "Secure Sharing & Study-Group Access",
           content: "**Problem / Why needed:** Students need controlled collaboration with specific users and study groups.\n\n**How implemented:** Folder owners create and revoke `FolderShare` records for USER, GROUP, or GLOBAL targets. Group sharing requires group-owner or admin access. `FolderPermissionService` checks valid shares and current membership when granting read access; group-based folder visibility uses the same membership check.\n\n**Result:** Revoking a share removes that access path unless another valid permission rule still grants access.",
-          diagramPlaceholder: "<Figure Folder Sharing & Group Access Flow>"
+          diagram: {
+            title: "Folder Sharing & Group Access Flow",
+            src: "projects/leckeep/archi&design/folder-sharing&group-access-flow.png",
+            alt: "Folder access is granted through ownership, visibility, current group membership, or valid explicit shares."
+          }
         },
         {
           title: "Containerized Deployment Architecture",
           content: "**Problem / Why needed:** The frontend, API, database, and object store need a repeatable environment and a defined deployment workflow.\n\n**How implemented:** Separate frontend and backend containers run alongside MongoDB and MinIO. Docker Compose defines service healthchecks and persistent MongoDB/MinIO volumes. The Jenkins CI pipeline defines backend tests, application builds, and frontend/backend image publishing. Ansible provides automation to deploy the four-service Compose stack to EC2. Terraform contains security-group configuration and a lookup of an existing EC2 instance.\n\n**Result:** The repository provides a repeatable local stack, CI pipeline configuration, and separate deployment automation. End-to-end production deployment is not verified: Jenkins does not invoke Ansible, MinIO image publishing is separate, and public HTTPS/reverse-proxy setup remains a later step.",
-          diagramPlaceholder: "<Figure LecKeep Deployment Architecture>"
+          diagram: {
+            title: "LecKeep Deployment Architecture",
+            src: "projects/leckeep/archi&design/deployment-architecture.png",
+            alt: "Jenkins CI, separate Ansible deployment automation, Terraform configuration, and the four-service Compose runtime.",
+            caption: "Deployment overview: the Jenkins-to-Ansible trigger is a target integration, not an implemented pipeline stage. Terraform configures a security group for an existing EC2 instance. Frontend container port is 80 (host port 3000); MongoDB data is mounted at /data/db. Production deployment remains unverified."
+          }
         }
       ],
       oopDesignPatterns: [
@@ -1307,28 +1317,48 @@ export const projects: Project[] = [
           where: "`FileTypeHandler` with file-specific implementations such as PDF, image, and office-document handlers.",
           howImplemented: "Each handler determines whether it supports a file type and encapsulates file-specific validation and preview behavior.",
           why: "New document types can be introduced without adding large conditional blocks to the upload workflow.",
-          diagramPlaceholder: "<Figure File Type Strategy UML>"
+          diagram: {
+            title: "File Type Strategy UML",
+            src: "projects/leckeep/archi&design/oop-dp/file-type-strategy-uml.png",
+            alt: "FileTypeHandler strategy interface and PDF, image, and office-document handlers.",
+            caption: "Conceptual UML; method names are illustrative. The implementation uses supports(contentType, extension), validate(file, extension), getDocumentType, and getPreviewMode, with FileTypeHandlerResolver selecting the strategy."
+          }
         },
         {
           pattern: "Factory / Resolver Pattern — File Handler Selection",
           where: "`FileTypeHandlerResolver`",
           howImplemented: "The resolver receives the available `FileTypeHandler` implementations and selects the correct strategy for the uploaded file.",
           why: "The document service does not need to know about every concrete file-type implementation.",
-          diagramPlaceholder: "<Figure File Type Resolver UML>"
+          diagram: {
+            title: "File Type Resolver UML",
+            src: "projects/leckeep/archi&design/oop-dp/file-type-resolver-uml.png",
+            alt: "FileTypeHandlerResolver selects a file handler from the injected handler implementations.",
+            caption: "Conceptual UML. The implemented resolver exposes resolve(contentType, extension); preview URLs are generated through ObjectStorageService."
+          }
         },
         {
           pattern: "Adapter Pattern — Object Storage",
           where: "`ObjectStorageService` with the implemented `MinioObjectStorageAdapter`. MinIO provides S3-compatible object storage; the separate `S3ObjectStorageAdapter` remains an unimplemented extension point.",
           howImplemented: "Application services depend on the storage abstraction rather than directly calling a provider-specific SDK.",
           why: "Storage-provider-specific details remain isolated and the underlying provider can be replaced without redesigning document business logic.",
-          diagramPlaceholder: "<Figure Object Storage Adapter UML>"
+          diagram: {
+            title: "Object Storage Adapter UML",
+            src: "projects/leckeep/archi&design/oop-dp/object-storage-adapter-uml.png",
+            alt: "ObjectStorageService isolates document services from MinIO, with an unimplemented S3 adapter extension point.",
+            caption: "Conceptual UML; the implemented storage contract is upload, download, delete, and generatePreviewUrl. MinIO is implemented; the S3 adapter remains a stub."
+          }
         },
         {
           pattern: "Template Method Pattern — JWT Request Filtering",
           where: "JWT filter implementation based on Spring Security's `OncePerRequestFilter`.",
           howImplemented: "Spring controls the request-filter lifecycle while LecKeep provides the JWT extraction, validation, and authentication-context logic.",
           why: "The project customizes authentication behavior while reusing Spring Security's standard filtering lifecycle.",
-          diagramPlaceholder: "<Figure JWT Filter UML>"
+          diagram: {
+            title: "JWT Filter UML",
+            src: "projects/leckeep/archi&design/oop-dp/jwt-filter-uml.png",
+            alt: "A JWT request filter customizes the OncePerRequestFilter lifecycle and continues the filter chain.",
+            caption: "Conceptual UML. The implementation names are JwtFilter and JWTService; Spring provides the filtering lifecycle."
+          }
         }
       ]
     }
