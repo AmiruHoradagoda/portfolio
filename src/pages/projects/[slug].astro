@@ -9,7 +9,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import ProjectVisual from "../../components/ProjectVisual.astro";
 import EngineeringCaseStudy from "../../components/EngineeringCaseStudy.astro";
-import { profile, projects, type Project } from "../../data/profile";
+import { profile, projects } from "../../data";
+import type { Project } from "../../types/project";
 import { assetPath } from "../../utils/paths";
 
 export function getStaticPaths() {

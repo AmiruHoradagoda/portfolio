@@ -1,7 +1,7 @@
 ---
 import { Code2, Database, FileText, Network, Server, X } from "@lucide/astro";
 import DiagramCanvas from "./DiagramCanvas.astro";
-import type { ProjectDiagram } from "../data/profile";
+import type { ProjectDiagram } from "../types/project";
 import { assetPath } from "../utils/paths";
 interface Props { diagrams: ProjectDiagram[]; idPrefix: string; variant?: "default" | "data-model" | "overview" }
 const { diagrams, idPrefix, variant = "default" } = Astro.props;

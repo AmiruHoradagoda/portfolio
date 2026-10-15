@@ -8,8 +8,8 @@ import AboutSection from "../components/AboutSection.astro";
 import Section from "../components/Section.astro";
 import SkillTabs from "../components/SkillTabs.astro";
 import ProjectCard from "../components/ProjectCard.astro";
-import ExperienceCard from "../components/ExperienceCard.astro";
-import { profile, projects, experience } from "../data/profile";
+import ProfessionalJourneySection from "../components/ProfessionalJourneySection.astro";
+import { profile, projects } from "../data";
 import { assetPath } from "../utils/paths";
 const title = `${profile.name} | ${profile.headline}`;
 const description = "Portfolio of Amiru Horadagoda, a Computer Engineer focused on full-stack development, DevOps, and AI projects.";
@@ -19,10 +19,8 @@ const description = "Portfolio of Amiru Horadagoda, a Computer Engineer focused 
   <main id="main-content">
     <Hero />
     <AboutSection />
-    <Section id="experience" eyebrow="Professional experience" title="Experience">
-      {experience.map(item => <ExperienceCard item={item} />)}
-    </Section>
-    <Section id="featured-projects" eyebrow="Selected work" title="Selected Projects" intro="A few projects that best represent how I approach software engineering.">
+    <ProfessionalJourneySection />
+    <Section id="featured-projects" title="Selected Projects">
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {projects.slice(0, 3).map((project) => <ProjectCard project={project} />)}
       </div>

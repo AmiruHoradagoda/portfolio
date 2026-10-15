@@ -1,4 +1,4 @@
-import type { Project, ProjectDiagram, SystemDesign, OopDesignPattern } from "../data/profile";
+import type { Project, ProjectDiagram, SystemDesign, OopDesignPattern } from "../types/project";
 
 // Unknown pattern names remain architectural rather than guessing an OOP classification.
 const oopPattern = /\b(strategy|adapter|factory|singleton|dao|facade|builder|template method|observer|provider|interceptor|chain of responsibility)\b/i;

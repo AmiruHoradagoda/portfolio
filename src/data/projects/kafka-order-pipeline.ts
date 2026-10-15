@@ -1,6 +1,5 @@
-import type { Project } from "./profile";
+import type { Project } from "../../types/project";
 
-// Content verified against repository commit b1bf8756475ff39f388aac2b77fc82e8e6c9688d.
 export const kafkaOrderPipeline: Project = {
   slug: "kafka-order-pipeline",
   title: "Resilient Kafka Order Processing Pipeline",
@@ -66,7 +65,7 @@ export const kafkaOrderPipeline: Project = {
     ],
     overviewDiagrams: [
       { title: "C4 Context Diagram", src: "projects/kafka-order-pipeline/c4/context_diagram_c1.png", alt: "Kafka order pipeline context showing the system operator, DLQ inspector, and Apache Kafka" },
-      { title: "C4 Container Diagram", src: "projects/kafka-order-pipeline/c4/container_diagram_c2.png", alt: "Kafka order pipeline containers showing the Python producer, order consumer, in-memory aggregation, and DLQ consumer", caption: "Logical process view: events travel through Kafka topics, and aggregation runs in memory inside the order consumer." },
+      { title: "C4 Container Diagram", src: "projects/kafka-order-pipeline/c4/container_diagram_c2.png", alt: "Kafka order pipeline containers showing the Python producer, order consumer, in-memory aggregation, and DLQ consumer" },
     ],
   },
 };

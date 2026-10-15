@@ -1,6 +1,6 @@
 ---
 import { Code2, GraduationCap, ArrowUpRight, Zap } from "@lucide/astro";
-import { profile, education } from "../data/profile";
+import { profile, education } from "../data";
 const socialLinks = profile.links.filter(link => ["LinkedIn", "GitHub"].includes(link.label)).sort((a, b) => a.label === "LinkedIn" ? -1 : 1);
 ---
 
