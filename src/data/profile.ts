@@ -1884,12 +1884,10 @@ export const projects: Project[] = [
     title: "Pharmacy Sales and Inventory Management System",
     year: "2024",
     type: "Full-Stack Web Application",
-    status: "Implemented prototype",
+    status: "Completed",
     role: "Developer",
-    summary:
-      "A web platform that helps customers browse and order pharmacy products while giving administrators tools to manage product inventory, customer orders, and sales activity.",
-    description:
-      "A React storefront and administration interface connected to a layered Spring Boot REST API and MySQL. The prototype supports product discovery, cart-based order submission, order-status administration, stock visibility, and operational reporting.",
+    summary: "A web platform that helps customers browse and order pharmacy products while giving administrators tools to manage product inventory, customer orders, and sales activity.",
+    description: "A React storefront and administration interface connected to a layered Spring Boot REST API and MySQL. The application supports product discovery, cart-based order submission, order-status administration, stock visibility, and operational reporting.",
     stack: [
       "Java",
       "Spring Boot",
@@ -1899,67 +1897,80 @@ export const projects: Project[] = [
       "Tailwind CSS",
       "MySQL",
       "JWT Authentication",
-      "Firebase Storage",
+      "Firebase Storage"
     ],
     stackGroups: [
       {
         title: "Frontend",
-        items: ["React", "Vite", "Tailwind CSS"],
+        items: [
+          "React",
+          "Vite",
+          "Tailwind CSS"
+        ]
       },
       {
         title: "Backend",
-        items: ["Java", "Spring Boot", "Spring Security"],
+        items: [
+          "Java",
+          "Spring Boot",
+          "Spring Security"
+        ]
       },
       {
         title: "Database",
-        items: ["MySQL"],
+        items: [
+          "MySQL"
+        ]
       },
       {
         title: "Authentication",
-        items: ["JWT Authentication"],
+        items: [
+          "JWT Authentication"
+        ]
       },
       {
         title: "Product Images",
-        items: ["Firebase Storage"],
-      },
+        items: [
+          "Firebase Storage"
+        ]
+      }
     ],
     features: [
       "Paginated product catalog and shopping cart",
       "Shipping details and persistent order submission",
       "Product, order-status, and customer administration",
       "Stored-stock monitoring and sales summaries",
-      "Frontend product-image upload and cleanup integration",
+      "Frontend product-image upload and cleanup integration"
     ],
     challenges: [
       "Preserving related order, line-item, and shipping records in one transaction",
       "Keeping browser authentication state and API access rules consistent",
-      "Separating inventory visibility from unimplemented stock reservation and deduction",
+      "Separating inventory visibility from unimplemented stock reservation and deduction"
     ],
     links: [
       {
         label: "Backend GitHub",
-        href: "https://github.com/AmiruHoradagoda/pharmacy-backend",
+        href: "https://github.com/AmiruHoradagoda/pharmacy-backend"
       },
       {
         label: "Frontend GitHub",
-        href: "https://github.com/AmiruHoradagoda/pharmacy-frontend",
-      },
+        href: "https://github.com/AmiruHoradagoda/pharmacy-frontend"
+      }
     ],
     accent: "blue",
     media: [
       {
         type: "image",
         src: "projects/pharmacy/card-image.png",
-        alt: "Pharmacy storefront and administration project visual",
-      },
+        alt: "Pharmacy storefront and administration project visual"
+      }
     ],
     details: {
-      background:
-        "Pharmacy sales combine customer-facing product browsing and ordering with product maintenance, order tracking, and low-stock monitoring. Handling these separately makes it harder to keep a consistent operational view.\n\nThis prototype connects a React storefront and administration interface to a Spring Boot REST API. Customers browse products, build a cart, enter shipping details, and submit orders. Administrators manage product records and stored stock quantities, inspect orders, update statuses, and view operational summaries.\n\nThe engineering focus is connecting these workflows through layered services and relational persistence. Order placement saves records; integrated online payments and prescription fulfilment are not implemented. The project demonstrates application structure and workflows without establishing production readiness.",
+      background: "Pharmacy sales combine customer-facing product browsing and ordering with product maintenance, order tracking, and low-stock monitoring. This application brings those workflows together through a React storefront, an administration interface, and a Spring Boot REST API.\n\nCustomers browse products, build a cart, enter shipping details, and submit orders. Administrators manage products and stored stock quantities, inspect orders, update statuses, and view sales summaries. Layered backend services and MySQL persistence connect these workflows through a shared relational data model.",
       architectureHeadings: {
         dataModel: "Data Model / ER Design",
         systemDesigns: "Main System Designs",
-        oopDesignPatterns: "Design Patterns & Framework Idioms",
+        oopDesignPatterns: "Design Patterns"
       },
       overviewSections: [
         {
@@ -1969,9 +1980,9 @@ export const projects: Project[] = [
             {
               title: "C4 System Context Diagram",
               src: "projects/pharmacy/c4/Context_diagram_c1.png",
-              alt: "Conceptual pharmacy context showing customer and administrator workflows, Firebase image storage, and a PayPal integration outside the implemented scope",
-            },
-          ],
+              alt: "Conceptual pharmacy context showing customer and administrator workflows, Firebase image storage, and a PayPal integration outside the implemented scope"
+            }
+          ]
         },
         {
           id: "container",
@@ -1980,135 +1991,103 @@ export const projects: Project[] = [
             {
               title: "C4 Container Diagram",
               src: "projects/pharmacy/c4/container-diagram_c2.png",
-              alt: "Conceptual React, Spring Boot, and MySQL architecture with image storage and an unimplemented payment integration",
-            },
-          ],
-        },
+              alt: "Conceptual React, Spring Boot, and MySQL architecture with image storage and an unimplemented payment integration"
+            }
+          ]
+        }
       ],
       functionalRequirements: [
         {
           id: "PHR-FR-01",
           area: "Account Access",
-          requirement:
-            "Register and sign in with JWT-backed requests and BCrypt password hashing. Provide customer/admin experiences, public catalog reads, and backend admin restrictions for product writes, user reads, dashboard routes, and order-status changes.",
-          priority: "Implemented in reviewed code",
+          requirement: "Register and sign in with JWT-backed requests and BCrypt password hashing. Provide customer/admin experiences, public catalog reads, and backend admin restrictions for product writes, user reads, dashboard routes, and order-status changes.",
+          priority: "Implemented in reviewed code"
         },
         {
           id: "PHR-FR-02",
           area: "Product Discovery",
-          requirement:
-            "Browse a paginated, sortable product catalog, open product details, and search the currently loaded products by name.",
-          priority: "Implemented in reviewed code",
+          requirement: "Browse a paginated, sortable product catalog, open product details, and search the currently loaded products by name.",
+          priority: "Implemented in reviewed code"
         },
         {
           id: "PHR-FR-03",
           area: "Shopping Cart",
-          requirement:
-            "Add and remove products, adjust quantities, review calculated item/shipping totals, and proceed to checkout.",
-          priority: "Implemented in reviewed code",
+          requirement: "Add and remove products, adjust quantities, review calculated item/shipping totals, and proceed to checkout.",
+          priority: "Implemented in reviewed code"
         },
         {
           id: "PHR-FR-04",
           area: "Checkout",
-          requirement:
-            "Collect shipping details and submit an order with line items and totals through the REST API. Clear the cart after a successful response; order submission does not process an online payment.",
-          priority: "Implemented in reviewed code",
+          requirement: "Collect shipping details and submit an order with line items and totals through the REST API. Clear the cart after a successful response; order submission does not process an online payment.",
+          priority: "Implemented in reviewed code"
         },
         {
           id: "PHR-FR-05",
           area: "Order Administration",
-          requirement:
-            "List and inspect orders with pagination and sorting, and advance status from PENDING to PROCESSING to COMPLETED. Customer-specific order history is not established by the current dashboard UI.",
-          priority: "Implemented in reviewed code",
+          requirement: "List and inspect orders with pagination and sorting, and advance status from PENDING to PROCESSING to COMPLETED. Customer-specific order history is not established by the current dashboard UI.",
+          priority: "Implemented in reviewed code"
         },
         {
           id: "PHR-FR-06",
           area: "Product & Inventory Administration",
-          requirement:
-            "Create, edit, list, and delete products; maintain their active state, price, stored stock quantity, and image URL. Stock reservation or deduction during checkout is not implemented.",
-          priority: "Implemented in reviewed code",
+          requirement: "Create, edit, list, and delete products; maintain their active state, price, stored stock quantity, and image URL. Stock reservation or deduction during checkout is not implemented.",
+          priority: "Implemented in reviewed code"
         },
         {
           id: "PHR-FR-07",
           area: "Customer Administration",
-          requirement:
-            "Let administrators browse paginated and sortable user records and inspect an individual account.",
-          priority: "Implemented in reviewed code",
+          requirement: "Let administrators browse paginated and sortable user records and inspect an individual account.",
+          priority: "Implemented in reviewed code"
         },
         {
           id: "PHR-FR-08",
           area: "Operational Dashboard",
-          requirement:
-            "Show order-value summaries, recent orders, low-stock products, date-range sales aggregates, and annual monthly totals from stored records.",
-          priority: "Implemented in reviewed code",
-        },
+          requirement: "Show order-value summaries, recent orders, low-stock products, date-range sales aggregates, and annual monthly totals from stored records.",
+          priority: "Implemented in reviewed code"
+        }
       ],
-      dataModelDescription:
-        "- **Accounts and roles:** `User` and `Role` have a many-to-many relationship through `user_roles`; email is unique and password values are BCrypt hashes.\n- **Catalog:** `Item` stores the product name, active state, stock quantity, price, and image URL.\n- **Orders:** Each `Order` references a customer and one `ShippingAddress`; its `OrderItems` reference both the order and catalog items.\n- **Line-item snapshots:** Each line stores item name, quantity, and amount alongside the item reference, allowing order-detail responses to include the submitted purchase data.",
+      dataModelDescription: "Users and Roles have a many-to-many relationship. Each Order belongs to a User and references a ShippingAddress, while its OrderItems link to the ordered Products/Items. MySQL stores these relationships alongside product prices and stock quantities, supporting order retrieval and administration.",
       dataModelDiagrams: [
         {
           title: "Pharmacy ER Diagram",
           src: "projects/pharmacy/archi&design/er_diagram.png",
-          alt: "Pharmacy relational model showing users, roles, their join table, items, orders, order items, and shipping addresses",
-        },
+          alt: "Pharmacy relational model showing users, roles, their join table, items, orders, order items, and shipping addresses"
+        }
       ],
       systemDesigns: [
         {
-          title: "Layered React, Spring Boot & MySQL Architecture",
-          content:
-            "**Decision:** Separate browser presentation from HTTP endpoints, business services, and persistence. `AuthController`, `ItemController`, `OrderController`, `UserController`, and `DashboardController` delegate to services; repositories extend Spring Data JPA.\n\n**Why:** Customer and admin screens share API contracts while database operations stay behind backend services. DTO mapping keeps response construction separate from the entity relationships.\n\n**Trade-off:** Two applications require consistent routes, error handling, CORS configuration, and deployment settings. The current frontend uses localhost API URLs; production configuration and end-to-end behavior require further validation.",
+          title: "Layered Application Architecture",
+          content: "React provides the customer storefront and administration screens, communicating with a Spring Boot REST API. Controllers handle HTTP requests, the service layer coordinates application workflows, and Spring Data JPA repositories access MySQL. This separation keeps presentation, business operations, and persistence focused on distinct responsibilities while allowing both customer and admin interfaces to use the same backend."
         },
         {
-          title: "JWT Authentication & Explicit Access Rules",
-          content:
-            "**Decision:** `JwtRequestFilter` validates bearer tokens and populates Spring Security's authentication context. Public catalog reads are allowed; product writes, user reads, dashboard routes, and order-status updates require the Admin role. React Context shares login/logout state, while the browser stores the token and user object in localStorage.\n\n**Engineering challenge:** Client navigation checks and backend authorization must agree. Order GET routes currently fall through to authenticated access, and order creation selects the customer from the submitted email rather than binding it to the authenticated principal.\n\n**Trade-off / next step:** Add order ownership checks and principal-derived customer selection. Audit token storage and remove token-bearing debug logs. Context state starts in memory rather than automatically rehydrating from persisted storage.",
+          title: "Authentication & Role-Based Authorization",
+          content: "Spring Security processes JWT bearer tokens through JwtRequestFilter, while BCrypt hashes account passwords. Customers can browse the public catalog and sign in to place orders. Admin checks protect product changes, user records, dashboard endpoints, and order-status updates. React authentication state supports customer/admin navigation, and API access rules enforce the configured permissions independently of the interface."
         },
         {
-          title: "Transactional Order, Shipping & Line-Item Persistence",
-          content:
-            "**Decision:** `OrderServiceIMPL.addOrder` runs within a transaction. It resolves the submitted customer, saves a shipping address and PENDING order, links each line to an existing item, and persists the lines. Status transitions allow PENDING to PROCESSING to COMPLETED, with same-status updates accepted.\n\n**Why:** Related records can be saved together instead of leaving an order as an unstructured cart payload. Administrative details combine customer, shipping, and line-item data.\n\n**Trade-off / next step:** The service trusts submitted totals, quantities, item names, and amounts. It does not reserve or deduct stock. Recalculate prices server-side, validate quantities, use decimal money types, and design stock concurrency controls before claiming inventory-safe checkout. Saving an order is not payment processing.",
-        },
-        {
-          title: "Paginated & Sortable Administration",
-          content:
-            "**Decision:** Product, user, and order services construct `PageRequest` and `Sort` values from API parameters, then return page data and total counts. React screens use these for pagination and sorting.\n\n**Why:** Administrators can navigate records without rendering every entry at once. The customer catalog uses the same paginated product API.\n\n**Trade-off:** Catalog search filters the loaded page in the browser; it is not a global indexed search. Page-size bounds and allowed sort fields need validation, and performance at large data volumes has not been measured.",
-        },
-        {
-          title: "Inventory Visibility & Order-Value Reporting",
-          content:
-            "**Decision:** Dashboard services query stored orders and item quantities for recent orders, low-stock alerts, aggregate order values, and annual totals grouped by month. The frontend renders these through dashboard components and API service functions.\n\n**Why:** Administrators gain operational visibility without querying MySQL directly. Low-stock reporting observes stored quantities rather than performing stock reservation.\n\n**Trade-off:** Revenue-labelled totals sum stored order amounts across statuses; they are not captured-payment revenue. The daily sales breakdown is currently empty, and some growth/change indicators are placeholders. Validate reporting semantics and data correctness before treating the dashboard as financial reporting.",
-        },
-        {
-          title: "Frontend Product-Image Uploads & Cleanup",
-          content:
-            "**Decision:** The active `admin/pages/Products.jsx` page calls Firebase Storage upload/deletion helpers. Images are uploaded first, their URLs are sent with product data, replaced images are deleted after successful edits, and deletion attempts follow product removal.\n\n**Why:** Binary files remain separate from relational catalog records. The helpers validate an image MIME type and a five-megabyte size limit in the browser.\n\n**Trade-off / next step:** Database writes and object-storage operations are not one transaction. Some failed-response branches attempt cleanup, but exception paths can still leave orphaned images. Storage rules, reliable cleanup, server-side validation, and actual upload-progress reporting need further work; the current progress display is simulated.",
-        },
+          title: "Order & Inventory Management",
+          content: "Order creation saves the customer reference, shipping address, order, and linked OrderItems within a database transaction. Administrators inspect these records and advance orders from PENDING through PROCESSING to COMPLETED. Product records and low-stock queries provide stock visibility for administration. This connects customer ordering with operational monitoring without implementing stock reservation or automatic stock deduction."
+        }
       ],
       oopDesignPatterns: [
         {
-          pattern: "Template Method / Spring Filter Lifecycle",
-          where:
-            "`JwtRequestFilter` extends Spring's `OncePerRequestFilter` and overrides `doFilterInternal`.",
-          howImplemented:
-            "Spring owns the filtering lifecycle. The project supplies token extraction, validation, authenticated-context setup, and continuation through FilterChain.",
-          why: "JWT-specific behavior fits into the framework pipeline while route access decisions remain in WebSecurityConfiguration.",
+          pattern: "Template Method ? Spring Security Filter Lifecycle",
+          where: "`JwtRequestFilter` extends `OncePerRequestFilter`.",
+          howImplemented: "It supplies JWT validation and authentication-context setup within Spring's request-filter lifecycle.",
+          why: "This integrates authentication with Spring Security's standard pipeline."
         },
         {
-          pattern: "Interceptor Pattern / Shared Axios Client",
-          where: "Request and response interceptors in `src/api/apiConfig.js`.",
-          howImplemented:
-            "Requests through the shared client attach the stored bearer token. A 401 clears local credentials and redirects to login; a 403 displays an access-denied alert. Errors remain rejected promises.",
-          why: "Admin API services share authentication/error behavior. This is not universal: checkout uses fetch and the public catalog uses a separate Axios call.",
+          pattern: "Interceptor ? Axios Request/Response Handling",
+          where: "The shared Axios client in `src/api/apiConfig.js`.",
+          howImplemented: "Interceptors attach bearer tokens and handle 401/403 responses.",
+          why: "API services using this client share consistent authentication and error handling."
         },
         {
-          pattern: "Context / Provider Pattern",
-          where:
-            "`AuthProvider` and `useAuth` in `AuthContext.jsx`, mounted around the React application.",
-          howImplemented:
-            "React Context exposes isLoggedIn plus login/logout actions. Route wrappers and cart navigation read that state; persisted token/user data are handled separately through localStorage.",
-          why: "Shared session presentation avoids passing login state through every component. Persistent-token restoration and synchronization remain follow-up work.",
-        },
-      ],
-    },
+          pattern: "Context / Provider ? React Authentication State",
+          where: "`AuthProvider` and `useAuth` in `AuthContext.jsx`.",
+          howImplemented: "React Context shares login state and login/logout actions across components.",
+          why: "Navigation and screens access authentication state without passing it through each component."
+        }
+      ]
+    }
   },
 ];
