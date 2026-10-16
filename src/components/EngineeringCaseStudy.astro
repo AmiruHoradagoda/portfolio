@@ -98,6 +98,14 @@ const tabs = [
 
       <section class="hidden" hidden id={`${project.slug}-case-panel-architecture`} role="tabpanel" aria-labelledby={`${project.slug}-case-tab-architecture`} tabindex="0" data-case-panel="architecture">
         <h3 class="text-2xl font-bold text-white">Architecture & Design</h3>
+        {details.pipelineArchitecture && (
+          <section class="mt-8" data-pipeline-architecture aria-labelledby={`${project.slug}-pipeline-heading`}>
+            <h4 id={`${project.slug}-pipeline-heading`} class="text-xl font-bold text-blue-200">Data Pipeline Architecture</h4>
+            <h5 class="mt-4 text-lg font-semibold text-white">{details.pipelineArchitecture.title}</h5>
+            <div class="mt-3"><CaseStudyText text={details.pipelineArchitecture.content} /></div>
+            <CaseStudyDiagrams diagrams={[details.pipelineArchitecture.diagram]} idPrefix={`${project.slug}-pipeline`} />
+          </section>
+        )}
         {(details.dataModelDiagrams.length > 0 || !!details.dataModelPlaceholders?.length || !!details.dataModelDescription) && (
           <section class="mt-8" data-data-models>
             <h4 class="text-xl font-bold text-blue-200">{details.architectureHeadings?.dataModel ?? "Data Model / ER Design"}</h4>

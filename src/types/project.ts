@@ -65,6 +65,7 @@ export type ProjectDiagram = {
   title: string;
   src: string;
   alt: string;
+  caption?: string;
   section?: "overview" | "challenges" | "architecture" | "decisions";
 };
 
@@ -95,6 +96,11 @@ export type ChallengeSolution = {
 
 export type ProjectDetails = {
   background: string;
+  pipelineArchitecture?: {
+    title: string;
+    content: string;
+    diagram: ProjectDiagram;
+  };
   architectureHeadings?: {
     dataModel: string;
     systemDesigns: string;

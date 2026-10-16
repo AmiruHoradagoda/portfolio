@@ -7,6 +7,7 @@ import { leckeep } from "./leckeep.ts";
 import { simplePosSystem } from "./simple-pos-system.ts";
 import { serviceFinder } from "./service-finder.ts";
 import { pharmacy } from "./pharmacy.ts";
+import { smartGrid } from "./smart-grid.ts";
 
 // Display order for project cards, featured projects, and generated routes.
 export const projects: Project[] = [
@@ -18,4 +19,5 @@ export const projects: Project[] = [
   simplePosSystem,
   serviceFinder,
   pharmacy,
+  smartGrid,
 ];
